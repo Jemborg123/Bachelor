@@ -12,8 +12,6 @@ import random
 import folium
 import pyproj
 import matplotlib.pyplot as plt
-import heapq  # 👈 For priority queue
-import math   # 👈 For log2 in complexity analysis
 
 # ---------------------------------------------------------------------------
 # Global config
@@ -362,188 +360,60 @@ def to_latlon(x, y, transformer):
     return lat, lon
 
 
-
-# ---------------------------------------------------------------------------
-# CUSTOM DIJKSTRA IMPLEMENTATION
-# ---------------------------------------------------------------------------
-
-def dijkstra_custom(graph, source, target, weight='weight'):
-    """
-    Custom implementation of Dijkstra's algorithm.
-    
-    Time Complexity: O((V + E) log V) with binary heap
-    Space Complexity: O(V)
-    
-    Args:
-        graph: NetworkX graph object
-        source: source node
-        target: target node
-        weight: edge attribute to use as weight
-    
-    Returns:
-        tuple: (path list, distance, stats dictionary)
-    """
-    stats = {
-        'nodes_visited': 0,
-        'edges_relaxed': 0,
-        'heap_operations': 0
-    }
-    
-    # Initialize distances and predecessors
-    dist = {node: float('inf') for node in graph.nodes()}
-    prev = {node: None for node in graph.nodes()}
-    dist[source] = 0
-    
-    # Priority queue: (distance, node)
-    pq = [(0, source)]
-    stats['heap_operations'] += 1
-    
-    # Visited set
-    visited = set()
-    
-    while pq:
-        # Extract min
-        current_dist, current = heapq.heappop(pq)
-        stats['heap_operations'] += 1
-        
-        # Skip if we've already found a better path
-        if current_dist > dist[current]:
-            continue
-        
-        # Mark as visited
-        if current not in visited:
-            visited.add(current)
-            stats['nodes_visited'] += 1
-        
-        # Early termination if we reached target
-        if current == target:
-            break
-        
-        # Relax all neighbors
-        for neighbor in graph.neighbors(current):
-            edge_weight = graph[current][neighbor].get(weight, 1)
-            stats['edges_relaxed'] += 1
-            
-            new_dist = current_dist + edge_weight
-            
-            if new_dist < dist[neighbor]:
-                dist[neighbor] = new_dist
-                prev[neighbor] = current
-                heapq.heappush(pq, (new_dist, neighbor))
-                stats['heap_operations'] += 1
-    
-    # Reconstruct path
-    path = []
-    if dist[target] < float('inf'):
-        node = target
-        while node is not None:
-            path.append(node)
-            node = prev[node]
-        path.reverse()
-    
-    return path, dist[target], stats
-
-# ---------------------------------------------------------------------------
-# Time complexity
-# ---------------------------------------------------------------------------
-
-def analyze_complexity(V, E, stats, elapsed_time):
-    """
-    Analyze and print complexity information.
-    """
-    print("\n📊 COMPLEXITY ANALYSIS:")
-    print(f"  Graph size: |V| = {V}, |E| = {E}")
-    print(f"  Theoretical: O((|V| + |E|) log |V|) = O(({V} + {E}) log {V})")
-    print(f"  ≈ {((V + E) * math.log2(V)):.0f} operations (estimate)")
-    print(f"\n  Actual performance:")
-    print(f"    Nodes visited: {stats['nodes_visited']} ({stats['nodes_visited']/V*100:.1f}% of |V|)")
-    print(f"    Edges relaxed: {stats['edges_relaxed']} ({stats['edges_relaxed']/E*100:.1f}% of |E|)")
-    print(f"    Heap ops: {stats['heap_operations']}")
-    print(f"    Time: {elapsed_time*1000:.2f} ms")
-    
-    # Empirical complexity verification
-    theoretical_ops = (V + E) * math.log2(V)
-    actual_ops = stats['edges_relaxed'] + stats['heap_operations']
-    ratio = actual_ops / theoretical_ops if theoretical_ops > 0 else 0
-    print(f"\n  Complexity verification:")
-    print(f"    Theoretical ops ~ {theoretical_ops:.0f}")
-    print(f"    Actual ops: {actual_ops}")
-    print(f"    Ratio: {ratio:.3f} (should be ~1 for average case)")
 # ---------------------------------------------------------------------------
 # Dijkstra + Folium map
 # ---------------------------------------------------------------------------
 
 def run_dijkstra_and_map(G):
-    print("\n🔍 Running Dijkstra (custom implementation) …")
-    total_start = time.time()
+    print("\n🔍 Running Dijkstra …")
 
-    # Filter outliers
-    filter_start = time.time()
     kept_nodes = filter_outliers(G)
-    filter_time = time.time() - filter_start
-
-    # Get largest connected component
-    subgraph = G.subgraph(kept_nodes)
+    subgraph   = G.subgraph(kept_nodes)
     components = list(nx.connected_components(subgraph))
-    largest = list(max(components, key=len))
+    largest    = list(max(components, key=len))
     print(f"  Largest component: {len(largest)} nodes")
 
-    # Pick random source and target
     node_a, node_b = random.sample(largest, 2)
-    print(f"  Source: node {node_a} @ ({G.nodes[node_a]['x']:.2f}, {G.nodes[node_a]['y']:.2f})")
-    print(f"  Target: node {node_b} @ ({G.nodes[node_b]['x']:.2f}, {G.nodes[node_b]['y']:.2f})")
+    print(f"  Source: node {node_a}  @ ({G.nodes[node_a]['x']:.2f}, {G.nodes[node_a]['y']:.2f})")
+    print(f"  Target: node {node_b}  @ ({G.nodes[node_b]['x']:.2f}, {G.nodes[node_b]['y']:.2f})")
 
-    # Run custom Dijkstra
-    V = G.number_of_nodes()
-    E = G.number_of_edges()
-    
-    dijkstra_start = time.time()
-    path, cost, stats = dijkstra_custom(G, node_a, node_b, weight='weight')
-    dijkstra_time = time.time() - dijkstra_start
-    
-    print(f"  ✅ Path found: {len(path)} nodes, {cost:.1f} m total")
-    
-    # Analyze complexity
-    analyze_complexity(V, E, stats, dijkstra_time)
+    path = nx.dijkstra_path(G, node_a, node_b, weight='weight')
+    cost = nx.dijkstra_path_length(G, node_a, node_b, weight='weight')
+    print(f"  ✅ Path: {len(path)} nodes, {cost:.1f} m total")
 
-    # Detect CRS
-    print("\n  Detecting CRS from WFS …")
-    crs_start = time.time()
+    # Detect CRS by fetching a sample layer from WFS
+    print("  Detecting CRS from WFS …")
     params = {
         'service': 'WFS', 'version': '1.0.0', 'request': 'GetFeature',
         'typeName': f'{WORKSPACE}:fortove', 'outputFormat': 'application/json',
         'maxFeatures': '1'
     }
-    sample_gdf = gpd.read_file(requests.get(WFS_URL, params=params).content)
+    sample_gdf = gpd.read_file(
+        requests.get(WFS_URL, params=params).content
+    )
     source_crs = sample_gdf.crs
-    crs_time = time.time() - crs_start
     print(f"  Detected CRS: {source_crs}")
 
-    # Reproject path to WGS84 for mapping
+    # Build a GeoDataFrame of path nodes and reproject to WGS84
     from shapely.geometry import Point
-    reproject_start = time.time()
     path_points = gpd.GeoDataFrame(
         [{'node': n, 'geometry': Point(G.nodes[n]['x'], G.nodes[n]['y'])} for n in path],
         crs=source_crs
     ).to_crs("EPSG:4326")
-    reproject_time = time.time() - reproject_start
 
     path_latlon = [(row.geometry.y, row.geometry.x) for _, row in path_points.iterrows()]
 
-    # Create Folium map
-    print("\n🗺️  Creating map …")
-    map_start = time.time()
-    
-    # Center map on path midpoint
     mid_lat = np.mean([p[0] for p in path_latlon])
     mid_lon = np.mean([p[1] for p in path_latlon])
-    
-    m = folium.Map(location=[mid_lat, mid_lon], zoom_start=17, tiles='OpenStreetMap')
+    print(f"  Path center: lat={mid_lat:.6f}, lon={mid_lon:.6f}")
 
-    # Add WMS building layer
+    # Build Folium map — also add WMS layers as background so we can see the campus
+    m = folium.Map(location=[55.7858, 12.5215], zoom_start=16, tiles='OpenStreetMap')
+
+    # Add WMS background layers from GeoServer
     folium.WmsTileLayer(
         url="https://casgis.azurewebsites.net/geoserver/dtu/wms",
-        name='DTU Buildings',
+        name='DTU Campus',
         layers='dtu:llyn_bygning_dtu',
         fmt='image/png',
         transparent=True,
@@ -553,42 +423,31 @@ def run_dijkstra_and_map(G):
         control=True
     ).add_to(m)
 
-    # Add path
     folium.PolyLine(
         locations=path_latlon,
         color='red',
-        weight=5,
-        opacity=0.8,
+        weight=4,
+        opacity=0.9,
         tooltip=f"Shortest path: {cost:.1f} m"
     ).add_to(m)
 
-    # Add start marker
     folium.Marker(
         location=path_latlon[0],
         popup=f"Start (node {node_a})",
         icon=folium.Icon(color='green', icon='play')
     ).add_to(m)
 
-    # Add end marker
     folium.Marker(
         location=path_latlon[-1],
         popup=f"End (node {node_b})",
         icon=folium.Icon(color='red', icon='stop')
     ).add_to(m)
 
-    # Add layer control
     folium.LayerControl().add_to(m)
 
-    # Save map
-    m.save('dijkstra_path_custom.html')
-    map_time = time.time() - map_start
-    print(f"  ⏱️  Map creation time: {map_time:.2f} seconds")
-
-    total_time = time.time() - total_start
-    print(f"\n⏱️  TOTAL DIJKSTRA + MAP TIME: {total_time:.2f} seconds")
-    print("💾 Map saved to 'dijkstra_path_custom.html'")
-
-    return path, cost, stats
+    m.save('dijkstra_path.html')
+    print("💾 Map saved to 'dijkstra_path.html'")
+    return path, cost
 # ---------------------------------------------------------------------------
 # Matplotlib visualisation (optional, for debugging)
 # ---------------------------------------------------------------------------
@@ -636,7 +495,7 @@ def visualise_graph(G):
 # ---------------------------------------------------------------------------
 
 def main():
-    load_config('src\master_config.json')
+    load_config('master_config.json')
 
     if FETCH_LAYER_NAMES:
         fetchLayerNamesAndSave()

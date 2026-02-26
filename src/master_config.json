@@ -1,6 +1,6 @@
 {
-  "fetch_layer_names": "false",
-  "fetch_layer_data": "false",
+  "fetch_layer_names": "true",
+  "fetch_layer_data": "true",
   "build_graph": "true",
-  "run_dijkstra": "false"
+  "run_dijkstra": "true"
 }
