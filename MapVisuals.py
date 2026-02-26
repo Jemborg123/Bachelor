@@ -9,10 +9,12 @@ import numpy as np
 import requests
 from shapely.geometry import Point
 import time
+import os
 
 # Constants
 WFS_URL = "https://casgis.azurewebsites.net/geoserver/dtu/wfs"
 WORKSPACE = "dtu"
+MAPS_FOLDER = "Maps"
 
 def detect_crs():
     """Detect CRS from GeoServer by fetching a sample layer."""
@@ -40,6 +42,8 @@ def create_path_map(graph, path, cost, source_node, target_node, filename="path_
     Returns:
         Folium map object
     """
+    filepath = os.path.join(MAPS_FOLDER, filename)
+    
     print(f"\n🗺️  Creating map: {filename}")
     map_start = time.time()
     
@@ -101,9 +105,9 @@ def create_path_map(graph, path, cost, source_node, target_node, filename="path_
     folium.LayerControl().add_to(m)
     
     # Save map
-    m.save(filename)
+    m.save(filepath)
     map_time = time.time() - map_start
-    print(f"  ✅ Map saved to '{filename}' ({map_time:.2f} seconds)")
+    print(f"  ✅ Map saved to '{filepath}' ({map_time:.2f} seconds)")
     
     return m
 
@@ -117,6 +121,8 @@ def create_comparison_map(graph, results_dict, filename="comparison_map.html"):
         results_dict: Dictionary of {algorithm_name: (path, cost)}
         filename: Output HTML filename
     """
+    filepath = os.path.join(MAPS_FOLDER, filename)
+
     print(f"\n🗺️  Creating comparison map: {filename}")
     map_start = time.time()
     
@@ -191,9 +197,9 @@ def create_comparison_map(graph, results_dict, filename="comparison_map.html"):
     folium.LayerControl().add_to(m)
     
     # Save map
-    m.save(filename)
+    m.save(filepath)
     map_time = time.time() - map_start
-    print(f"  ✅ Comparison map saved to '{filename}' ({map_time:.2f} seconds)")
+    print(f"  ✅ Comparison map saved to '{filepath}' ({map_time:.2f} seconds)")
     
     return m
 
