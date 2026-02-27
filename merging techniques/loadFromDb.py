@@ -163,35 +163,3 @@ def remove_near_zero_outliers(points, x_threshold=10000, y_threshold=10000):
     print(f"Y range: [{filtered_points[:, 1].min():.0f}, {filtered_points[:, 1].max():.0f}]")
     
     return filtered_points
-
-def main():
-    walk_points,obstacles = fetch_points()
-
-
-    print("="*80)
-    print("WALK POINTS: ",walk_points)
-    print("="*80)
-    print("OBSTACLES: ",obstacles)
-    
-    print("="*80)
-    filtered_points = remove_near_zero_outliers(walk_points)
-    squares = intoGrid(filtered_points,10)
-    merged_points = findCentroid(squares)
-
-    # optics_merged_points = merge_points_optics(filtered_points)
-    dbscan_merged_points = merge_points_dbscan(filtered_points, eps=4.0)
-    print("raw points: ", len(filtered_points))
-    
-    print("grid merged points: ", len(merged_points))
-
-    # print("optics merged points", len(optics_merged_points))
-
-    print("DBSCAN merged points: ", len(dbscan_merged_points))
-    plot_with_density(filtered_points)
-    plot_with_density(merged_points)
-    # plot_with_density(optics_merged_points)
-    plot_with_density(dbscan_merged_points)
-
-
-if __name__ == "__main__":
-    main()
