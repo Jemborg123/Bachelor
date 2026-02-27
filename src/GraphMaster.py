@@ -3,14 +3,14 @@ import json
 import xml.etree.ElementTree as ET
 import numpy as np
 import geopandas as gpd
-import networkx as nx
-from shapely.geometry import LineString
-from shapely.ops import unary_union
-from scipy.spatial import KDTree
+# import networkx as nx
+# from shapely.geometry import LineString
+# from shapely.ops import unary_union
+# from scipy.spatial import KDTree
 import pickle
 import random
-import folium
-import pyproj
+# import folium
+# import pyproj
 import matplotlib.pyplot as plt
 import heapq  # 👈 For priority queue
 import math   # 👈 For log2 in complexity analysis
