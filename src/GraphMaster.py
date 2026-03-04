@@ -3,14 +3,14 @@ import json
 import xml.etree.ElementTree as ET
 import numpy as np
 import geopandas as gpd
-# import networkx as nx
-# from shapely.geometry import LineString
-# from shapely.ops import unary_union
-# from scipy.spatial import KDTree
+import networkx as nx
+from shapely.geometry import LineString
+from shapely.ops import unary_union
+from scipy.spatial import KDTree
 import pickle
 import random
 # import folium
-# import pyproj
+import pyproj
 import matplotlib.pyplot as plt
 import heapq  # 👈 For priority queue
 import math   # 👈 For log2 in complexity analysis
@@ -636,19 +636,21 @@ def visualise_graph(G):
 # ---------------------------------------------------------------------------
 
 def main():
-    load_config('src\master_config.json')
+    # load_config('src\master_config.json')
 
-    if FETCH_LAYER_NAMES:
-        fetchLayerNamesAndSave()
+    # if FETCH_LAYER_NAMES:
+    #     fetchLayerNamesAndSave()
 
-    if BUILD_GRAPH:
-        fetch_and_build_graph()
+    # if BUILD_GRAPH:
+    #     fetch_and_build_graph()
 
-    if RUN_DIJKSTRA:
-        with open('walkability_graph.pkl', 'rb') as f:
-            G = pickle.load(f)
-        run_dijkstra_and_map(G)
-
+    # if RUN_DIJKSTRA:
+    #     with open('walkability_graph.pkl', 'rb') as f:
+    #         G = pickle.load(f)
+    #     run_dijkstra_and_map(G)
+    with open('walkability_graph.pkl', 'rb') as f:
+        G = pickle.load(f)
+    visualise_graph(G)
     print("\n✅ Done")
 
 

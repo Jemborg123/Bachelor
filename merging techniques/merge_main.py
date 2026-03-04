@@ -93,22 +93,29 @@ def main():
     
     print("="*80)
     filtered_points = loadFromDb.remove_near_zero_outliers(walk_points)
+    print("raw points: ", len(filtered_points))
     squares = grid_merge.intoGrid(filtered_points,10)
     merged_points = grid_merge.findCentroid(squares)
+    print("grid merged points: ", len(merged_points))
 
     # optics_merged_points = merge_points_optics(filtered_points)
     dbscan_merged_points = dbscan_merge.merge_points_dbscan(filtered_points, eps=4.0)
-    print("raw points: ", len(filtered_points))
+    print("DBSCAN merged points: ", len(dbscan_merged_points))
+
+    simple_dbscan_merged_points = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=50, min_samples=10)
+    print("simple DBSCAN merged points: ", len(simple_dbscan_merged_points))
     
-    print("grid merged points: ", len(merged_points))
+    
 
     # print("optics merged points", len(optics_merged_points))
 
-    print("DBSCAN merged points: ", len(dbscan_merged_points))
+
+
     plot_with_density(filtered_points)
     plot_with_density(merged_points)
     # plot_with_density(optics_merged_points)
     plot_with_density(dbscan_merged_points)
+    plot_with_density(simple_dbscan_merged_points)
 
 
 if __name__ == "__main__":
