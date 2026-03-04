@@ -10,7 +10,12 @@ import os
 
 # Import your modules
 from MapVisuals import create_path_map, create_comparison_map
-from Algorithms.Dijkstra import dijkstra, analyze_complexity 
+# from Algorithms.Dijkstra import dijkstra, analyze_complexity 
+from Algorithms import (
+    dijkstra, 
+    astar, 
+    analyze_complexity,
+)
 
 # Configuration
 GRAPH_FILE = 'data/walkability_graph.pkl'
@@ -67,8 +72,8 @@ def run_all_algorithms(G, source, target):
     
     # Dictionary of algorithms to test
     algorithms = {
-        'Dijkstra': dijkstra,  # 👈 Now this is the function
-        # 'A*': astar,  # Uncomment when ready
+        'Dijkstra': dijkstra, 
+        'A*': astar,
     }
     
     for name, func in algorithms.items():
@@ -98,10 +103,16 @@ def main():
     results = run_all_algorithms(G, source, target)
     
     # Create individual maps for each algorithm
-    for name, (path, cost, _) in results.items():
-        filename = f"{name.lower()}_path.html"
-        create_path_map(G, path, cost, source, target, filename)
+    # for name, (path, cost, _) in results.items():
+    #     filename = f"{name.lower()}_path.html"
+    #     create_path_map(G, path, cost, source, target, filename)
     
+    for name, (path, cost, _) in results.items():
+        # Clean filename (remove spaces and special chars)
+        clean_name = name.lower().replace(' ', '_').replace('*', 'star').replace('(', '').replace(')', '')
+        filename = f"{clean_name}_path.html"
+        create_path_map(G, path, cost, source, target, filename)
+
     # Create comparison map
     comparison_results = {name: (path, cost) for name, (path, cost, _) in results.items()}
     create_comparison_map(G, comparison_results, "algorithm_comparison.html")
