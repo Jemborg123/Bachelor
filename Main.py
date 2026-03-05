@@ -13,7 +13,8 @@ from MapVisuals import create_path_map, create_comparison_map
 # from Algorithms.Dijkstra import dijkstra, analyze_complexity 
 from Algorithms import (
     dijkstra, 
-    astar, 
+    astar,
+    bidirectional_astar, 
     analyze_complexity,
 )
 
@@ -74,6 +75,7 @@ def run_all_algorithms(G, source, target):
     algorithms = {
         'Dijkstra': dijkstra, 
         'A*': astar,
+        'Bidirectional A*': bidirectional_astar,
     }
     
     for name, func in algorithms.items():
