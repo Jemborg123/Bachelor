@@ -1,4 +1,4 @@
-from utils import simpleDistance
+from Data.utils import simpleDistance
 class KDtreeNode():
     def __init__(self,x,y,axis,leftChild=None,rightChild=None):
         self.coords = (x,y)
@@ -88,3 +88,4 @@ def radiusSearch(tree: KDtreeNode, point, eps, result=None):
         radiusSearch(furthest, point, eps, result)
 
     return result
+
