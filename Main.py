@@ -15,6 +15,9 @@ from Algorithms import (
     dijkstra, 
     astar,
     bidirectional_astar, 
+    alt,
+    select_landmarks,          
+    precompute_landmark_distances,
     analyze_complexity,
 )
 
@@ -70,12 +73,27 @@ def run_single_algorithm(G, algorithm_func, source, target, algo_name):
 def run_all_algorithms(G, source, target):
     """Run all algorithms on the same source-target pair."""
     results = {}
-    
+
+    # Preprocess for ALT (do once)
+    print("\n🔧 Preprocessing for ALT...")
+    landmarks = select_landmarks(G, num_landmarks=16)
+    dist_to, dist_from = precompute_landmark_distances(G, landmarks)
+
+    # # Dictionary of algorithms to test
+    # algorithms = {
+    #     'Dijkstra': dijkstra, 
+    #     'A*': astar,
+    #     'Bidirectional A*': bidirectional_astar,
+    #     'ALT': alt,
+    # }
+
     # Dictionary of algorithms to test
     algorithms = {
-        'Dijkstra': dijkstra, 
-        'A*': astar,
-        'Bidirectional A*': bidirectional_astar,
+        'Dijkstra': lambda s,t: dijkstra(G, s, t, weight='weight'),
+        'A*': lambda s,t: astar(G, s, t, weight='weight'),
+        'Bidirectional A*': lambda s,t: bidirectional_astar(G, s, t, weight='weight'),
+        'ALT': lambda s,t: alt(G, s, t, weight='weight', 
+                               landmarks=landmarks, dist_to=dist_to, dist_from=dist_from),
     }
     
     for name, func in algorithms.items():
