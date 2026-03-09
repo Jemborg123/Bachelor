@@ -99,11 +99,15 @@ def main():
     print("grid merged points: ", len(merged_points))
 
     # optics_merged_points = merge_points_optics(filtered_points)
-    dbscan_merged_points = dbscan_merge.merge_points_dbscan(filtered_points, eps=4.0)
-    print("DBSCAN merged points: ", len(dbscan_merged_points))
+    # dbscan_merged_points = dbscan_merge.merge_points_dbscan(filtered_points, eps=4.0)
+    # print("DBSCAN merged points: ", len(dbscan_merged_points))
 
-    simple_dbscan_merged_points = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=50, min_samples=10)
-    print("simple DBSCAN merged points: ", len(simple_dbscan_merged_points))
+    simple_dbscan_merged_points3 = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=3, min_samples=1)
+    print("simple DBSCAN merged points eps 3: ", len(simple_dbscan_merged_points3))
+    simple_dbscan_merged_points5 = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=5, min_samples=1)
+    print("simple DBSCAN merged points eps 5: ", len(simple_dbscan_merged_points5))
+    simple_dbscan_merged_points8 = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=8, min_samples=1)
+    print("simple DBSCAN merged points eps 8: ", len(simple_dbscan_merged_points8))
     
     
 
@@ -114,8 +118,10 @@ def main():
     plot_with_density(filtered_points)
     plot_with_density(merged_points)
     # plot_with_density(optics_merged_points)
-    plot_with_density(dbscan_merged_points)
-    plot_with_density(simple_dbscan_merged_points)
+    # plot_with_density(dbscan_merged_points)
+    plot_with_density(simple_dbscan_merged_points3)
+    plot_with_density(simple_dbscan_merged_points5)
+    plot_with_density(simple_dbscan_merged_points8)
 
 
 if __name__ == "__main__":

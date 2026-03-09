@@ -1,5 +1,8 @@
 from sklearn.cluster import DBSCAN
 import numpy as np
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from Data.merging_techniques import KDtree
 
 def merge_points_dbscan(points: np.ndarray, eps: float = 0.5, min_samples: int = 3) -> np.ndarray:
     """
@@ -84,15 +87,19 @@ def computeNeighbors(dataset, Eps):
     print("PreComputing all neighbours")
     n = len(dataset)
     neighbors = [[] for _ in range(n)]
+    point_to_idx = {tuple(p): i for i, p in enumerate(dataset)}
+    
+    tree = KDtree.buildKDtree(dataset)
+
     for i in range(n):
         print(f"\rProgress: {i}/{n}", end="", flush=True)
-        for j in range(i+1, n):
-            if simpleDistance(dataset[i], dataset[j]) <= Eps:
+        candidates = KDtree.radiusSearch(tree, dataset[i], Eps)
+        for coords, _ in candidates:
+            j = point_to_idx[tuple(coords)]
+            if i != j and j not in neighbors[i]:
                 neighbors[i].append(j)
                 neighbors[j].append(i)
+
     return neighbors
 
-def simpleDistance(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-    return (x1-x2)**2 + (y1-y2)**2
+
