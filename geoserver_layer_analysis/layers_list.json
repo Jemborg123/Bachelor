@@ -1,0 +1,532 @@
+[
+  {
+    "name": "LERdtulyngby",
+    "full_name": "dtu:LERdtulyngby",
+    "title": "LERdtulyngby"
+  },
+  {
+    "name": "broer",
+    "full_name": "dtu:broer",
+    "title": "broer"
+  },
+  {
+    "name": "cykelsti",
+    "full_name": "dtu:cykelsti",
+    "title": "cykelsti"
+  },
+  {
+    "name": "eksisterende_haver",
+    "full_name": "dtu:eksisterende_haver",
+    "title": "eksisterende_haver"
+  },
+  {
+    "name": "eksisterende_torve",
+    "full_name": "dtu:eksisterende_torve",
+    "title": "eksisterende_torve"
+  },
+  {
+    "name": "forareal",
+    "full_name": "dtu:forareal",
+    "title": "forareal"
+  },
+  {
+    "name": "fortove",
+    "full_name": "dtu:fortove",
+    "title": "fortove"
+  },
+  {
+    "name": "lbal_bygning_dtu",
+    "full_name": "dtu:lbal_bygning_dtu",
+    "title": "lbal_bygning_dtu"
+  },
+  {
+    "name": "lbal_parkering_plads",
+    "full_name": "dtu:lbal_parkering_plads",
+    "title": "lbal_parkering_plads"
+  },
+  {
+    "name": "ldtu_building_whiteout",
+    "full_name": "dtu:ldtu_building_whiteout",
+    "title": "ldtu_building_whiteout"
+  },
+  {
+    "name": "ldtu_hjertestarter",
+    "full_name": "dtu:ldtu_hjertestarter",
+    "title": "ldtu_hjertestarter"
+  },
+  {
+    "name": "ldtu_parkering_sensade",
+    "full_name": "dtu:ldtu_parkering_sensade",
+    "title": "ldtu_parkering_sensade"
+  },
+  {
+    "name": "ler2_afloebskomponent",
+    "full_name": "dtu:ler2_afloebskomponent",
+    "title": "ler2_afloebskomponent"
+  },
+  {
+    "name": "ler2_afloebsledning",
+    "full_name": "dtu:ler2_afloebsledning",
+    "title": "ler2_afloebsledning"
+  },
+  {
+    "name": "ler2_anden_komponent",
+    "full_name": "dtu:ler2_anden_komponent",
+    "title": "ler2_anden_komponent"
+  },
+  {
+    "name": "ler2_elkomponent",
+    "full_name": "dtu:ler2_elkomponent",
+    "title": "ler2_elkomponent"
+  },
+  {
+    "name": "ler2_elledning",
+    "full_name": "dtu:ler2_elledning",
+    "title": "ler2_elledning"
+  },
+  {
+    "name": "ler2_foeringsroer",
+    "full_name": "dtu:ler2_foeringsroer",
+    "title": "ler2_foeringsroer"
+  },
+  {
+    "name": "ler2_gaskomponent",
+    "full_name": "dtu:ler2_gaskomponent",
+    "title": "ler2_gaskomponent"
+  },
+  {
+    "name": "ler2_gasledning",
+    "full_name": "dtu:ler2_gasledning",
+    "title": "ler2_gasledning"
+  },
+  {
+    "name": "ler2_lar_komponent",
+    "full_name": "dtu:ler2_lar_komponent",
+    "title": "ler2_lar_komponent"
+  },
+  {
+    "name": "ler2_telekomponent",
+    "full_name": "dtu:ler2_telekomponent",
+    "title": "ler2_telekomponent"
+  },
+  {
+    "name": "ler2_teleledning",
+    "full_name": "dtu:ler2_teleledning",
+    "title": "ler2_teleledning"
+  },
+  {
+    "name": "ler2_termisk_komponent",
+    "full_name": "dtu:ler2_termisk_komponent",
+    "title": "ler2_termisk_komponent"
+  },
+  {
+    "name": "ler2_termisk_ledning",
+    "full_name": "dtu:ler2_termisk_ledning",
+    "title": "ler2_termisk_ledning"
+  },
+  {
+    "name": "ler2_vandkomponent",
+    "full_name": "dtu:ler2_vandkomponent",
+    "title": "ler2_vandkomponent"
+  },
+  {
+    "name": "ler2_vandledning",
+    "full_name": "dtu:ler2_vandledning",
+    "title": "ler2_vandledning"
+  },
+  {
+    "name": "ler_afloebskomponent",
+    "full_name": "dtu:ler_afloebskomponent",
+    "title": "ler_afloebskomponent"
+  },
+  {
+    "name": "ler_afloebsledning",
+    "full_name": "dtu:ler_afloebsledning",
+    "title": "ler_afloebsledning"
+  },
+  {
+    "name": "ler_belysningsarmatur",
+    "full_name": "dtu:ler_belysningsarmatur",
+    "title": "ler_belysningsarmatur"
+  },
+  {
+    "name": "ler_elkomponent",
+    "full_name": "dtu:ler_elkomponent",
+    "title": "ler_elkomponent"
+  },
+  {
+    "name": "ler_elledning",
+    "full_name": "dtu:ler_elledning",
+    "title": "ler_elledning"
+  },
+  {
+    "name": "ler_foeringsroer",
+    "full_name": "dtu:ler_foeringsroer",
+    "title": "ler_foeringsroer"
+  },
+  {
+    "name": "ler_gaskomponent",
+    "full_name": "dtu:ler_gaskomponent",
+    "title": "ler_gaskomponent"
+  },
+  {
+    "name": "ler_gasledning",
+    "full_name": "dtu:ler_gasledning",
+    "title": "ler_gasledning"
+  },
+  {
+    "name": "ler_lar_komponent",
+    "full_name": "dtu:ler_lar_komponent",
+    "title": "ler_lar_komponent"
+  },
+  {
+    "name": "ler_oliekomponent",
+    "full_name": "dtu:ler_oliekomponent",
+    "title": "ler_oliekomponent"
+  },
+  {
+    "name": "ler_olieledning",
+    "full_name": "dtu:ler_olieledning",
+    "title": "ler_olieledning"
+  },
+  {
+    "name": "ler_teleledning",
+    "full_name": "dtu:ler_teleledning",
+    "title": "ler_teleledning"
+  },
+  {
+    "name": "ler_termiskledning",
+    "full_name": "dtu:ler_termiskledning",
+    "title": "ler_termiskledning"
+  },
+  {
+    "name": "ler_vandledning",
+    "full_name": "dtu:ler_vandledning",
+    "title": "ler_vandledning"
+  },
+  {
+    "name": "lerext_afloebskomponent",
+    "full_name": "dtu:lerext_afloebskomponent",
+    "title": "lerext_afloebskomponent"
+  },
+  {
+    "name": "lerext_afloebsledning",
+    "full_name": "dtu:lerext_afloebsledning",
+    "title": "lerext_afloebsledning"
+  },
+  {
+    "name": "lerext_elkomponent",
+    "full_name": "dtu:lerext_elkomponent",
+    "title": "lerext_elkomponent"
+  },
+  {
+    "name": "lerext_elledning",
+    "full_name": "dtu:lerext_elledning",
+    "title": "lerext_elledning"
+  },
+  {
+    "name": "lerext_foeringsroer",
+    "full_name": "dtu:lerext_foeringsroer",
+    "title": "lerext_foeringsroer"
+  },
+  {
+    "name": "lerext_gaskomponent",
+    "full_name": "dtu:lerext_gaskomponent",
+    "title": "lerext_gaskomponent"
+  },
+  {
+    "name": "lerext_gasledning",
+    "full_name": "dtu:lerext_gasledning",
+    "title": "lerext_gasledning"
+  },
+  {
+    "name": "lerext_ledningstrace",
+    "full_name": "dtu:lerext_ledningstrace",
+    "title": "lerext_ledningstrace"
+  },
+  {
+    "name": "lerext_telekomponent",
+    "full_name": "dtu:lerext_telekomponent",
+    "title": "lerext_telekomponent"
+  },
+  {
+    "name": "lerext_termisk_ledning",
+    "full_name": "dtu:lerext_termisk_ledning",
+    "title": "lerext_termisk_ledning"
+  },
+  {
+    "name": "lerext_termiskkomponent",
+    "full_name": "dtu:lerext_termiskkomponent",
+    "title": "lerext_termiskkomponent"
+  },
+  {
+    "name": "lerext_vandkomponent",
+    "full_name": "dtu:lerext_vandkomponent",
+    "title": "lerext_vandkomponent"
+  },
+  {
+    "name": "lerext_vandledning",
+    "full_name": "dtu:lerext_vandledning",
+    "title": "lerext_vandledning"
+  },
+  {
+    "name": "letbanekrydsninger",
+    "full_name": "dtu:letbanekrydsninger",
+    "title": "letbanekrydsninger"
+  },
+  {
+    "name": "letbanestop",
+    "full_name": "dtu:letbanestop",
+    "title": "letbanestop"
+  },
+  {
+    "name": "llyn_adgangsvej",
+    "full_name": "dtu:llyn_adgangsvej",
+    "title": "llyn_adgangsvej"
+  },
+  {
+    "name": "llyn_affaldsgaard",
+    "full_name": "dtu:llyn_affaldsgaard",
+    "title": "llyn_affaldsgaard"
+  },
+  {
+    "name": "llyn_afspaerring_linje",
+    "full_name": "dtu:llyn_afspaerring_linje",
+    "title": "llyn_afspaerring_linje"
+  },
+  {
+    "name": "llyn_afspaerring_pullert",
+    "full_name": "dtu:llyn_afspaerring_pullert",
+    "title": "llyn_afspaerring_pullert"
+  },
+  {
+    "name": "llyn_andet_ijord",
+    "full_name": "dtu:llyn_andet_ijord",
+    "title": "llyn_andet_ijord"
+  },
+  {
+    "name": "llyn_andre_arealer",
+    "full_name": "dtu:llyn_andre_arealer",
+    "title": "llyn_andre_arealer"
+  },
+  {
+    "name": "llyn_brandhane",
+    "full_name": "dtu:llyn_brandhane",
+    "title": "llyn_brandhane"
+  },
+  {
+    "name": "llyn_brandvej",
+    "full_name": "dtu:llyn_brandvej",
+    "title": "llyn_brandvej"
+  },
+  {
+    "name": "llyn_bro",
+    "full_name": "dtu:llyn_bro",
+    "title": "llyn_bro"
+  },
+  {
+    "name": "llyn_broendrens",
+    "full_name": "dtu:llyn_broendrens",
+    "title": "llyn_broendrens"
+  },
+  {
+    "name": "llyn_building_user_view",
+    "full_name": "dtu:llyn_building_user_view",
+    "title": "llyn_building_user_view"
+  },
+  {
+    "name": "llyn_byggefelt_100",
+    "full_name": "dtu:llyn_byggefelt_100",
+    "title": "llyn_byggefelt_100"
+  },
+  {
+    "name": "llyn_byggefelt_75",
+    "full_name": "dtu:llyn_byggefelt_75",
+    "title": "llyn_byggefelt_75"
+  },
+  {
+    "name": "llyn_byggefelt_construction",
+    "full_name": "dtu:llyn_byggefelt_construction",
+    "title": "llyn_byggefelt_construction"
+  },
+  {
+    "name": "llyn_byggefelt_east",
+    "full_name": "dtu:llyn_byggefelt_east",
+    "title": "llyn_byggefelt_east"
+  },
+  {
+    "name": "llyn_byggefelt_parking",
+    "full_name": "dtu:llyn_byggefelt_parking",
+    "title": "llyn_byggefelt_parking"
+  },
+  {
+    "name": "llyn_byggeplads",
+    "full_name": "dtu:llyn_byggeplads",
+    "title": "llyn_byggeplads"
+  },
+  {
+    "name": "llyn_bygning_andre",
+    "full_name": "dtu:llyn_bygning_andre",
+    "title": "llyn_bygning_andre"
+  },
+  {
+    "name": "llyn_bygning_andre_4326",
+    "full_name": "dtu:llyn_bygning_andre_4326",
+    "title": "llyn_bygning_andre_4326"
+  },
+  {
+    "name": "llyn_bygning_dtu",
+    "full_name": "dtu:llyn_bygning_dtu",
+    "title": "llyn_bygning_dtu"
+  },
+  {
+    "name": "llyn_bygning_dtu_4326",
+    "full_name": "dtu:llyn_bygning_dtu_4326",
+    "title": "llyn_bygning_dtu_4326"
+  },
+  {
+    "name": "llyn_cykel_rep",
+    "full_name": "dtu:llyn_cykel_rep",
+    "title": "llyn_cykel_rep"
+  },
+  {
+    "name": "llyn_cykelp_plads",
+    "full_name": "dtu:llyn_cykelp_plads",
+    "title": "llyn_cykelp_plads"
+  },
+  {
+    "name": "llyn_facade_groen",
+    "full_name": "dtu:llyn_facade_groen",
+    "title": "llyn_facade_groen"
+  },
+  {
+    "name": "llyn_graes",
+    "full_name": "dtu:llyn_graes",
+    "title": "llyn_graes"
+  },
+  {
+    "name": "llyn_invasivearter",
+    "full_name": "dtu:llyn_invasivearter",
+    "title": "llyn_invasivearter"
+  },
+  {
+    "name": "llyn_letbane_spor",
+    "full_name": "dtu:llyn_letbane_spor",
+    "title": "llyn_letbane_spor"
+  },
+  {
+    "name": "llyn_lokalplan_new",
+    "full_name": "dtu:llyn_lokalplan_new",
+    "title": "llyn_lokalplan_new"
+  },
+  {
+    "name": "llyn_mask",
+    "full_name": "dtu:llyn_mask",
+    "title": "llyn_mask"
+  },
+  {
+    "name": "llyn_matrikel",
+    "full_name": "dtu:llyn_matrikel",
+    "title": "llyn_matrikel"
+  },
+  {
+    "name": "llyn_parkering_areal",
+    "full_name": "dtu:llyn_parkering_areal",
+    "title": "llyn_parkering_areal"
+  },
+  {
+    "name": "llyn_parkering_plads",
+    "full_name": "dtu:llyn_parkering_plads",
+    "title": "llyn_parkering_plads"
+  },
+  {
+    "name": "llyn_parkering_plads_lplan",
+    "full_name": "dtu:llyn_parkering_plads_lplan",
+    "title": "llyn_parkering_plads_lplan"
+  },
+  {
+    "name": "llyn_parkering_udlaeg",
+    "full_name": "dtu:llyn_parkering_udlaeg",
+    "title": "llyn_parkering_udlaeg"
+  },
+  {
+    "name": "llyn_samlingsplads",
+    "full_name": "dtu:llyn_samlingsplads",
+    "title": "llyn_samlingsplads"
+  },
+  {
+    "name": "llyn_spisesteder",
+    "full_name": "dtu:llyn_spisesteder",
+    "title": "llyn_spisesteder"
+  },
+  {
+    "name": "llyn_stigroer",
+    "full_name": "dtu:llyn_stigroer",
+    "title": "llyn_stigroer"
+  },
+  {
+    "name": "llyn_stoettemur",
+    "full_name": "dtu:llyn_stoettemur",
+    "title": "llyn_stoettemur"
+  },
+  {
+    "name": "llyn_torv_plads",
+    "full_name": "dtu:llyn_torv_plads",
+    "title": "llyn_torv_plads"
+  },
+  {
+    "name": "llyn_trae",
+    "full_name": "dtu:llyn_trae",
+    "title": "llyn_trae"
+  },
+  {
+    "name": "llyn_uudgravet_kaelder",
+    "full_name": "dtu:llyn_uudgravet_kaelder",
+    "title": "llyn_uudgravet_kaelder"
+  },
+  {
+    "name": "llyn_vejkant",
+    "full_name": "dtu:llyn_vejkant",
+    "title": "llyn_vejkant"
+  },
+  {
+    "name": "lris_bygning_dtu",
+    "full_name": "dtu:lris_bygning_dtu",
+    "title": "lris_bygning_dtu"
+  },
+  {
+    "name": "lris_parkering_plads",
+    "full_name": "dtu:lris_parkering_plads",
+    "title": "lris_parkering_plads"
+  },
+  {
+    "name": "mellemareal",
+    "full_name": "dtu:mellemareal",
+    "title": "mellemareal"
+  },
+  {
+    "name": "mobilitetsnetvaerkbil",
+    "full_name": "dtu:mobilitetsnetvaerkbil",
+    "title": "mobilitetsnetvaerkbil"
+  },
+  {
+    "name": "mobilitetsnetvaerkdrift",
+    "full_name": "dtu:mobilitetsnetvaerkdrift",
+    "title": "mobilitetsnetvaerkdrift"
+  },
+  {
+    "name": "mobilitetsnetvaerkfodgaengercykel",
+    "full_name": "dtu:mobilitetsnetvaerkfodgaengercykel",
+    "title": "mobilitetsnetvaerkfodgaengercykel"
+  },
+  {
+    "name": "nyehaver",
+    "full_name": "dtu:nyehaver",
+    "title": "nyehaver"
+  },
+  {
+    "name": "parker",
+    "full_name": "dtu:parker",
+    "title": "parker"
+  }
+]
