@@ -16,7 +16,7 @@ from Data.utils import save_adjacency_list,load_adjacency_list
 
 def main():
     print("script started")
-    ADJACENCY_PATH = "Data/Adjacency_list_gridMerge.json"
+    ADJACENCY_PATH = "Data/Adjacency_list_16neighbours.json"
     adjacency_list,success = load_adjacency_list(ADJACENCY_PATH)
     if success:
         
@@ -39,19 +39,49 @@ def main():
         tree = KDtree.buildKDtree(merged_points)
 
         adjacency_list = {}
-        print("Looking for neighbours")
-        n=len(merged_points)
-        for i,point in enumerate(merged_points):
-            print(f"\rProgress: {i}/{n}", end="", flush=True)
-            KNN = KNN_KDtree_obstacles(
-                tree=tree, point=point, k=8,
-                polygons=polygons, spatial_index=spatial_index,
-                polygon_bboxes=polygon_bboxes, cell_size=10
-            )
-            adjacency_list[tuple(point)] = KNN
+        buildAdjacencyList(
+            adjacency_list,
+            merged_points,
+            tree,
+            polygons, 
+            spatial_index, 
+            polygon_bboxes
+        )
 
         save_adjacency_list(adjacency_list=adjacency_list, filepath=ADJACENCY_PATH)
         visualize_graph(adjacency_list,polygons)
+
+def buildAdjacencyList(
+        adjacency_list, 
+        merged_points, 
+        tree, 
+        polygons, 
+        spatial_index, 
+        polygon_bboxes
+    ):
+    print("Looking for neighbours")
+    n=len(merged_points)
+    for i,point in enumerate(merged_points):
+        print(f"\rProgress: {i}/{n}", end="", flush=True)
+        KNN = KNN_KDtree_obstacles(
+            tree=tree, point=point, k=16,
+            polygons=polygons, spatial_index=spatial_index,
+            polygon_bboxes=polygon_bboxes, cell_size=10,
+            adjacency_list=adjacency_list
+        )
+        
+        p = tuple(point)
+        # print(f"\rNeighbours found for {p}, adding point to neighbours", end="", flush=True)
+        adjacency_list[p] = list(KNN)
+        for j, neighbour in enumerate(KNN):
+            # print(f"\rProgress: {j}/{len(KNN)}", end="", flush=True)
+            key = tuple(neighbour[0])
+            dist = neighbour[1]
+            if key not in adjacency_list:
+                adjacency_list[key] = [(p, dist)]
+            else:
+                if not any(c == p for c, d in adjacency_list[key]): 
+                    adjacency_list[key].append((p, dist))
 
 def visualize_graph(adjacency_list, polygons=None):
     fig, ax = plt.subplots(figsize=(12, 12))
