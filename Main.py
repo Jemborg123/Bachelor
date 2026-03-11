@@ -15,6 +15,9 @@ from Algorithms import (
     dijkstra, 
     astar,
     bidirectional_astar, 
+    alt,
+    select_landmarks,          
+    precompute_landmark_distances,
     analyze_complexity,
 )
 
@@ -56,7 +59,7 @@ def run_single_algorithm(G, algorithm_func, source, target, algo_name):
     E = G.number_of_edges()
     
     start_time = time.time()
-    path, cost, stats = algorithm_func(G, source, target, weight='weight')
+    path, cost, stats = algorithm_func(G, source, target)
     elapsed = time.time() - start_time
     
     print(f"  ✅ Path found: {len(path)} nodes, {cost:.1f} m")
@@ -70,12 +73,22 @@ def run_single_algorithm(G, algorithm_func, source, target, algo_name):
 def run_all_algorithms(G, source, target):
     """Run all algorithms on the same source-target pair."""
     results = {}
-    
+
+    # Preprocess for ALT (do once)
+    print("\n🔧 Preprocessing for ALT...")
+    all_nodes = list(G.nodes())
+    num_landmarks = min(16, len(all_nodes))
+    landmarks = random.sample(all_nodes, num_landmarks)
+    print(f"  Selected {len(landmarks)} random landmarks")
+    dist_to, dist_from = precompute_landmark_distances(G, landmarks, max_distance=1500)
+
     # Dictionary of algorithms to test
     algorithms = {
-        'Dijkstra': dijkstra, 
-        'A*': astar,
-        'Bidirectional A*': bidirectional_astar,
+        'Dijkstra': lambda g,s,t: dijkstra(g, s, t),
+        'A*': lambda g,s,t: astar(g, s, t),
+        'Bidirectional A*': lambda g,s,t: bidirectional_astar(g, s, t),
+        'ALT': lambda g,s,t: alt(g, s, t, 
+                               landmarks=landmarks, dist_to=dist_to, dist_from=dist_from),
     }
     
     for name, func in algorithms.items():
