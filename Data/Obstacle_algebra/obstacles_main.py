@@ -16,7 +16,7 @@ from Data.utils import save_adjacency_list,load_adjacency_list
 
 def main():
     print("script started")
-    ADJACENCY_PATH = "Data/Adjacency_list_16neighbours.json"
+    ADJACENCY_PATH = "Data/Adjacency_list_IGNOREOBSTACLES.json"
     adjacency_list,success = load_adjacency_list(ADJACENCY_PATH)
     if success:
         
@@ -63,18 +63,19 @@ def buildAdjacencyList(
     n=len(merged_points)
     for i,point in enumerate(merged_points):
         print(f"\rProgress: {i}/{n}", end="", flush=True)
-        KNN = KNN_KDtree_obstacles(
-            tree=tree, point=point, k=16,
-            polygons=polygons, spatial_index=spatial_index,
-            polygon_bboxes=polygon_bboxes, cell_size=10,
-            adjacency_list=adjacency_list
-        )
-        
+        # KNN = KNN_KDtree_obstacles(
+        #     tree=tree, point=point, k=16,
+        #     polygons=polygons, spatial_index=spatial_index,
+        #     polygon_bboxes=polygon_bboxes, cell_size=10,
+        #     adjacency_list=adjacency_list
+        # )
+        KNN = [None for _ in range(8)]
+        KDtree.KNNsearch(tree, point, KNN)
+
+        #pre append point to neighbours
         p = tuple(point)
-        # print(f"\rNeighbours found for {p}, adding point to neighbours", end="", flush=True)
         adjacency_list[p] = list(KNN)
-        for j, neighbour in enumerate(KNN):
-            # print(f"\rProgress: {j}/{len(KNN)}", end="", flush=True)
+        for  neighbour in KNN:
             key = tuple(neighbour[0])
             dist = neighbour[1]
             if key not in adjacency_list:

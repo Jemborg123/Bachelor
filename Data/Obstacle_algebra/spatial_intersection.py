@@ -92,31 +92,3 @@ def precompute_bboxes(polygons):
         ys = [p[1] for p in polygon]
         bboxes.append((min(xs), max(xs), min(ys), max(ys)))
     return bboxes
-
-
-def check_all_edges(vertices, get_neighbours, polygons, cell_size):
-    """
-    vertices:       list of [x, y]
-    get_neighbours: function(i) -> list of vertex indices (your 8 neighbours)
-    polygons:       list of polygon coordinate lists
-    """
-    spatial_index = build_spatial_index(polygons, cell_size)
-    polygon_bboxes = precompute_bboxes(polygons)
-
-    results = {}
-    visited = set()  # avoid checking the same edge twice
-
-    for i, a in enumerate(vertices):
-        for j in get_neighbours(i):
-            if j <= i:
-                continue  # already checked a->b when we did b->a
-            edge = (i, j)
-            if edge in visited:
-                continue
-            visited.add(edge)
-            b = vertices[j]
-            results[edge] = check_edge_intersects(
-                a, b, polygons, spatial_index, cell_size, polygon_bboxes
-            )
-
-    return results

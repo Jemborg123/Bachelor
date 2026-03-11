@@ -10,10 +10,7 @@ def KNN_KDtree_obstacles(tree: KDtreeNode, point, k, polygons, spatial_index, po
         KNNsearch_obstacles(tree, point, remaining, KNN, polygons, spatial_index, polygon_bboxes, cell_size, adjacency_list)
     return KNN
 
-def KNNsearch_obstacles(tree: KDtreeNode, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size,adjacency_list,depth=0):
-    if depth > 10000:
-        print("MAX DEPTH EXCEEDED - infinite recursion detected")
-        return
+def KNNsearch_obstacles(tree: KDtreeNode, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size,adjacency_list):
     if tree is None:
         return
 
@@ -37,9 +34,9 @@ def KNNsearch_obstacles(tree: KDtreeNode, point, k, KNN, polygons, spatial_index
     closest  = tree.leftChild if diff < 0 else tree.rightChild
     furthest = tree.rightChild if diff < 0 else tree.leftChild
 
-    KNNsearch_obstacles(closest, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size,adjacency_list,depth+1)
+    KNNsearch_obstacles(closest, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size,adjacency_list)
 
     # Pruning: only explore far side if it could contain a valid closer neighbour
     worst = KNN[-1][1] if len(KNN) == k else float('inf')
     if abs(diff) < worst:
-        KNNsearch_obstacles(furthest, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size,adjacency_list,depth+1)
+        KNNsearch_obstacles(furthest, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size,adjacency_list)
