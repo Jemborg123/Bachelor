@@ -5,6 +5,7 @@ ALT (A* with Landmarks and Triangle Inequality) algorithm implementation.
 import math
 import heapq
 import random
+import time
 
 def select_landmarks(graph, num_landmarks=16, strategy='farthest'):
     """
@@ -150,50 +151,76 @@ def _dijkstra_distance(graph, source, target):
     return dist[target]
 
 
-def precompute_landmark_distances(graph, landmarks):
+def precompute_landmark_distances(graph, landmarks, max_distance=2000):
     """
-    Precompute distances from all nodes to/from all landmarks.
-    
-    Returns:
-        dist_to: dict[node][landmark] = distance from node to landmark
-        dist_from: dict[landmark][node] = distance from landmark to node
+    Precompute distances with radius limit for speed.
     """
-    print(f"  Precomputing distances for {len(landmarks)} landmarks...")
+    print(f"  Precomputing distances for {len(landmarks)} landmarks (radius: {max_distance}m)...")
+    start_time = time.time()
     
-    dist_to = {node: {} for node in graph.nodes()}
-    dist_from = {lm: {} for lm in landmarks}
-    
-    for i, landmark in enumerate(landmarks):
-        print(f"    Landmark {i+1}/{len(landmarks)}")
+    try:
+        # Initialize with infinity for all nodes
+        print("    Initializing data structures...")
+        dist_to = {node: {lm: float('inf') for lm in landmarks} for node in graph.nodes()}
+        dist_from = {lm: {node: float('inf') for node in graph.nodes()} for lm in landmarks}
+        print(f"    Initialized {len(dist_to)} nodes and {len(dist_from)} landmarks")
         
-        # Forward: from landmark to all nodes
-        dist = {node: float('inf') for node in graph.nodes()}
-        dist[landmark] = 0
-        pq = [(0, landmark)]
-        visited = set()
-        
-        while pq:
-            d, current = heapq.heappop(pq)
-            if current in visited:
-                continue
-            visited.add(current)
-            dist_from[landmark][current] = d
+        for i, landmark in enumerate(landmarks):
+            print(f"    Processing landmark {i+1}/{len(landmarks)} (node {landmark})...")
             
-            for neighbor in graph.neighbors(current):
-                weight = graph[current][neighbor].get('weight', 1)
-                new_d = d + weight
-                if new_d < dist[neighbor]:
-                    dist[neighbor] = new_d
-                    heapq.heappush(pq, (new_d, neighbor))
+            # Limited Dijkstra from landmark
+            dist = {node: float('inf') for node in graph.nodes()}
+            dist[landmark] = 0
+            pq = [(0, landmark)]
+            nodes_processed = 0
+            
+            while pq:
+                d, current = heapq.heappop(pq)
+                
+                # Stop if beyond radius
+                if d > max_distance:
+                    continue
+                    
+                # Skip if we already have a better distance
+                if d > dist[current]:
+                    continue
+                
+                # Store distance
+                dist_from[landmark][current] = d
+                dist_to[current][landmark] = d
+                nodes_processed += 1
+                
+                # Explore neighbors
+                for neighbor in graph.neighbors(current):
+                    try:
+                        weight = graph[current][neighbor].get('weight', 1)
+                        new_d = d + weight
+                        
+                        # Only enqueue if within radius and better than current best
+                        if new_d <= max_distance and new_d < dist.get(neighbor, float('inf')):
+                            dist[neighbor] = new_d
+                            heapq.heappush(pq, (new_d, neighbor))
+                    except Exception as e:
+                        print(f"      Error at neighbor {neighbor}: {e}")
+                        raise
+            
+            print(f"      Processed {nodes_processed} nodes for landmark {landmark}")
+            
+            if i % 4 == 3:  # Progress update every 4 landmarks
+                elapsed = time.time() - start_time
+                print(f"    Progress: {i+1}/{len(landmarks)} landmarks ({elapsed:.1f}s elapsed)")
         
-        # Backward: from all nodes to landmark (run on reversed graph conceptually)
-        # But we can just use dist_from for symmetry since graph is undirected
-        # For undirected graphs, dist_to = dist_from
-        for node in graph.nodes():
-            dist_to[node][landmark] = dist_from[landmark][node]
+        total_time = time.time() - start_time
+        print(f"  ✅ Preprocessing completed in {total_time:.1f} seconds")
+        
+        return dist_to, dist_from
+        
+    except Exception as e:
+        print(f"  ❌ Error during preprocessing: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
     
-    return dist_to, dist_from
-
 
 def alt_heuristic(node, target, landmarks, dist_to, dist_from):
     """
