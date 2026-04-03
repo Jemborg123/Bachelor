@@ -1,6 +1,6 @@
 import folium
 import json
-from branca.element import IFrame
+# from branca.element import IFrame
 
 # Load the layers from JSON file
 with open('layers_list.json', 'r') as f:

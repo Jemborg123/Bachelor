@@ -28,14 +28,20 @@ def main():
         visualize_graph(adjacency_list,polygons)
     else:
         print("No adjacency list found, building from scratch...")
+
         walk_points, obstacles = loadFromDb.fetch_points()
         filtered_points = loadFromDb.remove_near_zero_outliers(walk_points)
+
         polygons = fetch_obstacles.geodataframe_to_polygon_lists(obstacles)
+        polygons = fetch_obstacles.remove_near_zero_polygon_outliers(polygons)
+
         polygon_bboxes = spatial_intersection.precompute_bboxes(polygons)
         spatial_index = spatial_intersection.build_spatial_index(polygons, cell_size=10.0)
+
         squares = grid_merge.intoGrid(filtered_points,10)
         merged_points = grid_merge.findCentroid(squares)
         # simple_dbscan_merged_points5 = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=5, min_samples=1)
+        
         tree = KDtree.buildKDtree(merged_points)
 
         adjacency_list = {}
