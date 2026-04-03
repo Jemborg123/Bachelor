@@ -12,7 +12,7 @@ import Data.merging_techniques.dbscan_merge as dbscan_merge
 import Data.merging_techniques.grid_merge as grid_merge
 import Data.merging_techniques.KDtree as KDtree
 import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
-from Data.utils import save_adjacency_list,load_adjacency_list
+from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList
 
 def main():
     print("script started")
@@ -41,7 +41,7 @@ def main():
         squares = grid_merge.intoGrid(filtered_points,10)
         merged_points = grid_merge.findCentroid(squares)
         # simple_dbscan_merged_points5 = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=5, min_samples=1)
-        
+
         tree = KDtree.buildKDtree(merged_points)
 
         adjacency_list = {}

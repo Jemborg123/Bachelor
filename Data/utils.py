@@ -32,8 +32,9 @@ def save_adjacency_list(adjacency_list, filepath):
     serializable = {}
     for point, neighbours in adjacency_list.items():
         key = f"{point[0]},{point[1]}"
+        llist = neighbours.asList()
         serializable[key] = [
-            [list(coords), distance] for coords, distance in neighbours
+            [list(coords), distance] for coords, distance in llist
         ]
     with open(filepath, 'w') as f:
         json.dump(serializable, f)
@@ -47,13 +48,19 @@ def load_adjacency_list(filepath):
         return None, False
     with open(filepath, 'r') as f:
         raw = json.load(f)
-    adjacency_list = {}
+
+    keys = []
     for key, neighbours in raw.items():
         x, y = map(float, key.split(','))
         point = (x, y)
-        adjacency_list[point] = [
-            (tuple(coords), distance) for coords, distance in neighbours
-        ]
+        keys.append(point)
+
+    adjacency_list = AdjacencyList(keys)
+
+    for key, neighbours in raw.items():
+        x, y = map(float, key.split(','))
+        point = (x, y)
+        adjacency_list.insertNeighbour(point,((tuple(coords), distance) for coords, distance in neighbours))
     print(f"Loaded {len(adjacency_list)} nodes from {filepath}")
     return adjacency_list, True
 
@@ -62,7 +69,7 @@ class AdjacencyList:
         self.keyVertices = vertices.copy()
         self.elements = {}
         for keyVertex in self.keyVertices:
-            self.elements(keyVertex) = LinkedList()
+            self.elements[keyVertex] = LinkedList()
 
     def insertNeighbour(self, vertex, neighbour):
         llist: LinkedList = self.elements.get(vertex)
@@ -74,6 +81,9 @@ class AdjacencyList:
     def removeNeighbour(self, vertex, neighbour):
         llist: LinkedList = self.elements.get(vertex)
         return llist.popVal(neighbour)
+    
+    def items(self):
+        return self.elements.items()
 
 class LinkedListNode:
         def __init__(self, value = None):
@@ -177,7 +187,25 @@ class LinkedList:
             node = current
 
         return None
-        
+    
+    def asList(self):
+        out = []
+        node = self.head
+        while (node is not None):
+            out.append(node.value)
+            nextnode = node.next
+            node = nextnode
+        return out
+    
+    # OBS! Generates a reversed copy, ONLY use when order doesn't matter
+    def copy(self):
+        newCopy = LinkedList()
+        node = self.head
+        while (node is not None):
+            newCopy.append(node.value)
+            nextnode = node.next
+            node = nextnode
+        return newCopy
 
 Test = LinkedList()
 print(Test.isEmpty)
@@ -200,3 +228,7 @@ print(str(Test))
 print(Test.popVal(2))
 Test.popAt(3)
 Test.pop()
+
+print(str(Test))
+l = Test.asList()
+print(l)
