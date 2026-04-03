@@ -12,7 +12,7 @@ import Data.merging_techniques.dbscan_merge as dbscan_merge
 import Data.merging_techniques.grid_merge as grid_merge
 import Data.merging_techniques.KDtree as KDtree
 import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
-from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList
+from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList
 
 def main():
     print("script started")
@@ -44,7 +44,7 @@ def main():
 
         tree = KDtree.buildKDtree(merged_points)
 
-        adjacency_list = {}
+        adjacency_list = AdjacencyList(merged_points)
         buildAdjacencyList(
             adjacency_list,
             merged_points,
@@ -58,7 +58,7 @@ def main():
         visualize_graph(adjacency_list,polygons)
 
 def buildAdjacencyList(
-        adjacency_list, 
+        adjacency_list: AdjacencyList, 
         merged_points, 
         tree, 
         polygons, 
@@ -78,17 +78,19 @@ def buildAdjacencyList(
         KNN = [None for _ in range(8)]
         KDtree.KNNsearch(tree, point, KNN)
 
-        #pre append point to neighbours
+        #Add neighbours to point
         p = tuple(point)
-        adjacency_list[p] = list(KNN)
+        neighbours = list(KNN)
+        for coords, distance in neighbours:
+            adjacency_list.insertNeighbour(p, (tuple(coords), distance))
+
+        #pre append point to neighbours
         for  neighbour in KNN:
             key = tuple(neighbour[0])
             dist = neighbour[1]
-            if key not in adjacency_list:
-                adjacency_list[key] = [(p, dist)]
-            else:
-                if not any(c == p for c, d in adjacency_list[key]): 
-                    adjacency_list[key].append((p, dist))
+            neighbourList = adjacency_list.neighbors(p)
+            if not neighbourList.has(key):
+                adjacency_list.insertNeighbour(key,(p,dist))
 
 def visualize_graph(adjacency_list, polygons=None):
     fig, ax = plt.subplots(figsize=(12, 12))
@@ -104,7 +106,7 @@ def visualize_graph(adjacency_list, polygons=None):
     # Draw edges
     drawn_edges = set()
     for point, neighbours in adjacency_list.items():
-        for coords, distance in neighbours:
+        for coords, distance in neighbours.asList():
             edge = (min(point, coords), max(point, coords))
             if edge not in drawn_edges:
                 drawn_edges.add(edge)
@@ -120,7 +122,7 @@ def visualize_graph(adjacency_list, polygons=None):
     ax.scatter(xs, ys, c='blue', s=0.1, zorder=2)
 
     ax.set_aspect('equal')
-    ax.set_title(f"Graph — {len(adjacency_list)} nodes, {len(drawn_edges)} edges")
+    ax.set_title(f"Graph — {adjacency_list.length()} nodes, {len(drawn_edges)} edges")
     plt.tight_layout()
     plt.show()
 

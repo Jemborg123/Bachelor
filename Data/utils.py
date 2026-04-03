@@ -1,4 +1,28 @@
 import os
+
+def _are_equal(a, b):
+    """Safely compare two values, handling NumPy arrays and other edge cases."""
+    if a is b:
+        return True
+    
+    try:
+        # Try normal equality comparison
+        return a == b
+    except ValueError:
+        # Handle NumPy arrays
+        try:
+            import numpy as np
+            if isinstance(a, np.ndarray) and isinstance(b, np.ndarray):
+                return np.array_equal(a, b)
+        except:
+            pass
+        
+        # Last resort: compare string representations
+        try:
+            return str(a) == str(b)
+        except:
+            return False
+
 def simpleDistance(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
@@ -34,7 +58,7 @@ def save_adjacency_list(adjacency_list, filepath):
         key = f"{point[0]},{point[1]}"
         llist = neighbours.asList()
         serializable[key] = [
-            [list(coords), distance] for coords, distance in llist
+            [list(coords), distance] for (coords, distance) in llist
         ]
     with open(filepath, 'w') as f:
         json.dump(serializable, f)
@@ -60,8 +84,9 @@ def load_adjacency_list(filepath):
     for key, neighbours in raw.items():
         x, y = map(float, key.split(','))
         point = (x, y)
-        adjacency_list.insertNeighbour(point,((tuple(coords), distance) for coords, distance in neighbours))
-    print(f"Loaded {len(adjacency_list)} nodes from {filepath}")
+        for coords, distance in neighbours:
+            adjacency_list.insertNeighbour(point, (tuple(coords), distance))
+    print(f"Loaded {adjacency_list.length} nodes from {filepath}")
     return adjacency_list, True
 
 class AdjacencyList:
@@ -78,12 +103,21 @@ class AdjacencyList:
     def neighbors(self, vertex):
         return self.elements.get(vertex)
     
+    def hasNeighbour(self, vertex):
+        llist = self.neighbors(vertex)
+
+    def length(self):
+        return len(self.keyVertices)
+    
     def removeNeighbour(self, vertex, neighbour):
         llist: LinkedList = self.elements.get(vertex)
         return llist.popVal(neighbour)
     
     def items(self):
         return self.elements.items()
+
+    def keys(self):
+        return self.elements.keys()
 
 class LinkedListNode:
         def __init__(self, value = None):
@@ -136,6 +170,14 @@ class LinkedList:
     
     def isEmpty(self):
         return self.head is None
+    
+    def has(self, value):
+        node = self.head
+        while node is not None:
+            if _are_equal(node,value): return True
+            nextnode = node.next
+            node = nextnode
+        return False
     
     def pop(self):
         if self.head is None: return None
