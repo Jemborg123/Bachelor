@@ -72,7 +72,7 @@ def check_edge_intersects(a, b, polygons, spatial_index, cell_size, polygon_bbox
         if cell in spatial_index:
             candidate_indices.update(spatial_index[cell])
 
-    for i in candidate_indices:
+    for num,i in enumerate(candidate_indices):
         # Bbox check first (precomputed)
         min_px, max_px, min_py, max_py = polygon_bboxes[i]
         min_ax = min(a[0], b[0]);  max_ax = max(a[0], b[0])
@@ -81,6 +81,8 @@ def check_edge_intersects(a, b, polygons, spatial_index, cell_size, polygon_bbox
             max_ay < min_py or min_ay > max_py):
             continue
         if line_intersects_polygon(a, b, polygons[i]):
+            # print("intersection found after, compared",num+1,"polygons, found in",len(cells),"cells")
+            # input("Press Enter to continue...")
             return True
     return False
 

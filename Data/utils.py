@@ -1,3 +1,4 @@
+from math import floor
 import os
 
 def _are_equal(a, b):
@@ -58,7 +59,7 @@ def save_adjacency_list(adjacency_list, filepath):
         key = f"{point[0]},{point[1]}"
         llist = neighbours.asList()
         serializable[key] = [
-            [list(coords), distance] for (coords, distance) in llist
+            [distance, list(coords)] for (distance, coords) in llist
         ]
     with open(filepath, 'w') as f:
         json.dump(serializable, f)
@@ -84,9 +85,9 @@ def load_adjacency_list(filepath):
     for key, neighbours in raw.items():
         x, y = map(float, key.split(','))
         point = (x, y)
-        for coords, distance in neighbours:
-            adjacency_list.insertNeighbour(point, (tuple(coords), distance))
-    print(f"Loaded {adjacency_list.length} nodes from {filepath}")
+        for distance, coords in neighbours:
+            adjacency_list.insertNeighbour(point, (distance, tuple(coords)))
+    print(f"Loaded {adjacency_list.length()} nodes from {filepath}")
     return adjacency_list, True
 
 class AdjacencyList:
@@ -96,6 +97,12 @@ class AdjacencyList:
         for keyVertex in self.keyVertices:
             self.elements[keyVertex] = LinkedList()
 
+    def addPoint(self, point):
+        self.elements[point] = LinkedList()
+
+    def popPoint(self, point):
+        return self.elements.pop(point)
+
     def insertNeighbour(self, vertex, neighbour):
         llist: LinkedList = self.elements.get(vertex)
         return llist.append(neighbour)
@@ -103,8 +110,9 @@ class AdjacencyList:
     def neighbors(self, vertex):
         return self.elements.get(vertex)
     
-    def hasNeighbour(self, vertex):
+    def hasNeighbour(self, vertex, neighbour):
         llist = self.neighbors(vertex)
+        return llist.has(neighbour)
 
     def length(self):
         return len(self.keyVertices)
@@ -118,6 +126,9 @@ class AdjacencyList:
 
     def keys(self):
         return self.elements.keys()
+    
+    def get(self, key):
+        return self.elements.get(key)
 
 class LinkedListNode:
         def __init__(self, value = None):
@@ -130,6 +141,7 @@ class LinkedListNode:
 class LinkedList:
     def __init__(self, Inputlist: list = None):
         self.head = None
+        self.n = 0
         if Inputlist is None: 
             return
 
@@ -159,6 +171,7 @@ class LinkedList:
         newHead = LinkedListNode(value)
         newHead.next = self.head
         self.head = newHead
+        self.n = self.n + 1
 
     def get(self, index):
         if self.head is None: return None
@@ -174,7 +187,7 @@ class LinkedList:
     def has(self, value):
         node = self.head
         while node is not None:
-            if _are_equal(node,value): return True
+            if _are_equal(node.value,value): return True
             nextnode = node.next
             node = nextnode
         return False
@@ -185,6 +198,7 @@ class LinkedList:
         value = self.head.value
         newHead = self.head.next
         self.head = newHead
+        self.n = self.n - 1
         return value
         
 
@@ -211,6 +225,7 @@ class LinkedList:
         value = nodeToDelete.value
         
         node.next = nodeToDelete.next
+        self.n = self.n - 1
         return value
 
     def popVal(self, value):
@@ -225,6 +240,7 @@ class LinkedList:
             if current.value == value:
                 nextnode = current.next
                 node.next = nextnode
+                self.n = self.n - 1
                 return value
             node = current
 
@@ -239,6 +255,16 @@ class LinkedList:
             node = nextnode
         return out
     
+    def asHeap(self):
+        out = Heap()
+        node = self.head
+        while (node is not None):
+            out.add(node.value)
+            nextnode = node.next
+            node = nextnode
+        return out
+
+    
     # OBS! Generates a reversed copy, ONLY use when order doesn't matter
     def copy(self):
         newCopy = LinkedList()
@@ -249,28 +275,103 @@ class LinkedList:
             node = nextnode
         return newCopy
 
-Test = LinkedList()
-print(Test.isEmpty)
-Test.append(1)
-Test.append(2)
-Test.append(3)
-for i in range(4):
-    print(Test.get(i))
+class Heap:
+    def __init__(self):
+        self.heap = [None]
+        self.n = 0
+    
+    def parent(self, x):
+        return floor(x/2)
+    
+    def left(self, x):
+        return 2*x
+    
+    def right(self, x):
+        return (2*x)+1
+    
+    def swap(self, x1, x2):
+        temp = self.heap[x1]
+        self.heap[x1] = self.heap[x2]
+        self.heap[x2] = temp
+    
+    def bubbleUp(self, x):
+        if x <= 1: return
+        key = self.heap[x]
+        pIdx = self.parent(x)
+        pKey = self.heap[pIdx]
+        if key > pKey:
+            self.swap(x,pIdx)
+            self.bubbleUp(pIdx)
 
-print(str(Test))
+    def add(self, key):
+        self.n = self.n + 1
+        self.heap.append(key)
+        self.bubbleUp(self.n)
+
+    def bubbleDown(self, x):
+        lIdx = self.left(x)
+        rIdx = self.right(x)
+
+        if lIdx > self.n: return
+
+        if rIdx > self.n:
+            if self.heap[x] < self.heap[lIdx]:
+                self.swap(x, lIdx)
+            return
+
+        key = self.heap[x]
+        lKey = self.heap[lIdx]
+        rKey = self.heap[rIdx]
+
+        if key >= lKey and key >= rKey: return
+
+        largestChild = lIdx if lKey > rKey else rIdx
+        self.swap(x,largestChild)
+        self.bubbleDown(largestChild)
+
+    def extractMax(self):
+        if self.n == 0: return None
+        r = self.heap[1]
+        self.heap[1] = self.heap[self.n]
+        self.heap.pop()
+        self.n = self.n-1
+        self.bubbleDown(1)
+        return r
+    
+    def peekMax(self):
+        return self.heap[1]
+    
+    def __len__(self):
+        return self.n
 
 
-print(str(Test.isEmpty()))
 
-Test.append(10)
-for i in range(4):
-    print(Test.get(i))
 
-print(str(Test))
-print(Test.popVal(2))
-Test.popAt(3)
-Test.pop()
 
-print(str(Test))
-l = Test.asList()
-print(l)
+#Test code, ignore if not main
+if __name__ == "__main__":
+    Test = LinkedList()
+    print(Test.isEmpty)
+    Test.append(1)
+    Test.append(2)
+    Test.append(3)
+    for i in range(4):
+        print(Test.get(i))
+
+    print(str(Test))
+
+
+    print(str(Test.isEmpty()))
+
+    Test.append(10)
+    for i in range(4):
+        print(Test.get(i))
+
+    print(str(Test))
+    print(Test.popVal(2))
+    Test.popAt(3)
+    Test.pop()
+
+    print(str(Test))
+    l = Test.asList()
+    print(l)

@@ -27,16 +27,6 @@ def line_intersects_polygon(a, b, polygon):
     if n < 2:
         return False
 
-    # Check bounding box of a-b against polygon bbox for early exit
-    min_ax = min(a[0], b[0]);  max_ax = max(a[0], b[0])
-    min_ay = min(a[1], b[1]);  max_ay = max(a[1], b[1])
-
-    poly_xs = [p[0] for p in polygon]
-    poly_ys = [p[1] for p in polygon]
-    if (max_ax < min(poly_xs) or min_ax > max(poly_xs) or
-        max_ay < min(poly_ys) or min_ay > max(poly_ys)):
-        return False  # bounding boxes don't overlap
-
     # Check each edge of the polygon
     for i in range(n - 1):
         if segments_intersect(a, b, polygon[i], polygon[i + 1]):

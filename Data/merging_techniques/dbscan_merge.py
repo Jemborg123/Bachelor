@@ -2,7 +2,7 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from Data.merging_techniques import KDtree
+from Data import KDtree
 
 def merge_points_dbscan(points: np.ndarray, eps: float = 0.5, min_samples: int = 3) -> np.ndarray:
     """

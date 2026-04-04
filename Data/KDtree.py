@@ -1,4 +1,4 @@
-from Data.utils import simpleDistance
+from Data.utils import simpleDistance, Heap
 class KDtreeNode():
     def __init__(self,x,y,axis,leftChild=None,rightChild=None):
         self.coords = (x,y)
@@ -46,28 +46,28 @@ def KNN_KDtree(tree: KDtreeNode,point,k):
     KNNsearch(tree,point,KNN)
     return KNN
 
-def KNNsearch(tree: KDtreeNode, point,KNN):
+def KNNsearch(tree: KDtreeNode, point,KNN: Heap, k):
     if tree is None : return
 
     distance = simpleDistance(tree.coords,point)
 
-    if None in KNN:
-        KNN[KNN.index(None)] = (tree.coords, distance)
+    if len(KNN)<k:
+        KNN.add((distance, tree.coords))
     else:
-        worst_idx = KNN.index(max(KNN, key=lambda n: n[1]))
-        if distance < KNN[worst_idx][1]:
-            KNN[worst_idx] = (tree.coords, distance)
+        if distance < KNN.peekMax()[0]:
+            KNN.extractMax()
+            KNN.add((distance, tree.coords))
     
     axis_idx = 0 if tree.axis == 'x' else 1
     diff = point[axis_idx] - tree.coords[axis_idx]
 
     closest = tree.leftChild if diff <0 else tree.rightChild
     furthest = tree.rightChild if diff < 0 else tree.leftChild
-    KNNsearch(closest,point,KNN)
+    KNNsearch(closest,point,KNN,k)
 
-    worst = max(KNN, key=lambda n: n[1])[1] if None not in KNN else float('inf')
-    if abs(diff) < worst:
-        KNNsearch(furthest,point,KNN)
+    worst = KNN.peekMax()[0] if len(KNN) == k else float('inf')
+    if diff**2 < worst:
+        KNNsearch(furthest,point,KNN,k)
 
 def radiusSearch(tree: KDtreeNode, point, eps, result=None):
     if result is None: result = []

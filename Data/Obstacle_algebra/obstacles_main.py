@@ -10,13 +10,15 @@ import Data.merging_techniques.loadFromDb as loadFromDb
 import Data.merging_techniques.dbscan_merge as dbscan_merge
 
 import Data.merging_techniques.grid_merge as grid_merge
-import Data.merging_techniques.KDtree as KDtree
+import Data.KDtree as KDtree
 import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
-from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList
+from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList, Heap
+
+CELLSIZE = 10
 
 def main():
     print("script started")
-    ADJACENCY_PATH = "Data/Adjacency_list_IGNOREOBSTACLES.json"
+    ADJACENCY_PATH = "Data/Adjacency_list_ObstacleAware_better.json"
     adjacency_list,success = load_adjacency_list(ADJACENCY_PATH)
     if success:
         
@@ -36,12 +38,12 @@ def main():
         polygons = fetch_obstacles.remove_near_zero_polygon_outliers(polygons)
 
         polygon_bboxes = spatial_intersection.precompute_bboxes(polygons)
-        spatial_index = spatial_intersection.build_spatial_index(polygons, cell_size=10.0)
+        spatial_index = spatial_intersection.build_spatial_index(polygons, cell_size=CELLSIZE)
 
         squares = grid_merge.intoGrid(filtered_points,10)
         merged_points = grid_merge.findCentroid(squares)
         # simple_dbscan_merged_points5 = dbscan_merge.merge_points_simpleDbscan(filtered_points, eps=5, min_samples=1)
-
+        print("kept",len(merged_points),"after merge")
         tree = KDtree.buildKDtree(merged_points)
 
         adjacency_list = AdjacencyList(merged_points)
@@ -67,30 +69,34 @@ def buildAdjacencyList(
     ):
     print("Looking for neighbours")
     n=len(merged_points)
+
+    graph = {tuple(p): set() for p in merged_points}
+    blockedPoints = {tuple(p): set() for p in merged_points} #Use this to track if we already know that a point is blocked (avoid checking twice)
+
     for i,point in enumerate(merged_points):
         print(f"\rProgress: {i}/{n}", end="", flush=True)
-        # KNN = KNN_KDtree_obstacles(
-        #     tree=tree, point=point, k=16,
-        #     polygons=polygons, spatial_index=spatial_index,
-        #     polygon_bboxes=polygon_bboxes, cell_size=10,
-        #     adjacency_list=adjacency_list
-        # )
-        KNN = [None for _ in range(8)]
-        KDtree.KNNsearch(tree, point, KNN)
-
-        #Add neighbours to point
+        
         p = tuple(point)
-        neighbours = list(KNN)
-        for coords, distance in neighbours:
-            adjacency_list.insertNeighbour(p, (tuple(coords), distance))
+        KNN = KNN_KDtree_obstacles(
+            tree=tree, point=point, k=8,
+            polygons=polygons, spatial_index=spatial_index,
+            polygon_bboxes=polygon_bboxes, cell_size=CELLSIZE,blockedPoints = blockedPoints,
+            graph=graph
+        )
+        # KNN = Heap()
+        # KDtree.KNNsearch(tree, point, KNN, k=8)
 
-        #pre append point to neighbours
-        for  neighbour in KNN:
-            key = tuple(neighbour[0])
-            dist = neighbour[1]
-            neighbourList = adjacency_list.neighbors(p)
-            if not neighbourList.has(key):
-                adjacency_list.insertNeighbour(key,(p,dist))
+        #Add neighbours to point, and point to neighbours
+        for distance, coords in KNN.heap[1:]:
+            coords = tuple(coords)
+            graph[p].add((distance, coords))
+            graph[coords].add((distance, p))
+    
+    # Dump into AdjacencyList at the end
+    print("\nConverting to adjacency list...")
+    for point, neighbours in graph.items():
+        for neighbour in neighbours:
+            adjacency_list.insertNeighbour(point, neighbour)
 
 def visualize_graph(adjacency_list, polygons=None):
     fig, ax = plt.subplots(figsize=(12, 12))
@@ -106,7 +112,7 @@ def visualize_graph(adjacency_list, polygons=None):
     # Draw edges
     drawn_edges = set()
     for point, neighbours in adjacency_list.items():
-        for coords, distance in neighbours.asList():
+        for distance, coords in neighbours.asList():
             edge = (min(point, coords), max(point, coords))
             if edge not in drawn_edges:
                 drawn_edges.add(edge)
@@ -126,6 +132,13 @@ def visualize_graph(adjacency_list, polygons=None):
     plt.tight_layout()
     plt.show()
 
+import cProfile
+import pstats
 
 if __name__ == "__main__":
-    main()
+    with cProfile.Profile() as pr:
+        main()
+    
+    stats = pstats.Stats(pr)
+    stats.sort_stats(pstats.SortKey.CALLS)
+    stats.print_stats(20)  # top 20 functions by cumulative time
