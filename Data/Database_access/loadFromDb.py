@@ -19,8 +19,7 @@ WALKABLE_LAYERS = [
 ]
 
 OBSTACLE_LAYERS = [
-    "llyn_byggefelt_100", "llyn_byggefelt_75", "llyn_byggefelt_construction",
-    "llyn_byggefelt_east", "llyn_byggefelt_parkering", "llyn_byggeplads",
+    "llyn_byggefelt_construction",  "llyn_byggefelt_east", 
     "llyn_bygning_andre", "llyn_bygning_dtu", "llyn_stoettemur"#, "llyn_trae"
 ]
 

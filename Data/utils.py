@@ -32,8 +32,9 @@ def simpleDistance(p1, p2):
     return (x1-x2)**2 + (y1-y2)**2
 
 def minmaxxy(points):
-    min_x = max_x = points[0][0]
-    min_y = max_y = points[0][1]
+    x0,y0 =points[0]
+    min_x = max_x = x0
+    min_y = max_y = y0
     
     # Loop through the remaining points
     for x, y in points[1:]:
@@ -102,6 +103,7 @@ class AdjacencyList:
     def __init__(self, vertices: list):
         self.keyVertices = vertices.copy()
         self.elements = {}
+        self.numedges = 0
         for keyVertex in self.keyVertices:
             self.elements[keyVertex] = LinkedList()
 
@@ -109,10 +111,13 @@ class AdjacencyList:
         self.elements[point] = LinkedList()
 
     def popPoint(self, point):
-        return self.elements.pop(point)
+        llist = self.elements.pop(point)
+        self.numedges = self.numedges - len(llist)
+        return llist
 
     def insertNeighbour(self, vertex, neighbour):
         llist: LinkedList = self.elements.get(vertex)
+        self.numedges = self.numedges+1
         return llist.append(neighbour)
 
     def neighbors(self, vertex):
@@ -125,8 +130,12 @@ class AdjacencyList:
     def length(self):
         return len(self.keyVertices)
     
+    def numEdges(self):
+        return self.numedges
+    
     def removeNeighbour(self, vertex, neighbour):
         llist: LinkedList = self.elements.get(vertex)
+        self.numedges = self.numedges -1
         return llist.popVal(neighbour)
     
     def items(self):
@@ -135,8 +144,8 @@ class AdjacencyList:
     def keys(self):
         return self.elements.keys()
     
-    def get(self, key):
-        return self.elements.get(key)
+    def get_node_by_index(self, key):
+        return self.elements.keys()[key]
 
 class LinkedListNode:
         def __init__(self, value = None):
@@ -282,6 +291,9 @@ class LinkedList:
             nextnode = node.next
             node = nextnode
         return newCopy
+    
+    def __len__(self):
+        return self.n
 
 class Heap:
     def __init__(self):

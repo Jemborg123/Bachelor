@@ -37,7 +37,7 @@ from Algorithms import (
 )
 
 # Configuration
-GRAPH_FILE = 'data/walkability_graph.pkl'
+GRAPH_FILE = 'Data/Old_Graph_data/walkability_graph.pkl'
 ADJACENCY_PATH = "Data/Adjacency_list_ObstacleAwareGraph.json"
 
 # ============================================================================
@@ -86,7 +86,7 @@ def load_adjacency_graph():
     num_nodes = len(adjacency_list.keys())
     num_edges = 0
     for node in adjacency_list.keys():
-        neighbors = adjacency_list.get(node)
+        neighbors = adjacency_list.neighbors(node)
         if neighbors:
             current = neighbors.head
             while current is not None:
@@ -135,14 +135,7 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
     print(f"\n🔍 Running {algo_name} (AdjacencyList)...")
     
     V = adj_list.length()
-    E = 0
-    for node in adj_list.keys():
-        neighbors = adj_list.get(node)
-        if neighbors:
-            current = neighbors.head
-            while current is not None:
-                E += 1
-                current = current.next
+    E = adj_list.numEdges()
     E //= 2
     
     start_time = time.time()
@@ -305,7 +298,7 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
 # if __name__ == "__main__":
 #     main()
 
-def find_adj_node_by_coords(adj_list, x, y, tolerance=0.1):
+def find_adj_node_by_coords(adj_list, x, y, tolerance=5):
     """Find node in adjacency list by coordinates."""
     for node in adj_list.keys():
         if abs(node[0] - x) < tolerance and abs(node[1] - y) < tolerance:
@@ -347,13 +340,19 @@ def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path
     """Create a Folium map for adjacency list path."""
     import folium
     import numpy as np
+    import geopandas as gpd
+    from MapVisuals import detect_crs
+    from shapely.geometry import Point
+        
+    source_crs = detect_crs()
+    # Reproject path nodes to WGS84
+    path_points = gpd.GeoDataFrame(
+    [{'node': i} for i, n in enumerate(path)],
+    geometry=[Point(n[0], n[1]) for n in path], 
+    crs=source_crs
+).to_crs("EPSG:4326")
     
-    # Path nodes are tuples (x, y)
-    path_latlon = []
-    for node in path:
-        # Convert from UTM to lat/lon (assuming EPSG:25832)
-        # You'll need to transform coordinates
-        path_latlon.append((node[1], node[0]))  # Simple swap - may need proper conversion
+    path_latlon = [(row.geometry.y, row.geometry.x) for _, row in path_points.iterrows()]
     
     mid_lat = np.mean([p[0] for p in path_latlon])
     mid_lon = np.mean([p[1] for p in path_latlon])
@@ -433,15 +432,15 @@ def main():
     
     path, cost, stats = run_single_algorithm_nx(G_nx, dijkstra_nx, source_nx, target_nx, "Dijkstra")
     nx_results['Dijkstra'] = (path, cost, stats)
-    create_path_map(G_nx, path, cost, source_nx, target_nx, "maps/nx_dijkstra.html")
+    create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_dijkstra.html")
     
     path, cost, stats = run_single_algorithm_nx(G_nx, astar_nx, source_nx, target_nx, "A*")
     nx_results['A*'] = (path, cost, stats)
-    create_path_map(G_nx, path, cost, source_nx, target_nx, "maps/nx_astar.html")
+    create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_astar.html")
     
     path, cost, stats = run_single_algorithm_nx(G_nx, bidirectional_astar_nx, source_nx, target_nx, "Bidirectional A*")
     nx_results['Bidirectional A*'] = (path, cost, stats)
-    create_path_map(G_nx, path, cost, source_nx, target_nx, "maps/nx_bidirectional.html")
+    create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_bidirectional.html")
     
     # ========== ADJACENCYLIST ALGORITHMS ==========
     print("\n" + "=" * 80)
@@ -452,7 +451,7 @@ def main():
     
     path, cost, stats = run_single_algorithm_adj(adj_list, dijkstra_adj, source_adj, target_adj, "Dijkstra")
     adj_results['Dijkstra (Adj)'] = (path, cost, stats)
-    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "maps/adj_dijkstra.html")
+    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "adj_dijkstra.html")
     
     # Uncomment when A* and Bidirectional A* are ready for adjacency list
     # path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")

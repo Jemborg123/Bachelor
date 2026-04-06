@@ -11,7 +11,7 @@ import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
 from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList, Heap, visualize_graph
 
 
-def showGraph(ADJACENCY_PATH="Data/Adjacency_list_ObstacleIgnoringGraph.json"):
+def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
     print("script started")
     adjacency_list,success = load_adjacency_list(ADJACENCY_PATH)
     if success:
@@ -22,7 +22,7 @@ def showGraph(ADJACENCY_PATH="Data/Adjacency_list_ObstacleIgnoringGraph.json"):
         visualize_graph(adjacency_list,filtered_polygons)
     else:
         print("No adjacency list found at",ADJACENCY_PATH,", building graph from scratch...")
-        obstacleAwareGraph(MergeType.SQUAREBUCKETMERGE)
+        obstacleAwareGraph(MergeType.DBSCANMERGE)
         # obstacleIgnoringGraph(MergeType.SQUAREBUCKETMERGE)
 
 def obstacleAwareGraph(
@@ -89,7 +89,10 @@ def mergePoints(points,mergeType):
             squares = grid_merge.intoGrid(points, 10)
             return grid_merge.findCentroid(squares)
         case MergeType.DBSCANMERGE:
-            return dbscan_merge.merge_points_simpleDbscan(points, eps=5, min_samples=1)
+            merged = dbscan_merge.merge_points_simpleDbscan(points, eps=4, min_samples=1)
+            return [tuple(p) for p in merged]
+        case MergeType.NOMERGING:
+            return [tuple(p) for p in points]
         case _:
             valid = [e.name for e in MergeType if e is not MergeType.DEFAULT]
             raise ValueError(f"Invalid mergeType: {mergeType}. Must be one of: {valid}")

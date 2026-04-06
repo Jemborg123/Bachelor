@@ -5,6 +5,7 @@ No external libraries allowed.
 """
 
 import math
+from Data.utils import AdjacencyList
 
 # ============================================================================
 # CUSTOM MIN HEAP IMPLEMENTATION
@@ -88,7 +89,7 @@ class MinHeap:
 # DIJKSTRA ALGORITHM
 # ============================================================================
 
-def dijkstra(adjacency_list, source, target):
+def dijkstra(adjacency_list:AdjacencyList, source, target):
     """
     Custom implementation of Dijkstra's algorithm using AdjacencyList.
     Uses custom min-heap (no external libraries).
@@ -146,8 +147,8 @@ def dijkstra(adjacency_list, source, target):
             break
         
         # Get neighbors from adjacency list (LinkedList)
-        neighbors_list = adjacency_list.get(current)
-        if neighbors_list is None:
+        neighbors_list = adjacency_list.neighbors(current)
+        if neighbors_list.isEmpty():
             continue
         
         # Iterate through linked list of neighbors
@@ -155,13 +156,7 @@ def dijkstra(adjacency_list, source, target):
         while current_node is not None:
             # Get the value from the node (adjust attribute name as needed)
             # Try different attribute names based on your LinkedList implementation
-            if hasattr(current_node, 'value'):
-                edge_weight, neighbor = current_node.value
-            elif hasattr(current_node, 'data'):
-                edge_weight, neighbor = current_node.data
-            else:
-                # If neither, assume the node itself is the tuple
-                edge_weight, neighbor = current_node
+            edge_weight, neighbor = current_node.value
             
             stats['edges_relaxed'] += 1
             
