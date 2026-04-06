@@ -112,7 +112,7 @@ def select_random_nodes_adj(adjacency_list, num_pairs=1):
 # RUNNING ALGORITHMS (Both versions)
 # ============================================================================
 
-def run_single_algorithm_nx(G, algorithm_func, source, target, algo_name):
+def run_single_algorithm_nx(G, algorithm_func, source, target, algo_name, **kwargs):
     """Run a single algorithm and return results."""
     print(f"\n🔍 Running {algo_name} (NetworkX)...")
     
@@ -120,7 +120,7 @@ def run_single_algorithm_nx(G, algorithm_func, source, target, algo_name):
     E = G.number_of_edges()
     
     start_time = time.time()
-    path, cost, stats = algorithm_func(G, source, target)
+    path, cost, stats = algorithm_func(G, source, target, **kwargs)
     elapsed = time.time() - start_time
     
     print(f"  ✅ Path found: {len(path)} nodes, {cost:.1f} m")
@@ -134,7 +134,7 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
     """Run a single AdjacencyList-based algorithm."""
     print(f"\n🔍 Running {algo_name} (AdjacencyList)...")
     
-    V = adj_list.length()
+    V = len(adj_list.keys())
     E = 0
     for node in adj_list.keys():
         neighbors = adj_list.get(node)
@@ -160,152 +160,94 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
 # MAIN COMPARISON
 # ============================================================================
 
-# def run_all_algorithms(G, source, target):
-#     """Run all algorithms on the same source-target pair."""
-#     results = {}
-
-#     # Preprocess for ALT (do once)
-#     print("\n🔧 Preprocessing for ALT...")
-#     all_nodes = list(G.nodes())
-#     num_landmarks = min(16, len(all_nodes))
-#     landmarks = random.sample(all_nodes, num_landmarks)
-#     print(f"  Selected {len(landmarks)} random landmarks")
-#     dist_to, dist_from = precompute_landmark_distances(G, landmarks, max_distance=1500)
-
-#     # Dictionary of algorithms to test
-#     algorithms = {
-#         'Dijkstra': lambda g,s,t: dijkstra(g, s, t),
-#         'A*': lambda g,s,t: astar(g, s, t),
-#         'Bidirectional A*': lambda g,s,t: bidirectional_astar(g, s, t),
-#         'ALT': lambda g,s,t: alt(g, s, t, 
-#                                landmarks=landmarks, dist_to=dist_to, dist_from=dist_from),
-#     }
+def find_closest_nx_node(G_nx, x, y):
+    """Find the closest node in NetworkX to given coordinates."""
+    closest_node = None
+    min_dist = float('inf')
     
-#     for name, func in algorithms.items():
-#         path, cost, stats = run_single_algorithm(G, func, source, target, name)
-#         results[name] = (path, cost, stats)
+    for node in G_nx.nodes():
+        if 'x' in G_nx.nodes[node] and 'y' in G_nx.nodes[node]:
+            nx_x = G_nx.nodes[node]['x']
+            nx_y = G_nx.nodes[node]['y']
+            dist = (nx_x - x)**2 + (nx_y - y)**2  # Squared distance (no sqrt needed)
+            if dist < min_dist:
+                min_dist = dist
+                closest_node = node
     
-#     return results
+    return closest_node
 
 
-# def main():
-#     print("=" * 60)
-#     print("DTU PATHFINDING PROJECT")
-#     print("=" * 60)
+def select_same_points(adj_list, G_nx, num_pairs=1):
+    """Pick random points from adjacency list, find closest in NetworkX."""
     
-#     # Load graph
-#     G = load_graph()
-    
-#     # Select random source-target pair
-#     pairs = select_random_nodes(G, num_pairs=1)
-#     source, target = pairs[0]
-    
-#     print(f"\n🎯 Testing on:")
-#     print(f"  Source: node {source} @ ({G.nodes[source]['x']:.2f}, {G.nodes[source]['y']:.2f})")
-#     print(f"  Target: node {target} @ ({G.nodes[target]['x']:.2f}, {G.nodes[target]['y']:.2f})")
-    
-#     # Run all algorithms
-#     results = run_all_algorithms(G, source, target)
-    
-#     # Create individual maps for each algorithm
-#     # for name, (path, cost, _) in results.items():
-#     #     filename = f"{name.lower()}_path.html"
-#     #     create_path_map(G, path, cost, source, target, filename)
-    
-#     for name, (path, cost, _) in results.items():
-#         # Clean filename (remove spaces and special chars)
-#         clean_name = name.lower().replace(' ', '_').replace('*', 'star').replace('(', '').replace(')', '')
-#         filename = f"{clean_name}_path.html"
-#         create_path_map(G, path, cost, source, target, filename)
+    # Get random nodes from adjacency list
+    all_adj_nodes = list(adj_list.keys())
 
-#     # Create comparison map
-#     comparison_results = {name: (path, cost) for name, (path, cost, _) in results.items()}
-#     create_comparison_map(G, comparison_results, "algorithm_comparison.html")
+    if len(all_adj_nodes) < 2:
+        print("❌ Not enough nodes in adjacency list!")
+        return None, None
     
-#     print("\n✅ All done!")
+    source_adj, target_adj = random.sample(all_adj_nodes, 2)
+    
+    # Find closest NetworkX nodes by coordinates
+    source_nx = find_closest_nx_node(G_nx, source_adj[0], source_adj[1])
+    target_nx = find_closest_nx_node(G_nx, target_adj[0], target_adj[1])
 
+    if source_nx is None or target_nx is None:
+        print("❌ Could not find matching nodes in NetworkX!")
+        return None, None
+    
+    print(f"\n🎯 Selected points:")
+    print(f"  AdjacencyList: {source_adj} → {target_adj}")
+    print(f"  NetworkX (closest): {source_nx} → {target_nx}")
+    
+    return (source_nx, target_nx), (source_adj, target_adj)
 
-# if __name__ == "__main__":
-#     # You might need this import for largest component
-#     import networkx as nx
-#     main()
-# ------------------------------------------------------------------------------------------------------------------------------------
-# def main():
-#     print("=" * 80)
-#     print("ALGORITHM COMPARISON: NetworkX vs AdjacencyList")
-#     print("=" * 80)
+def select_identical_points(adj_list, G_nx):
+    """Pick random points from adjacency list, find EXACT match in NetworkX."""
     
-#     # Load both graph representations
-#     G_nx = load_nx_graph()
-#     adj_list, _, _ = load_adjacency_graph()
+    # Get random nodes from adjacency list
+    all_adj_nodes = list(adj_list.keys())
+    source_adj, target_adj = random.sample(all_adj_nodes, 2)
     
-#     # Get source-target pairs
-#     pairs_nx = select_random_nodes_nx(G_nx, num_pairs=1)
-#     source_nx, target_nx = pairs_nx[0]
+    # Find EXACT matching coordinates in NetworkX
+    source_nx = None
+    target_nx = None
     
-#     pairs_adj = select_random_nodes_adj(adj_list, num_pairs=1)
-#     source_adj, target_adj = pairs_adj[0]
+    for node in G_nx.nodes():
+        if 'x' in G_nx.nodes[node] and 'y' in G_nx.nodes[node]:
+            # Round to 2 decimals to handle floating point
+            nx_x = round(G_nx.nodes[node]['x'], 2)
+            nx_y = round(G_nx.nodes[node]['y'], 2)
+            adj_x = round(source_adj[0], 2)
+            adj_y = round(source_adj[1], 2)
+            
+            if nx_x == adj_x and nx_y == adj_y:
+                source_nx = node
+                break
     
-#     print(f"\n🎯 NetworkX test pair:")
-#     print(f"  Source: node {source_nx}")
-#     print(f"  Target: node {target_nx}")
+    for node in G_nx.nodes():
+        if 'x' in G_nx.nodes[node] and 'y' in G_nx.nodes[node]:
+            nx_x = round(G_nx.nodes[node]['x'], 2)
+            nx_y = round(G_nx.nodes[node]['y'], 2)
+            adj_x = round(target_adj[0], 2)
+            adj_y = round(target_adj[1], 2)
+            
+            if nx_x == adj_x and nx_y == adj_y:
+                target_nx = node
+                break
     
-#     print(f"\n🎯 AdjacencyList test pair:")
-#     print(f"  Source: {source_adj}")
-#     print(f"  Target: {target_adj}")
+    if source_nx is None or target_nx is None:
+        print("❌ Could not find exact matching nodes!")
+        return None, None
     
-#     # ========== NETWORKX ALGORITHMS ==========
-#     print("\n" + "=" * 80)
-#     print("RUNNING NETWORKX ALGORITHMS")
-#     print("=" * 80)
+    print(f"\n🎯 EXACT matching points:")
+    print(f"  AdjacencyList: {source_adj} → {target_adj}")
+    print(f"  NetworkX: node {source_nx} → node {target_nx}")
     
-#     nx_results = {}
-    
-#     path, cost, stats = run_single_algorithm_nx(G_nx, dijkstra_nx, source_nx, target_nx, "Dijkstra")
-#     nx_results['Dijkstra'] = (path, cost, stats)
-    
-#     path, cost, stats = run_single_algorithm_nx(G_nx, astar_nx, source_nx, target_nx, "A*")
-#     nx_results['A*'] = (path, cost, stats)
-    
-#     path, cost, stats = run_single_algorithm_nx(G_nx, bidirectional_astar_nx, source_nx, target_nx, "Bidirectional A*")
-#     nx_results['Bidirectional A*'] = (path, cost, stats)
-    
-#     # ========== ADJACENCYLIST ALGORITHMS ==========
-#     print("\n" + "=" * 80)
-#     print("RUNNING ADJACENCYLIST ALGORITHMS")
-#     print("=" * 80)
-    
-#     adj_results = {}
-    
-#     path, cost, stats = run_single_algorithm_adj(adj_list, dijkstra_adj, source_adj, target_adj, "Dijkstra")
-#     adj_results['Dijkstra (Adj)'] = (path, cost, stats)
-    
-#     # path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
-#     # adj_results['A* (Adj)'] = (path, cost, stats)
-    
-#     # path, cost, stats = run_single_algorithm_adj(adj_list, bidirectional_astar_adj, source_adj, target_adj, "Bidirectional A*")
-#     # adj_results['Bidirectional A* (Adj)'] = (path, cost, stats)
-    
-#     # ========== SUMMARY ==========
-#     print("\n" + "=" * 80)
-#     print("PERFORMANCE SUMMARY")
-#     print("=" * 80)
-#     print(f"\n{'Algorithm':<25} {'Nodes Visited':<15} {'Time (ms)':<12}")
-#     print("-" * 60)
-    
-#     for name, (_, _, stats) in nx_results.items():
-#         print(f"{name:<25} {stats['nodes_visited']:<15} {stats.get('time_ms', 'N/A'):<12}")
-    
-#     for name, (_, _, stats) in adj_results.items():
-#         print(f"{name:<25} {stats['nodes_visited']:<15} {stats.get('time_ms', 'N/A'):<12}")
-    
-#     print("\n✅ Comparison complete!")
+    return (source_nx, target_nx), (source_adj, target_adj)
 
-
-# if __name__ == "__main__":
-#     main()
-
-def find_adj_node_by_coords(adj_list, x, y, tolerance=0.1):
+def find_adj_node_by_coords(adj_list, x, y, tolerance=1.0):
     """Find node in adjacency list by coordinates."""
     for node in adj_list.keys():
         if abs(node[0] - x) < tolerance and abs(node[1] - y) < tolerance:
@@ -348,15 +290,33 @@ def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path
     import folium
     import numpy as np
     
+    # Check if path is valid
+    if not path or len(path) == 0:
+        print(f"  ⚠️ Cannot create map: path is empty")
+        return
+    
     # Path nodes are tuples (x, y)
     path_latlon = []
     for node in path:
-        # Convert from UTM to lat/lon (assuming EPSG:25832)
-        # You'll need to transform coordinates
-        path_latlon.append((node[1], node[0]))  # Simple swap - may need proper conversion
+        # Check if node has valid coordinates
+        if isinstance(node, tuple) and len(node) >= 2:
+            # Convert from UTM to lat/lon (assuming EPSG:25832)
+            path_latlon.append((node[1], node[0]))  # Simple swap - may need proper conversion
+        else:
+            print(f"  ⚠️ Invalid node format: {node}")
+            continue
     
+    if len(path_latlon) == 0:
+        print(f"  ⚠️ No valid coordinates found in path, skipping map")
+        return
+
     mid_lat = np.mean([p[0] for p in path_latlon])
     mid_lon = np.mean([p[1] for p in path_latlon])
+
+    # Check for NaN values
+    if np.isnan(mid_lat) or np.isnan(mid_lon):
+        print(f"  ⚠️ Invalid map center coordinates, skipping map")
+        return
     
     m = folium.Map(location=[mid_lat, mid_lon], zoom_start=17, tiles='OpenStreetMap')
     
@@ -410,10 +370,15 @@ def main():
     adj_list, _, _ = load_adjacency_graph()
     
     # Get matching nodes
-    nx_pair, adj_pair = select_matching_nodes(G_nx, adj_list)
+    # nx_pair, adj_pair = select_same_points(adj_list, G_nx)
+    nx_pair, adj_pair = select_identical_points(adj_list, G_nx)
+
+    if nx_pair is None or adj_pair is None:
+        print("❌ Could not find matching nodes! Trying closest match...")
+        nx_pair, adj_pair = select_same_points(adj_list, G_nx)
     
-    if nx_pair is None:
-        print("❌ Could not find matching nodes!")
+    if nx_pair is None or adj_pair is None:
+        print("❌ Failed to get matching nodes. Exiting.")
         return
     
     source_nx, target_nx = nx_pair
@@ -423,6 +388,13 @@ def main():
     print(f"  NetworkX: node {source_nx} → node {target_nx}")
     print(f"    Coordinates: ({G_nx.nodes[source_nx]['x']:.2f}, {G_nx.nodes[source_nx]['y']:.2f}) → ({G_nx.nodes[target_nx]['x']:.2f}, {G_nx.nodes[target_nx]['y']:.2f})")
     print(f"  AdjacencyList: {source_adj} → {target_adj}")
+
+    # Calculate distance between chosen points
+    import math
+    dx = source_adj[0] - target_adj[0]
+    dy = source_adj[1] - target_adj[1]
+    direct_dist = math.sqrt(dx*dx + dy*dy)
+    print(f"  Direct distance between points: {direct_dist:.0f}m")
     
     # ========== NETWORKX ALGORITHMS ==========
     print("\n" + "=" * 80)
@@ -433,15 +405,39 @@ def main():
     
     path, cost, stats = run_single_algorithm_nx(G_nx, dijkstra_nx, source_nx, target_nx, "Dijkstra")
     nx_results['Dijkstra'] = (path, cost, stats)
-    create_path_map(G_nx, path, cost, source_nx, target_nx, "maps/nx_dijkstra.html")
+    # Only create map if path is valid
+    if path and len(path) > 0:
+        create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_dijkstra.html")
+    else:
+        print(f"  ⚠️ No valid path found, skipping map")
     
     path, cost, stats = run_single_algorithm_nx(G_nx, astar_nx, source_nx, target_nx, "A*")
     nx_results['A*'] = (path, cost, stats)
-    create_path_map(G_nx, path, cost, source_nx, target_nx, "maps/nx_astar.html")
+    if path and len(path) > 0:
+        create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_astar.html")
+    else:
+        print(f"  ⚠️ No path found for A*, skipping map")
     
     path, cost, stats = run_single_algorithm_nx(G_nx, bidirectional_astar_nx, source_nx, target_nx, "Bidirectional A*")
     nx_results['Bidirectional A*'] = (path, cost, stats)
-    create_path_map(G_nx, path, cost, source_nx, target_nx, "maps/nx_bidirectional.html")
+    if path and len(path) > 0:
+        create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_bidirectional.html")
+    else:
+        print(f"  ⚠️ No path found for Bidirectional A*, skipping map")
+
+    # ALT (with preprocessing)
+    print("\n🔧 Preprocessing for ALT...")
+    all_nodes = list(G_nx.nodes())
+    num_landmarks = min(16, len(all_nodes))
+    landmarks = select_landmarks(G_nx, num_landmarks=num_landmarks, strategy='random')
+    print(f"  Selected {len(landmarks)} random landmarks")
+    dist_to, dist_from = precompute_landmark_distances(G_nx, landmarks, max_distance=1500)
+
+    path, cost, stats = run_single_algorithm_nx(G_nx, alt_nx, source_nx, target_nx, "ALT",
+                                            landmarks=landmarks, dist_to=dist_to, dist_from=dist_from)
+    nx_results['ALT'] = (path, cost, stats)
+    if path and len(path) > 0:
+        create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_alt.html")
     
     # ========== ADJACENCYLIST ALGORITHMS ==========
     print("\n" + "=" * 80)
@@ -452,7 +448,11 @@ def main():
     
     path, cost, stats = run_single_algorithm_adj(adj_list, dijkstra_adj, source_adj, target_adj, "Dijkstra")
     adj_results['Dijkstra (Adj)'] = (path, cost, stats)
-    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "maps/adj_dijkstra.html")
+    print(f"  Debug: path length = {len(path)}")
+    if len(path) > 0:
+        print(f"  Debug: first node = {path[0]}, type = {type(path[0])}")
+        print(f"  Debug: last node = {path[-1]}, type = {type(path[-1])}")
+    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_dijkstra.html")
     
     # Uncomment when A* and Bidirectional A* are ready for adjacency list
     # path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
@@ -472,11 +472,11 @@ def main():
     for name, (path, cost, stats) in adj_results.items():
         print(f"{name:<30} {stats['nodes_visited']:<15} {stats.get('time_ms', 'N/A'):<12} {cost:<12.1f}")
     
-    print("\n✅ Comparison complete! Maps saved to 'maps/' folder")
+    print("\n✅ Comparison complete! Maps saved to 'Maps/' folder")
 
 
 if __name__ == "__main__":
     import networkx as nx
     # Create maps folder if it doesn't exist
-    os.makedirs("maps", exist_ok=True)
+    os.makedirs("Maps", exist_ok=True)
     main()
