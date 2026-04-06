@@ -38,7 +38,7 @@ from Algorithms import (
 
 # Configuration
 GRAPH_FILE = 'data/walkability_graph.pkl'
-ADJACENCY_PATH = "Data/Adjacency_list_ObstacleAware_better.json"
+ADJACENCY_PATH = "Data/Adjacency_list_ObstacleAwareGraph.json"
 
 # ============================================================================
 # NETWORKX LOADING (Original)

@@ -1,4 +1,4 @@
-from intersections import line_intersects_polygon
+from Obstacle_algebra.intersections import line_intersects_polygon
 
 def build_spatial_index(polygons, cell_size):
     """

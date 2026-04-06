@@ -1,5 +1,7 @@
 from math import floor
 import os
+import matplotlib.pyplot as plt
+import json
 
 def _are_equal(a, b):
     """Safely compare two values, handling NumPy arrays and other edge cases."""
@@ -50,7 +52,13 @@ def minmaxxy(points):
     print(f"X: min = {min_x}, max = {max_x}")
     print(f"Y: min = {min_y}, max = {max_y}")
 
-import json
+def point_to_square(point,buffer):
+    square=[]
+    for i in [-buffer,buffer]:
+        for j in [-buffer,buffer]:
+            x,y=point[0]+i,point[1]+j
+            square.append([x,y])
+    return square
 
 def save_adjacency_list(adjacency_list, filepath):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -375,3 +383,38 @@ if __name__ == "__main__":
     print(str(Test))
     l = Test.asList()
     print(l)
+
+def visualize_graph(adjacency_list, polygons=None):
+    print("Visualizing graph with matplotlib")
+    fig, ax = plt.subplots(figsize=(12, 12))
+    # Draw obstacle polygons
+    if polygons is not None:
+        for polygon in polygons:
+            xs = [p[0] for p in polygon]
+            ys = [p[1] for p in polygon]
+            # close the ring
+            xs.append(xs[0])
+            ys.append(ys[0])
+            ax.plot(xs, ys, 'r-', linewidth=1, alpha=0.7)
+    # Draw edges
+    drawn_edges = set()
+    for point, neighbours in adjacency_list.items():
+        for distance, coords in neighbours.asList():
+            edge = (min(point, coords), max(point, coords))
+            if edge not in drawn_edges:
+                drawn_edges.add(edge)
+                ax.plot(
+                    [point[0], coords[0]],
+                    [point[1], coords[1]],
+                    'gray', linewidth=0.5, alpha=0.5
+                )
+
+    # Draw nodes
+    xs = [p[0] for p in adjacency_list.keys()]
+    ys = [p[1] for p in adjacency_list.keys()]
+    ax.scatter(xs, ys, c='blue', s=0.1, zorder=2)
+
+    ax.set_aspect('equal')
+    ax.set_title(f"Graph — {adjacency_list.length()} nodes, {len(drawn_edges)} edges")
+    plt.tight_layout()
+    plt.show()
