@@ -37,10 +37,14 @@ def obstacleAwareGraph(
     spatial_index = spatial_intersection.build_spatial_index(polygons, cell_size=CELLSIZE)
 
     merged_points = mergePoints(walk_points,mergeType)
+
+    
+    graph = {tuple(p): set() for p in merged_points}
+    blockedPoints = {tuple(p): set() for p in merged_points} #Use this to track if we already know that a point is blocked (avoid checking twice)
     
     tree = KDtree.buildKDtree(merged_points)
     adjacency_list = AdjacencyList(merged_points)
-    neighbourFunc = lambda point, blockedPoints, graph: KDtree.KNN_KDtree_obstacles(
+    neighbourFunc = lambda point: KDtree.KNN_KDtree_obstacles(
             tree=tree, point=point, k=8,
             polygons=polygons, spatial_index=spatial_index,
             polygon_bboxes=polygon_bboxes, cell_size=CELLSIZE,blockedPoints = blockedPoints,
@@ -50,7 +54,8 @@ def obstacleAwareGraph(
     buildAdjacencyList(
         adjacency_list,
         merged_points,
-        neighbourFunc
+        neighbourFunc,
+        graph
     )
 
     save_adjacency_list(adjacency_list=adjacency_list, filepath=ADJACENCY_PATH)
@@ -67,7 +72,7 @@ def obstacleIgnoringGraph(
     
     tree = KDtree.buildKDtree(merged_points)
     adjacency_list = AdjacencyList(merged_points)
-    neighbourFunc = lambda point, blockedPoints, graph: KDtree.KNN_KDtree(tree = tree,point = point,k=8)
+    neighbourFunc = lambda point: KDtree.KNN_KDtree(tree = tree,point = point,k=8)
 
     buildAdjacencyList(
         adjacency_list,
@@ -79,35 +84,33 @@ def obstacleIgnoringGraph(
     visualize_graph(adjacency_list,polygons)
 
 def mergePoints(points,mergeType):
-    merged_points = None
-    if mergeType is MergeType.SQUAREBUCKETMERGE:
-        squares = grid_merge.intoGrid(points,10)
-        merged_points = grid_merge.findCentroid(squares)
-    if mergeType is MergeType.DBSCANMERGE:
-        merged_points = dbscan_merge.merge_points_simpleDbscan(points, eps=5, min_samples=1)
-    if mergeType is MergeType.DEFAULT:
-        print("No or wrong mergetype")
-    return merged_points
-
-
+    match mergeType:
+        case MergeType.SQUAREBUCKETMERGE:
+            squares = grid_merge.intoGrid(points, 10)
+            return grid_merge.findCentroid(squares)
+        case MergeType.DBSCANMERGE:
+            return dbscan_merge.merge_points_simpleDbscan(points, eps=5, min_samples=1)
+        case _:
+            valid = [e.name for e in MergeType if e is not MergeType.DEFAULT]
+            raise ValueError(f"Invalid mergeType: {mergeType}. Must be one of: {valid}")
 
 def buildAdjacencyList(
         adjacency_list: AdjacencyList, 
         merged_points, 
-        neighbourFunc
+        neighbourFunc,
+        graph = None
     ):
 
     print("Looking for neighbours")
     n=len(merged_points)
-
-    graph = {tuple(p): set() for p in merged_points}
-    blockedPoints = {tuple(p): set() for p in merged_points} #Use this to track if we already know that a point is blocked (avoid checking twice)
+    if graph is None:
+        graph = {tuple(p): set() for p in merged_points}
 
     for i,point in enumerate(merged_points):
         print(f"\rProgress: {i}/{n}", end="", flush=True)
         
         p = tuple(point)
-        KNN = neighbourFunc(point=point,graph=graph,blockedPoints=blockedPoints)
+        KNN = neighbourFunc(point)
 
         #Add neighbours to point, and point to neighbours
         for distance, coords in KNN.heap[1:]:
