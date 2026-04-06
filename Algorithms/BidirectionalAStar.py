@@ -7,10 +7,10 @@ import heapq
 
 def bidirectional_astar(graph, source, target, weight='weight', heuristic=None):
     """
-    Bidirectional A* search algorithm from scratch.
+    Bidirectional A* search algorithm.
     
     Runs A* simultaneously from both source and target.
-    Returns when the two searches meet.
+    Stops when the two searches meet.
     """
     stats = {
         'nodes_visited': 0,
@@ -19,7 +19,7 @@ def bidirectional_astar(graph, source, target, weight='weight', heuristic=None):
         'algorithm': 'Bidirectional A*'
     }
     
-    # Default heuristic
+    # Default heuristic: Euclidean distance
     if heuristic is None:
         def heuristic(u, v):
             if ('x' in graph.nodes[u] and 'x' in graph.nodes[v] and
@@ -29,131 +29,127 @@ def bidirectional_astar(graph, source, target, weight='weight', heuristic=None):
                 return math.sqrt(dx*dx + dy*dy)
             return 0
     
-    # Forward search (from source to target)
-    g_forward = {node: float('inf') for node in graph.nodes()}
-    f_forward = {node: float('inf') for node in graph.nodes()}
-    parent_forward = {node: None for node in graph.nodes()}
-    g_forward[source] = 0
-    f_forward[source] = heuristic(source, target)
+    # Forward search (source -> target)
+    g_f = {source: 0}
+    f_f = {source: heuristic(source, target)}
+    parent_f = {source: None}
+    open_f = [(f_f[source], source)]
+    closed_f = set()
     
-    # Backward search (from target to source)
-    g_backward = {node: float('inf') for node in graph.nodes()}
-    f_backward = {node: float('inf') for node in graph.nodes()}
-    parent_backward = {node: None for node in graph.nodes()}
-    g_backward[target] = 0
-    f_backward[target] = heuristic(target, source)
+    # Backward search (target -> source)
+    g_b = {target: 0}
+    f_b = {target: heuristic(target, source)}
+    parent_b = {target: None}
+    open_b = [(f_b[target], target)]
+    closed_b = set()
     
-    # Priority queues
-    open_forward = [(f_forward[source], source)]
-    open_backward = [(f_backward[target], target)]
-    stats['heap_operations'] += 2
+    stats['heap_operations'] = 2
     
-    closed_forward = set()
-    closed_backward = set()
+    best_distance = float('inf')
+    best_node = None
     
-    best_path_length = float('inf')
-    meeting_node = None
-    
-    while open_forward and open_backward:
-        # Forward step
-        if open_forward:
-            current_f, current = heapq.heappop(open_forward)
+    while open_f and open_b:
+        # ========== FORWARD STEP ==========
+        if open_f:
+            f_val, u = heapq.heappop(open_f)
             stats['heap_operations'] += 1
             
-            if current in closed_forward:
+            if u in closed_f:
                 continue
-                
-            closed_forward.add(current)
+            
+            closed_f.add(u)
             stats['nodes_visited'] += 1
             
-            # Check if current node was reached by backward search
-            if current in g_backward and g_backward[current] < float('inf'):
-                path_length = g_forward[current] + g_backward[current]
-                if path_length < best_path_length:
-                    best_path_length = path_length
-                    meeting_node = current
+            # Check if u is in backward closed set
+            if u in closed_b:
+                dist = g_f[u] + g_b[u]
+                if dist < best_distance:
+                    best_distance = dist
+                    best_node = u
+                    break
             
-            # Early termination if we've found a path and forward's best f-score is >= best_path_length
-            if meeting_node is not None and open_forward and open_forward[0][0] >= best_path_length:
+            # Early termination condition
+            if best_node is not None and f_val >= best_distance:
                 break
             
-            # Explore forward neighbors
-            for neighbor in graph.neighbors(current):
-                if neighbor in closed_forward:
+            # Explore neighbors
+            for v in graph.neighbors(u):
+                if v in closed_f:
                     continue
-                    
-                edge_weight = graph[current][neighbor].get(weight, 1)
+                
+                weight_uv = graph[u][v].get(weight, 1)
                 stats['edges_relaxed'] += 1
                 
-                tentative_g = g_forward[current] + edge_weight
+                new_g = g_f[u] + weight_uv
                 
-                if tentative_g < g_forward[neighbor]:
-                    parent_forward[neighbor] = current
-                    g_forward[neighbor] = tentative_g
-                    f_forward[neighbor] = tentative_g + heuristic(neighbor, target)
-                    heapq.heappush(open_forward, (f_forward[neighbor], neighbor))
+                if v not in g_f or new_g < g_f[v]:
+                    g_f[v] = new_g
+                    parent_f[v] = u
+                    f_f[v] = new_g + heuristic(v, target)
+                    heapq.heappush(open_f, (f_f[v], v))
                     stats['heap_operations'] += 1
         
-        # Backward step
-        if open_backward:
-            current_f, current = heapq.heappop(open_backward)
+        # ========== BACKWARD STEP ==========
+        if open_b:
+            f_val, u = heapq.heappop(open_b)
             stats['heap_operations'] += 1
             
-            if current in closed_backward:
+            if u in closed_b:
                 continue
-                
-            closed_backward.add(current)
+            
+            closed_b.add(u)
             stats['nodes_visited'] += 1
             
-            # Check if current node was reached by forward search
-            if current in g_forward and g_forward[current] < float('inf'):
-                path_length = g_forward[current] + g_backward[current]
-                if path_length < best_path_length:
-                    best_path_length = path_length
-                    meeting_node = current
+            # Check if u is in forward closed set
+            if u in closed_f:
+                dist = g_f[u] + g_b[u]
+                if dist < best_distance:
+                    best_distance = dist
+                    best_node = u
+                    break
             
-            # Early termination
-            if meeting_node is not None and open_backward and open_backward[0][0] >= best_path_length:
+            # Early termination condition
+            if best_node is not None and f_val >= best_distance:
                 break
             
-            # Explore backward neighbors
-            for neighbor in graph.neighbors(current):
-                if neighbor in closed_backward:
+            # Explore neighbors
+            for v in graph.neighbors(u):
+                if v in closed_b:
                     continue
-                    
-                edge_weight = graph[current][neighbor].get(weight, 1)
+                
+                weight_uv = graph[u][v].get(weight, 1)
                 stats['edges_relaxed'] += 1
                 
-                tentative_g = g_backward[current] + edge_weight
+                new_g = g_b[u] + weight_uv
                 
-                if tentative_g < g_backward[neighbor]:
-                    parent_backward[neighbor] = current
-                    g_backward[neighbor] = tentative_g
-                    f_backward[neighbor] = tentative_g + heuristic(neighbor, source)
-                    heapq.heappush(open_backward, (f_backward[neighbor], neighbor))
+                if v not in g_b or new_g < g_b[v]:
+                    g_b[v] = new_g
+                    parent_b[v] = u
+                    f_b[v] = new_g + heuristic(v, source)
+                    heapq.heappush(open_b, (f_b[v], v))
                     stats['heap_operations'] += 1
     
-    # Reconstruct path
+    # ========== PATH RECONSTRUCTION ==========
     path = []
-    if meeting_node is not None:
-        # Build path from source to meeting node
-        path_forward = []
-        node = meeting_node
+    if best_node is not None:
+        # Forward path from source to best_node
+        forward_path = []
+        node = best_node
         while node is not None:
-            path_forward.append(node)
-            node = parent_forward[node]
-        path_forward.reverse()
+            forward_path.append(node)
+            node = parent_f.get(node)
+        forward_path.reverse()
         
-        # Build path from meeting node to target (excluding meeting node)
-        path_backward = []
-        node = parent_backward[meeting_node]
+        # Backward path from best_node to target (excluding best_node)
+        backward_path = []
+        node = parent_b.get(best_node)
         while node is not None:
-            path_backward.append(node)
-            node = parent_backward[node]
+            backward_path.append(node)
+            node = parent_b.get(node)
         
-        path = path_forward + path_backward
+        path = forward_path + backward_path
     
-    return path, best_path_length, stats
+    return path, best_distance, stats
 
 
 def euclidean_heuristic(u, v, graph):
