@@ -1,7 +1,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import dbscan_merge, loadFromDb, grid_merge,optics_merge
+import dbscan_merge, Data.Database_access.loadFromDb as loadFromDb, grid_merge,optics_merge
 
 def plot_with_density(points, title="Point Distribution", 
                       bins=30, bandwidth=None, 
