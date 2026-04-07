@@ -3,6 +3,7 @@ Main controller for DTU pathfinding project.
 Runs different algorithms and visualizes results.
 """
 
+import math
 import pickle
 import random
 import time
@@ -141,6 +142,7 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
     start_time = time.time()
     path, cost, stats = algorithm_func(adj_list, source, target)
     elapsed = time.time() - start_time
+    cost = math.sqrt(cost)
     
     print(f"  ✅ Path found: {len(path)} nodes, {cost:.1f} m")
     

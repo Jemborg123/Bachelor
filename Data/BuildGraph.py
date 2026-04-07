@@ -45,7 +45,7 @@ def obstacleAwareGraph(
     tree = KDtree.buildKDtree(merged_points)
     adjacency_list = AdjacencyList(merged_points)
     neighbourFunc = lambda point: KDtree.KNN_KDtree_obstacles(
-            tree=tree, point=point, k=8,
+            tree=tree, point=point, k=32,
             polygons=polygons, spatial_index=spatial_index,
             polygon_bboxes=polygon_bboxes, cell_size=CELLSIZE,blockedPoints = blockedPoints,
             graph=graph
@@ -72,7 +72,7 @@ def obstacleIgnoringGraph(
     
     tree = KDtree.buildKDtree(merged_points)
     adjacency_list = AdjacencyList(merged_points)
-    neighbourFunc = lambda point: KDtree.KNN_KDtree(tree = tree,point = point,k=8)
+    neighbourFunc = lambda point: KDtree.KNN_KDtree(tree = tree,point = point,k=32)
 
     buildAdjacencyList(
         adjacency_list,
@@ -89,7 +89,7 @@ def mergePoints(points,mergeType):
             squares = grid_merge.intoGrid(points, 10)
             return grid_merge.findCentroid(squares)
         case MergeType.DBSCANMERGE:
-            merged = dbscan_merge.merge_points_simpleDbscan(points, eps=4, min_samples=1)
+            merged = dbscan_merge.merge_points_simpleDbscan(points, eps=3, min_samples=1)
             return [tuple(p) for p in merged]
         case MergeType.NOMERGING:
             return [tuple(p) for p in points]
