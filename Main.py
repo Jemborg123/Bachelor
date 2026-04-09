@@ -13,16 +13,6 @@ import networkx as nx
 # Import your modules
 from MapVisuals import create_path_map, create_comparison_map
 from Data.utils import load_adjacency_list
-# from Algorithms.Dijkstra import dijkstra, analyze_complexity 
-# from Algorithms import (
-#     dijkstra, 
-#     astar,
-#     bidirectional_astar, 
-#     alt,
-#     select_landmarks,          
-#     precompute_landmark_distances,
-#     analyze_complexity,
-# )
 
 from Algorithms import (
     dijkstra_nx,
@@ -30,8 +20,9 @@ from Algorithms import (
     bidirectional_astar_nx,
     alt_nx,
     dijkstra_adj,
-    # astar_adj,
-    # bidirectional_astar_adj,
+    astar_adj,
+    bidirectional_astar_adj,
+    alt_adj,
     analyze_complexity,
     select_landmarks,
     precompute_landmark_distances
@@ -444,13 +435,19 @@ def main():
     
     path, cost, stats = run_single_algorithm_adj(adj_list, dijkstra_adj, source_adj, target_adj, "Dijkstra")
     adj_results['Dijkstra (Adj)'] = (path, cost, stats)
-    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "adj_dijkstra.html")
+    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_dijkstra.html")
     
-    # Uncomment when A* and Bidirectional A* are ready for adjacency list
-    # path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
-    # adj_results['A* (Adj)'] = (path, cost, stats)
-    # create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "maps/adj_astar.html")
+    path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
+    adj_results['A* (Adj)'] = (path, cost, stats)
+    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_astar.html")
+
+    path, cost, stats = run_single_algorithm_adj(adj_list, bidirectional_astar_adj, source_adj, target_adj, "Bidirectional A*")
+    adj_results['Bidirectional A* (Adj)'] = (path, cost, stats)
+    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_bidirectional.html")
     
+    path, cost, stats = run_single_algorithm_adj(adj_list, alt_adj, source_adj, target_adj, "ALT")
+    adj_results['ALT (Adj)'] = (path, cost, stats)
+    create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_alt.html")
     # ========== SUMMARY ==========
     print("\n" + "=" * 80)
     print("PERFORMANCE SUMMARY")
