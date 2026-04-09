@@ -45,7 +45,7 @@ def obstacleAwareGraph(
     tree = KDtree.buildKDtree(merged_points)
     adjacency_list = AdjacencyList(merged_points)
     neighbourFunc = lambda point: KDtree.KNN_KDtree_obstacles(
-            tree=tree, point=point, k=32,
+            tree=tree, point=point, k=8,
             polygons=polygons, spatial_index=spatial_index,
             polygon_bboxes=polygon_bboxes, cell_size=CELLSIZE,blockedPoints = blockedPoints,
             graph=graph

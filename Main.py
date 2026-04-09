@@ -11,7 +11,7 @@ import os
 import networkx as nx
 
 # Import your modules
-from MapVisuals import create_path_map, create_comparison_map
+from MapVisuals import create_path_map, create_comprehensive_comparison_map
 from Data.utils import load_adjacency_list
 
 from Algorithms import (
@@ -30,7 +30,7 @@ from Algorithms import (
 
 # Configuration
 GRAPH_FILE = 'Data/Old_Graph_data/walkability_graph.pkl'
-ADJACENCY_PATH = "Data/Adjacency_list_ObstacleAwareGraph.json"
+ADJACENCY_PATH = "Data/Data/Adjacency_list_ObstacleAwareGraph.json"
 
 # ============================================================================
 # NETWORKX LOADING (Original)
@@ -41,8 +41,12 @@ def load_nx_graph():
     print(f"\n📂 Loading NetworkX graph from {GRAPH_FILE}...")
     with open(GRAPH_FILE, 'rb') as f:
         G = pickle.load(f)
-    print(f"  ✅ Graph loaded: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
-    return G
+    # print(f"  ✅ Graph loaded: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
+    # return G
+    nx_nodes = G.number_of_nodes()
+    nx_edges = G.number_of_edges()
+    print(f"  ✅ Graph loaded: {nx_nodes} nodes, {nx_edges} edges")
+    return G, nx_nodes, nx_edges
 
 
 def select_random_nodes_nx(G, num_pairs=1):
@@ -74,20 +78,27 @@ def load_adjacency_graph():
     if not success:
         raise FileNotFoundError(f"Could not load adjacency list from {ADJACENCY_PATH}")
     
-    # Count edges
-    num_nodes = len(adjacency_list.keys())
-    num_edges = 0
-    for node in adjacency_list.keys():
-        neighbors = adjacency_list.neighbors(node)
-        if neighbors:
-            current = neighbors.head
-            while current is not None:
-                num_edges += 1
-                current = current.next
-    num_edges //= 2
+    # # Count edges
+    # num_nodes = len(adjacency_list.keys())
+    # num_edges = 0
+    # for node in adjacency_list.keys():
+    #     neighbors = adjacency_list.neighbors(node)
+    #     if neighbors:
+    #         current = neighbors.head
+    #         while current is not None:
+    #             num_edges += 1
+    #             current = current.next
+    # num_edges //= 2
     
-    print(f"  ✅ AdjacencyList loaded: {num_nodes} nodes, {num_edges} edges")
-    return adjacency_list, num_nodes, num_edges
+    # print(f"  ✅ AdjacencyList loaded: {num_nodes} nodes, {num_edges} edges")
+    # return adjacency_list, num_nodes, num_edges
+
+    adj_nodes = len(adjacency_list.keys())
+    adj_edges = adjacency_list.numEdges()  # Or your method to count edges
+    adj_edges //= 2  # If counting each edge twice
+    
+    print(f"  ✅ AdjacencyList loaded: {adj_nodes} nodes, {adj_edges} edges")
+    return adjacency_list, adj_nodes, adj_edges
 
 
 def select_random_nodes_adj(adjacency_list, num_pairs=1):
@@ -114,6 +125,8 @@ def run_single_algorithm_nx(G, algorithm_func, source, target, algo_name, **kwar
     start_time = time.time()
     path, cost, stats = algorithm_func(G, source, target, **kwargs)
     elapsed = time.time() - start_time
+
+    stats['time_ms'] = elapsed * 1000
     
     print(f"  ✅ Path found: {len(path)} nodes, {cost:.1f} m")
     
@@ -134,6 +147,8 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
     path, cost, stats = algorithm_func(adj_list, source, target)
     elapsed = time.time() - start_time
     cost = math.sqrt(cost)
+
+    stats['time_ms'] = elapsed * 1000
     
     print(f"  ✅ Path found: {len(path)} nodes, {cost:.1f} m")
     
@@ -353,19 +368,21 @@ def main():
     print("=" * 80)
     
     # Load both representations
-    G_nx = load_nx_graph()
-    adj_list, _, _ = load_adjacency_graph()
+    # G_nx = load_nx_graph()
+    # adj_list, _, _ = load_adjacency_graph()
+    G_nx, nx_nodes, nx_edges = load_nx_graph()
+    adj_list, adj_nodes, adj_edges = load_adjacency_graph()
     
     # Get matching nodes
     # nx_pair, adj_pair = select_same_points(adj_list, G_nx)
     nx_pair, adj_pair = select_identical_points(adj_list, G_nx)
 
     if nx_pair is None or adj_pair is None:
-        print("❌ Could not find matching nodes! Trying closest match...")
+        # print("❌ Could not find matching nodes! Trying closest match...")
         nx_pair, adj_pair = select_same_points(adj_list, G_nx)
     
     if nx_pair is None or adj_pair is None:
-        print("❌ Failed to get matching nodes. Exiting.")
+        # print("❌ Failed to get matching nodes. Exiting.")
         return
     
     source_nx, target_nx = nx_pair
@@ -448,18 +465,42 @@ def main():
     path, cost, stats = run_single_algorithm_adj(adj_list, alt_adj, source_adj, target_adj, "ALT")
     adj_results['ALT (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_alt.html")
+
+    print("\n🔍 DEBUG: AdjacencyList results before map creation:")
+    for name, (path, cost, stats) in adj_results.items():
+        print(f"  {name}: path length={len(path) if path else 0}, cost={cost}")
+        if path and len(path) > 0:
+            print(f"    First node: {path[0]}, type: {type(path[0])}")
+    
+    create_comprehensive_comparison_map(
+        G_nx, adj_list,
+        nx_results, adj_results,
+        source_nx, target_nx,
+        source_adj, target_adj,
+        "comprehensive_comparison.html"
+    )
+
     # ========== SUMMARY ==========
     print("\n" + "=" * 80)
     print("PERFORMANCE SUMMARY")
     print("=" * 80)
+
+    # Graph statistics comparison
+    print("\n📊 GRAPH STATISTICS:")
+    print(f"  {'NetworkX':<20} {nx_nodes:>6} nodes, {nx_edges:>6} edges")
+    print(f"  {'AdjacencyList':<20} {adj_nodes:>6} nodes, {adj_edges:>6} edges")
+    print(f"  Edge ratio (Adj/NX): {adj_edges/nx_edges:.2f}x")
+
     print(f"\n{'Algorithm':<30} {'Nodes Visited':<15} {'Time (ms)':<12} {'Distance (m)':<12}")
     print("-" * 70)
-    
+
     for name, (path, cost, stats) in nx_results.items():
-        print(f"{name:<30} {stats['nodes_visited']:<15} {stats.get('time_ms', 'N/A'):<12} {cost:<12.1f}")
-    
+        time_ms = f"{stats.get('time_ms', 0):.3f}"
+        print(f"{name:<30} {stats['nodes_visited']:<15} {time_ms:<12} {cost:<12.1f}")
+
     for name, (path, cost, stats) in adj_results.items():
-        print(f"{name:<30} {stats['nodes_visited']:<15} {stats.get('time_ms', 'N/A'):<12} {cost:<12.1f}")
+        time_ms = f"{stats.get('time_ms', 0):.3f}"
+        print(f"{name:<30} {stats['nodes_visited']:<15} {time_ms:<12} {cost:<12.1f}")
     
     print("\n✅ Comparison complete! Maps saved to 'Maps/' folder")
 
