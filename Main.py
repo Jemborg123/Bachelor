@@ -365,16 +365,16 @@ def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path
     print(f"  ✅ Map saved to '{filename}'")
 
 def costFromSquaredPath(path, adj_list:AdjacencyList):
-    print("Calculating distances from squared weights")
+    # print("Calculating distances from squared weights")
     cDistance = 0.0 
     for i in range(len(path)-1):
         node = path[i]
         nextnode = path[i+1]
         if node in adj_list.keys():
-            print("node",node,"in path getting neighbours")
+            # print("node",node,"in path getting neighbours")
             nodeneighbours:LinkedList = adj_list.neighbors(node)
         else:
-            print("node not in adj list")
+            # print("node not in adj list")
             raise ValueError("node not in adj list")
         
         focusNode =nodeneighbours.head
@@ -383,12 +383,12 @@ def costFromSquaredPath(path, adj_list:AdjacencyList):
             dx = abs(x - nextnode[0])
             dy = abs(y - nextnode[1])
             if dx<=1 and dy<=1: 
-                print(nextnode,"is a neighbour, getting distance")
-                print(dist)
+                # print(nextnode,"is a neighbour, getting distance")
+                # print(dist)
                 cDistance = cDistance + math.sqrt(dist)
                 break
             focusNode = focusNode.next
-        print("cummulative distance is now",cDistance)
+        # print("cummulative distance is now",cDistance)
     
     return cDistance
 
@@ -486,14 +486,17 @@ def main():
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_dijkstra.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
+    cost = costFromSquaredPath(path, adj_list)
     adj_results['A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_astar.html")
 
     path, cost, stats = run_single_algorithm_adj(adj_list, bidirectional_astar_adj, source_adj, target_adj, "Bidirectional A*")
+    cost = costFromSquaredPath(path, adj_list)
     adj_results['Bidirectional A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_bidirectional.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, alt_adj, source_adj, target_adj, "ALT")
+    cost = costFromSquaredPath(path, adj_list)
     adj_results['ALT (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_alt.html")
 
