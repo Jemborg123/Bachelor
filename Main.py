@@ -28,6 +28,8 @@ from Algorithms import (
     select_landmarks,
     precompute_landmark_distances
 )
+from Data.utils import AdjacencyList, LinkedList
+
 
 # Configuration
 GRAPH_FILE = 'Data/Old_Graph_data/walkability_graph.pkl'
@@ -362,6 +364,33 @@ def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path
     m.save(filename)
     print(f"  ✅ Map saved to '{filename}'")
 
+def costFromSquaredPath(path, adj_list:AdjacencyList):
+    print("Calculating distances from squared weights")
+    cDistance = 0.0 
+    for i in range(len(path)-1):
+        node = path[i]
+        nextnode = path[i+1]
+        if node in adj_list.keys():
+            print("node",node,"in path getting neighbours")
+            nodeneighbours:LinkedList = adj_list.neighbors(node)
+        else:
+            print("node not in adj list")
+            raise ValueError("node not in adj list")
+        
+        focusNode =nodeneighbours.head
+        for _ in range(nodeneighbours.n):
+            (dist, (x, y)) = focusNode.value
+            dx = abs(x - nextnode[0])
+            dy = abs(y - nextnode[1])
+            if dx<=1 and dy<=1: 
+                print(nextnode,"is a neighbour, getting distance")
+                print(dist)
+                cDistance = cDistance + math.sqrt(dist)
+                break
+            focusNode = focusNode.next
+        print("cummulative distance is now",cDistance)
+    
+    return cDistance
 
 def main():
     print("=" * 80)
@@ -452,6 +481,7 @@ def main():
     adj_results = {}
     
     path, cost, stats = run_single_algorithm_adj(adj_list, dijkstra_adj, source_adj, target_adj, "Dijkstra")
+    cost = costFromSquaredPath(path, adj_list)
     adj_results['Dijkstra (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_dijkstra.html")
     
