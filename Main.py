@@ -365,7 +365,7 @@ def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path
     print(f"  ✅ Map saved to '{filename}'")
 
 def costFromSquaredPath(path, adj_list:AdjacencyList):
-    print("Calculating distances from squared weights")
+    # print("Calculating distances from squared weights")
     cDistance = 0.0 
     for i in range(len(path)-1):
         node = path[i]
@@ -374,7 +374,7 @@ def costFromSquaredPath(path, adj_list:AdjacencyList):
             # print("node",node,"in path getting neighbours")
             nodeneighbours:LinkedList = adj_list.neighbors(node)
         else:
-            print("node not in adj list")
+            # print("node not in adj list")
             raise ValueError("node not in adj list")
         
         focusNode =nodeneighbours.head
@@ -486,14 +486,17 @@ def main():
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_dijkstra.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
+    cost = costFromSquaredPath(path, adj_list)
     adj_results['A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_astar.html")
 
     path, cost, stats = run_single_algorithm_adj(adj_list, bidirectional_astar_adj, source_adj, target_adj, "Bidirectional A*")
+    cost = costFromSquaredPath(path, adj_list)
     adj_results['Bidirectional A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_bidirectional.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, alt_adj, source_adj, target_adj, "ALT")
+    cost = costFromSquaredPath(path, adj_list)
     adj_results['ALT (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_alt.html")
 
