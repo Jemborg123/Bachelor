@@ -27,8 +27,9 @@ from .ALT import alt as alt_nx, alt_with_preprocessing, select_landmarks, precom
 
 # AdjacencyList-based algorithms (new - with _adj suffix)
 from .A_Dijkstra import dijkstra as dijkstra_adj
-# from .A_AStar import astar as astar_adj
-# from .A_BidirectionalAStar import bidirectional_astar as bidirectional_astar_adj
+from .A_AStar import astar as astar_adj
+from .A_BidirectionalAStar import bidirectional_astar as bidirectional_astar_adj
+from .A_ALT import alt as alt_adj
 
 # Complexity analysis (shared)
 from .Dijkstra import analyze_complexity
@@ -42,8 +43,9 @@ __all__ = [
     
     # AdjacencyList versions
     'dijkstra_adj',
-    # 'astar_adj',
-    # 'bidirectional_astar_adj',
+    'astar_adj',
+    'bidirectional_astar_adj',
+    'alt_adj',
     
     # Shared utilities
     'alt_with_preprocessing',

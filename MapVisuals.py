@@ -230,3 +230,206 @@ def filter_outliers(G):
     print(f"  ⏱️  Filtering time: {filter_time:.4f} seconds")
     
     return kept_nodes
+
+def create_comprehensive_comparison_map(G_nx, adj_list, nx_results, adj_results, 
+                                          source_nx, target_nx, source_adj, target_adj,
+                                          filename="comprehensive_comparison.html"):
+    """
+    Create a single map showing ALL algorithms.
+    NetworkX algorithms: red
+    AdjacencyList algorithms: blue
+    """
+    filepath = os.path.join(MAPS_FOLDER, filename)
+
+    print(f"\n🗺️  Creating comprehensive comparison map: {filename}")
+    map_start = time.time()
+    
+    # Detect CRS
+    source_crs = detect_crs()
+    
+    # Color mapping
+    nx_colors = {
+        'Dijkstra (NX)': 'red',
+        'A* (NX)': 'red', 
+        'Bidirectional A* (NX)': 'red',
+        'ALT (NX)': 'red'
+    }
+    
+    adj_colors = {
+        'Dijkstra (Adj)': 'blue',
+        'A* (Adj)': 'blue', 
+        'Bidirectional A* (Adj)': 'blue',
+        'ALT (Adj)': 'blue'
+    }
+    
+    # ========== COLLECT ALL COORDINATES FOR CENTERING ==========
+    all_lats = []
+    all_lons = []
+    
+    # Get NetworkX path coordinates (already in lat/lon after conversion)
+    nx_paths_latlon = {}
+    for name, (path, cost, _) in nx_results.items():
+        if path and len(path) > 0:
+            try:
+                path_points = gpd.GeoDataFrame(
+                    [{'node': n, 'geometry': Point(G_nx.nodes[n]['x'], G_nx.nodes[n]['y'])} for n in path],
+                    crs=source_crs
+                ).to_crs("EPSG:4326")
+                latlon = [(row.geometry.y, row.geometry.x) for _, row in path_points.iterrows()]
+                nx_paths_latlon[name] = (latlon, cost)
+                for lat, lon in latlon:
+                    all_lats.append(lat)
+                    all_lons.append(lon)
+            except Exception as e:
+                print(f"    ⚠️ Error converting {name}: {e}")
+    
+    # Get AdjacencyList path coordinates (convert properly!)
+    adj_paths_latlon = {}
+    for name, (path, cost, _) in adj_results.items():
+        if path and len(path) > 0:
+            try:
+                # Convert adjacency list points (UTM) to lat/lon using GeoDataFrame
+                points = [Point(node[0], node[1]) for node in path]
+                path_gdf = gpd.GeoDataFrame(geometry=points, crs=source_crs)
+                path_gdf = path_gdf.to_crs("EPSG:4326")
+                latlon = [(row.geometry.y, row.geometry.x) for _, row in path_gdf.iterrows()]
+                adj_paths_latlon[name] = (latlon, cost)
+                for lat, lon in latlon:
+                    all_lats.append(lat)
+                    all_lons.append(lon)
+            except Exception as e:
+                print(f"    ⚠️ Error converting {name}: {e}")
+    
+    # Center map on all paths combined
+    if all_lats and all_lons:
+        mid_lat = np.mean(all_lats)
+        mid_lon = np.mean(all_lons)
+    else:
+        mid_lat, mid_lon = 55.7858, 12.5215
+    
+    print(f"  Map centered at: ({mid_lat:.5f}, {mid_lon:.5f})")
+    
+    # Create base map
+    m = folium.Map(location=[mid_lat, mid_lon], zoom_start=15, tiles='OpenStreetMap')
+    
+    # Add DTU buildings WMS layer
+    folium.WmsTileLayer(
+        url="https://casgis.azurewebsites.net/geoserver/dtu/wms",
+        name='DTU Buildings',
+        layers='dtu:llyn_bygning_dtu',
+        fmt='image/png',
+        transparent=True,
+        version='1.1.1',
+        attr='GeoServer DTU',
+        overlay=True,
+        control=True
+    ).add_to(m)
+    
+    # ========== ADD NETWORKX PATHS (red) ==========
+    print("  Adding NetworkX paths (red)...")
+    for name, (latlon, cost) in nx_paths_latlon.items():
+        folium.PolyLine(
+            locations=latlon,
+            color=nx_colors.get(name, 'red'),
+            weight=4,
+            opacity=0.7,
+            tooltip=f"{name}: {cost:.1f} m",
+            popup=f"{name}<br>Distance: {cost:.1f}m<br>Nodes: {len(latlon)}"
+        ).add_to(m)
+        print(f"    ✅ Added {name}")
+    
+    # ========== ADD ADJACENCYLIST PATHS (blue) ==========
+    print("  Adding AdjacencyList paths (blue)...")
+    for name, (latlon, cost) in adj_paths_latlon.items():
+        folium.PolyLine(
+            locations=latlon,
+            color=adj_colors.get(name, 'blue'),
+            weight=3,
+            opacity=0.6,
+            tooltip=f"{name}: {cost:.1f} m",
+            popup=f"{name}<br>Distance: {cost:.1f}m<br>Nodes: {len(latlon)}"
+        ).add_to(m)
+        print(f"    ✅ Added {name}")
+    
+    # ========== ADD MARKERS ==========
+    # NetworkX markers (already in lat/lon)
+    if source_nx is not None:
+        try:
+            start_point = gpd.GeoDataFrame(
+                [{'node': source_nx, 'geometry': Point(G_nx.nodes[source_nx]['x'], G_nx.nodes[source_nx]['y'])}],
+                crs=source_crs
+            ).to_crs("EPSG:4326")
+            start_lat, start_lon = start_point.geometry.y.iloc[0], start_point.geometry.x.iloc[0]
+            folium.Marker(
+                location=[start_lat, start_lon],
+                popup=f"Start (NetworkX node {source_nx})",
+                icon=folium.Icon(color='green', icon='play')
+            ).add_to(m)
+        except:
+            pass
+    
+    if target_nx is not None:
+        try:
+            end_point = gpd.GeoDataFrame(
+                [{'node': target_nx, 'geometry': Point(G_nx.nodes[target_nx]['x'], G_nx.nodes[target_nx]['y'])}],
+                crs=source_crs
+            ).to_crs("EPSG:4326")
+            end_lat, end_lon = end_point.geometry.y.iloc[0], end_point.geometry.x.iloc[0]
+            folium.Marker(
+                location=[end_lat, end_lon],
+                popup=f"End (NetworkX node {target_nx})",
+                icon=folium.Icon(color='red', icon='stop')
+            ).add_to(m)
+        except:
+            pass
+    
+    # AdjacencyList markers (convert from UTM)
+    if source_adj is not None:
+        try:
+            src_gdf = gpd.GeoDataFrame(geometry=[Point(source_adj[0], source_adj[1])], crs=source_crs)
+            src_gdf = src_gdf.to_crs("EPSG:4326")
+            src_lat, src_lon = src_gdf.geometry.y.iloc[0], src_gdf.geometry.x.iloc[0]
+            folium.Marker(
+                location=[src_lat, src_lon],
+                popup=f"Start (AdjacencyList)",
+                icon=folium.Icon(color='lightgreen', icon='info-sign')
+            ).add_to(m)
+        except:
+            pass
+    
+    if target_adj is not None:
+        try:
+            tgt_gdf = gpd.GeoDataFrame(geometry=[Point(target_adj[0], target_adj[1])], crs=source_crs)
+            tgt_gdf = tgt_gdf.to_crs("EPSG:4326")
+            tgt_lat, tgt_lon = tgt_gdf.geometry.y.iloc[0], tgt_gdf.geometry.x.iloc[0]
+            folium.Marker(
+                location=[tgt_lat, tgt_lon],
+                popup=f"End (AdjacencyList)",
+                icon=folium.Icon(color='lightred', icon='info-sign')
+            ).add_to(m)
+        except:
+            pass
+    
+    # Add legend
+    legend_html = '''
+    <div style="position: fixed; bottom: 50px; right: 50px; z-index: 1000; background-color: white; padding: 10px; border: 2px solid grey; border-radius: 5px; font-size: 12px;">
+        <strong>Legend</strong><br>
+        <span style="color: red;">■</span> NetworkX Algorithms<br>
+        <span style="color: blue;">■</span> AdjacencyList Algorithms<br>
+        <hr>
+        <span style="color: green;">●</span> Start (NetworkX)<br>
+        <span style="color: red;">●</span> End (NetworkX)<br>
+        <span style="color: lightgreen;">●</span> Start (AdjacencyList)<br>
+        <span style="color: lightred;">●</span> End (AdjacencyList)
+    </div>
+    '''
+    m.get_root().html.add_child(folium.Element(legend_html))
+    
+    folium.LayerControl().add_to(m)
+    
+    # Save map
+    m.save(filepath)
+    map_time = time.time() - map_start
+    print(f"  ✅ Comprehensive comparison map saved to '{filepath}' ({map_time:.2f} seconds)")
+    
+    return m
