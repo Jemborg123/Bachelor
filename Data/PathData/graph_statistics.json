@@ -1,0 +1,11 @@
+{
+  "networkx": {
+    "nodes": 9394,
+    "edges": 32085
+  },
+  "adjacencylist": {
+    "nodes": 10339,
+    "edges": 35947
+  },
+  "edge_ratio": 1.120367773102696
+}

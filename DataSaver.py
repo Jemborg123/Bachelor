@@ -5,7 +5,22 @@ Module for saving path data and statistics to files.
 import json
 import csv
 import os
-import math
+import numpy as np
+
+
+def convert_to_serializable(obj):
+    """Convert NumPy types to Python native types for JSON serialization."""
+    if isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {key: convert_to_serializable(value) for key, value in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [convert_to_serializable(item) for item in obj]
+    return obj
 
 
 def save_path_data_to_files(G_nx, nx_results, adj_results, source_nx, target_nx, source_adj, target_adj):
@@ -21,8 +36,8 @@ def save_path_data_to_files(G_nx, nx_results, adj_results, source_nx, target_nx,
     json_data = {
         'source_target': {
             'networkx': {
-                'source': source_nx,
-                'target': target_nx,
+                'source': convert_to_serializable(source_nx),
+                'target': convert_to_serializable(target_nx),
                 'source_coords': None,
                 'target_coords': None
             },
@@ -33,8 +48,8 @@ def save_path_data_to_files(G_nx, nx_results, adj_results, source_nx, target_nx,
         },
         'graph_statistics': {
             'networkx': {
-                'nodes': G_nx.number_of_nodes(),
-                'edges': G_nx.number_of_edges()
+                'nodes': int(G_nx.number_of_nodes()),
+                'edges': int(G_nx.number_of_edges())
             }
         },
         'algorithms': {}
@@ -43,13 +58,13 @@ def save_path_data_to_files(G_nx, nx_results, adj_results, source_nx, target_nx,
     # Get NetworkX source/target coordinates
     if source_nx is not None and 'x' in G_nx.nodes[source_nx]:
         json_data['source_target']['networkx']['source_coords'] = [
-            G_nx.nodes[source_nx]['x'],
-            G_nx.nodes[source_nx]['y']
+            float(G_nx.nodes[source_nx]['x']),
+            float(G_nx.nodes[source_nx]['y'])
         ]
     if target_nx is not None and 'x' in G_nx.nodes[target_nx]:
         json_data['source_target']['networkx']['target_coords'] = [
-            G_nx.nodes[target_nx]['x'],
-            G_nx.nodes[target_nx]['y']
+            float(G_nx.nodes[target_nx]['x']),
+            float(G_nx.nodes[target_nx]['y'])
         ]
     
     # Add NetworkX results
@@ -58,30 +73,33 @@ def save_path_data_to_files(G_nx, nx_results, adj_results, source_nx, target_nx,
         coords = []
         for node in path:
             if 'x' in G_nx.nodes[node] and 'y' in G_nx.nodes[node]:
-                coords.append([G_nx.nodes[node]['x'], G_nx.nodes[node]['y']])
+                coords.append([
+                    float(G_nx.nodes[node]['x']),
+                    float(G_nx.nodes[node]['y'])
+                ])
         
         json_data['algorithms'][f'NetworkX_{name}'] = {
-            'path_nodes': path,
+            'path_nodes': convert_to_serializable(path),
             'path_coordinates': coords,
-            'cost': cost,
-            'nodes_visited': stats['nodes_visited'],
-            'edges_relaxed': stats['edges_relaxed'],
-            'heap_operations': stats['heap_operations'],
-            'time_ms': stats.get('time_ms', 0)
+            'cost': float(cost) if cost != float('inf') else None,
+            'nodes_visited': int(stats['nodes_visited']),
+            'edges_relaxed': int(stats['edges_relaxed']),
+            'heap_operations': int(stats['heap_operations']),
+            'time_ms': float(stats.get('time_ms', 0))
         }
     
     # Add AdjacencyList results
     for name, (path, cost, stats) in adj_results.items():
         # Path nodes are already coordinates
-        coords = [[node[0], node[1]] for node in path] if path else []
+        coords = [[float(node[0]), float(node[1])] for node in path] if path else []
         
         json_data['algorithms'][f'AdjacencyList_{name}'] = {
             'path_coordinates': coords,
-            'cost': cost,
-            'nodes_visited': stats['nodes_visited'],
-            'edges_relaxed': stats['edges_relaxed'],
-            'heap_operations': stats['heap_operations'],
-            'time_ms': stats.get('time_ms', 0)
+            'cost': float(cost) if cost != float('inf') else None,
+            'nodes_visited': int(stats['nodes_visited']),
+            'edges_relaxed': int(stats['edges_relaxed']),
+            'heap_operations': int(stats['heap_operations']),
+            'time_ms': float(stats.get('time_ms', 0))
         }
     
     # Save JSON
@@ -99,14 +117,14 @@ def save_path_data_to_files(G_nx, nx_results, adj_results, source_nx, target_nx,
         
         for name, (path, cost, stats) in nx_results.items():
             writer.writerow([
-                name, 'NetworkX', len(path), f"{cost:.2f}",
+                name, 'NetworkX', len(path), f"{cost:.2f}" if cost != float('inf') else 'inf',
                 stats['nodes_visited'], stats['edges_relaxed'],
                 stats['heap_operations'], f"{stats.get('time_ms', 0):.3f}"
             ])
         
         for name, (path, cost, stats) in adj_results.items():
             writer.writerow([
-                name, 'AdjacencyList', len(path), f"{cost:.2f}",
+                name, 'AdjacencyList', len(path), f"{cost:.2f}" if cost != float('inf') else 'inf',
                 stats['nodes_visited'], stats['edges_relaxed'],
                 stats['heap_operations'], f"{stats.get('time_ms', 0):.3f}"
             ])
@@ -155,18 +173,18 @@ def save_graph_statistics(G_nx, adj_list, nx_nodes, nx_edges, adj_nodes, adj_edg
     
     stats = {
         'networkx': {
-            'nodes': nx_nodes,
-            'edges': nx_edges
+            'nodes': int(nx_nodes),
+            'edges': int(nx_edges)
         },
         'adjacencylist': {
-            'nodes': adj_nodes,
-            'edges': adj_edges
+            'nodes': int(adj_nodes),
+            'edges': int(adj_edges)
         },
-        'edge_ratio': adj_edges / nx_edges if nx_edges > 0 else 0
+        'edge_ratio': float(adj_edges / nx_edges) if nx_edges > 0 else 0
     }
     
     filepath = "Data/PathData/graph_statistics.json"
     with open(filepath, 'w') as f:
         json.dump(stats, f, indent=2)
     
-    print(f"  ✅ Graph statistics saved to '{filepath}'") 
+    print(f"  ✅ Graph statistics saved to '{filepath}'")

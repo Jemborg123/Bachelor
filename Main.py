@@ -371,7 +371,7 @@ def costFromSquaredPath(path, adj_list:AdjacencyList):
         node = path[i]
         nextnode = path[i+1]
         if node in adj_list.keys():
-            print("node",node,"in path getting neighbours")
+            # print("node",node,"in path getting neighbours")
             nodeneighbours:LinkedList = adj_list.neighbors(node)
         else:
             print("node not in adj list")
@@ -383,12 +383,12 @@ def costFromSquaredPath(path, adj_list:AdjacencyList):
             dx = abs(x - nextnode[0])
             dy = abs(y - nextnode[1])
             if dx<=1 and dy<=1: 
-                print(nextnode,"is a neighbour, getting distance")
-                print(dist)
+                # print(nextnode,"is a neighbour, getting distance")
+                # print(dist)
                 cDistance = cDistance + math.sqrt(dist)
                 break
             focusNode = focusNode.next
-        print("cummulative distance is now",cDistance)
+        # print("cummulative distance is now",cDistance)
     
     return cDistance
 
@@ -497,11 +497,11 @@ def main():
     adj_results['ALT (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_alt.html")
 
-    print("\n🔍 DEBUG: AdjacencyList results before map creation:")
-    for name, (path, cost, stats) in adj_results.items():
-        print(f"  {name}: path length={len(path) if path else 0}, cost={cost}")
-        if path and len(path) > 0:
-            print(f"    First node: {path[0]}, type: {type(path[0])}")
+    # print("\n🔍 DEBUG: AdjacencyList results before map creation:")
+    # for name, (path, cost, stats) in adj_results.items():
+    #     print(f"  {name}: path length={len(path) if path else 0}, cost={cost}")
+    #     if path and len(path) > 0:
+    #         print(f"    First node: {path[0]}, type: {type(path[0])}")
     
     create_comprehensive_comparison_map(
         G_nx, adj_list,

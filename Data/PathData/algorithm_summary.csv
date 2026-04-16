@@ -1,0 +1,9 @@
+Algorithm,Type,Path Length (nodes),Distance (m),Nodes Visited,Edges Relaxed,Heap Operations,Time (ms)
+Dijkstra,NetworkX,28,326.50,760,6197,2255,17.161
+A*,NetworkX,28,326.50,161,728,630,4.259
+Bidirectional A*,NetworkX,29,329.58,153,708,604,2.011
+ALT,NetworkX,34,588.75,360,1823,1168,32.500
+Dijkstra (Adj),AdjacencyList,50,314.93,619,4495,2383,24.853
+A* (Adj),AdjacencyList,50,47.78,529,1726,2014,18.101
+Bidirectional A* (Adj),AdjacencyList,50,47.78,374,1249,1473,3.956
+ALT (Adj),AdjacencyList,50,47.78,539,1761,2110,242.786
