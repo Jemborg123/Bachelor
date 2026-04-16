@@ -1,0 +1,36 @@
+{
+  "source_target": {
+    "networkx": {
+      "source": 5583,
+      "target": 1749,
+      "source_coords": [
+        648055.9846461533,
+        1184963.0643401097
+      ],
+      "target_coords": [
+        647964.8706183725,
+        1184735.501621475
+      ]
+    },
+    "adjacencylist": {
+      "source": [
+        648055.87852821,
+        1184963.289062215
+      ],
+      "target": [
+        647965.9146997,
+        1184737.92028442
+      ]
+    }
+  },
+  "graph_statistics": {
+    "networkx": {
+      "nodes": 9394,
+      "edges": 32085
+    }
+  },
+  "algorithms": {
+    "NetworkX_Dijkstra": {
+      "path_nodes": [
+        5583,
+        

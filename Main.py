@@ -13,6 +13,7 @@ import networkx as nx
 # Import your modules
 from MapVisuals import create_path_map, create_comprehensive_comparison_map
 from Data.utils import load_adjacency_list
+from DataSaver import save_path_data_to_files, save_graph_statistics
 
 from Algorithms import (
     dijkstra_nx,
@@ -479,6 +480,15 @@ def main():
         source_adj, target_adj,
         "comprehensive_comparison.html"
     )
+
+    # ========== SAVE PATH DATA TO FILES ==========
+    save_path_data_to_files(
+        G_nx, nx_results, adj_results,
+        source_nx, target_nx,
+        source_adj, target_adj
+    )
+    
+    save_graph_statistics(G_nx, adj_list, nx_nodes, nx_edges, adj_nodes, adj_edges)
 
     # ========== SUMMARY ==========
     print("\n" + "=" * 80)
