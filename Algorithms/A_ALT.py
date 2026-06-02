@@ -8,14 +8,14 @@ import heapq
 import random
 import time
 
-def select_landmarks_adj(adj_list, num_landmarks=16, strategy='random'):
+def select_landmarks_adj(adj_list, num_landmarks=16, strategy='perimeter'):
     """
-    Select landmarks from adjacency list.
+    Select landmarks evenly spaced around the perimeter of DTU campus.
     
     Args:
         adj_list: AdjacencyList object
         num_landmarks: Number of landmarks to select
-        strategy: 'random' or 'degree'
+        strategy: 'perimeter' (ignored, kept for compatibility)
     
     Returns:
         List of landmark nodes (tuples of coordinates)
@@ -23,27 +23,71 @@ def select_landmarks_adj(adj_list, num_landmarks=16, strategy='random'):
     nodes = list(adj_list.keys())
     num_landmarks = min(num_landmarks, len(nodes))
     
-    if strategy == 'random':
-        return random.sample(nodes, num_landmarks)
+    # Find bounding box of all nodes
+    min_x = min_y = float('inf')
+    max_x = max_y = float('-inf')
     
-    elif strategy == 'degree':
-        # Count degree for each node
-        degrees = []
-        for node in nodes:
-            neighbors = adj_list.neighbors(node)
-            degree = 0
-            if neighbors:
-                current = neighbors.head
-                while current:
-                    degree += 1
-                    current = current.next
-            degrees.append((node, degree))
-        
-        # Sort by degree (highest first)
-        degrees.sort(key=lambda x: x[1], reverse=True)
-        return [node for node, _ in degrees[:num_landmarks]]
+    for node in nodes:
+        x, y = node[0], node[1]
+        min_x = min(min_x, x)
+        min_y = min(min_y, y)
+        max_x = max(max_x, x)
+        max_y = max(max_y, y)
     
-    return random.sample(nodes, num_landmarks)
+    print(f"  Campus bounding box: x=[{min_x:.0f}, {max_x:.0f}], y=[{min_y:.0f}, {max_y:.0f}]")
+    
+    # Generate perimeter points (corners + evenly spaced along edges)
+    perimeter_points = []
+    
+    # Number of points per side (roughly equal distribution)
+    points_per_side = max(1, num_landmarks // 4)
+    
+    # Top edge (y = max_y)
+    for i in range(points_per_side):
+        t = i / (points_per_side - 1) if points_per_side > 1 else 0.5
+        x = min_x + t * (max_x - min_x)
+        perimeter_points.append((x, max_y))
+    
+    # Right edge (x = max_x) - skip first point (top-right corner already added)
+    for i in range(1, points_per_side):
+        t = i / (points_per_side - 1) if points_per_side > 1 else 0.5
+        y = max_y - t * (max_y - min_y)
+        perimeter_points.append((max_x, y))
+    
+    # Bottom edge (y = min_y) - skip first point (bottom-right corner already added)
+    for i in range(1, points_per_side):
+        t = i / (points_per_side - 1) if points_per_side > 1 else 0.5
+        x = max_x - t * (max_x - min_x)
+        perimeter_points.append((x, min_y))
+    
+    # Left edge (x = min_x) - skip first and last points (corners already added)
+    for i in range(1, points_per_side - 1):
+        t = i / (points_per_side - 1) if points_per_side > 1 else 0.5
+        y = min_y + t * (max_y - min_y)
+        perimeter_points.append((min_x, y))
+    
+    # Trim to exact number
+    perimeter_points = perimeter_points[:num_landmarks]
+    
+    # Find closest actual nodes to these perimeter points
+    landmark_nodes = []
+    for px, py in perimeter_points:
+        # Find node with minimum Euclidean distance to target point
+        closest_node = min(nodes, key=lambda n: (n[0] - px)**2 + (n[1] - py)**2)
+        if closest_node not in landmark_nodes:
+            landmark_nodes.append(closest_node)
+    
+    # If we need more landmarks, add the farthest nodes from existing landmarks
+    if len(landmark_nodes) < num_landmarks:
+        remaining = [n for n in nodes if n not in landmark_nodes]
+        # Add remaining nodes in order of distance from existing landmarks
+        while len(landmark_nodes) < num_landmarks and remaining:
+            farthest = max(remaining, key=lambda n: min((n[0] - lm[0])**2 + (n[1] - lm[1])**2 for lm in landmark_nodes))
+            landmark_nodes.append(farthest)
+            remaining.remove(farthest)
+    
+    print(f"  Selected {len(landmark_nodes)} perimeter landmarks")
+    return landmark_nodes[:num_landmarks]
 
 
 def precompute_landmark_distances_adj(adj_list, landmarks, max_distance=2000):

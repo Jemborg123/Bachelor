@@ -7,122 +7,70 @@ import heapq
 import random
 import time
 
-def select_landmarks(graph, num_landmarks=16, strategy='farthest'):
+def select_landmarks(graph, num_landmarks=16, strategy='perimeter'):
     """
-    Select landmarks using farthest-first strategy.
-    
-    Args:
-        graph: NetworkX graph
-        num_landmarks: Number of landmarks to select
-        strategy: 'random', 'farthest', or 'perimeter'
-    
-    Returns:
-        List of landmark node IDs
+    Select landmarks evenly spaced around the perimeter of DTU campus.
     """
     nodes = list(graph.nodes())
     
-    if strategy == 'random':
+    # Check if coordinates are available
+    if 'x' not in graph.nodes[nodes[0]]:
+        print("  ⚠️ No coordinates found, using random selection")
         return random.sample(nodes, min(num_landmarks, len(nodes)))
     
-    elif strategy == 'farthest':
-        if len(nodes) == 0:
-            return []
-        
-        # Start with random node
-        landmarks = [random.choice(nodes)]
-        
-        while len(landmarks) < num_landmarks and len(landmarks) < len(nodes):
-            max_min_dist = -1
-            farthest_node = None
-            
-            # For each candidate node
-            for node in nodes:
-                if node in landmarks:
-                    continue
-                
-                # Find minimum distance to any landmark
-                min_dist = float('inf')
-                for landmark in landmarks:
-                    # Run Dijkstra to get exact distance
-                    dist = _dijkstra_distance(graph, node, landmark)
-                    if dist < min_dist:
-                        min_dist = dist
-                
-                # Keep node with largest minimum distance
-                if min_dist > max_min_dist:
-                    max_min_dist = min_dist
-                    farthest_node = node
-            
-            if farthest_node is not None:
-                landmarks.append(farthest_node)
-            else:
-                break
-        
-        return landmarks
+    # Find bounding box
+    min_x = min_y = float('inf')
+    max_x = max_y = float('-inf')
     
-    elif strategy == 'perimeter':
-        # Select nodes at extremes if coordinates available
-        if 'x' not in graph.nodes[list(graph.nodes())[0]]:
-            return select_landmarks(graph, num_landmarks, 'farthest')
-        
-        # Find min/max coordinates
-        min_x = min_y = float('inf')
-        max_x = max_y = float('-inf')
-        
-        for node in nodes:
-            x = graph.nodes[node].get('x', 0)
-            y = graph.nodes[node].get('y', 0)
-            min_x = min(min_x, x)
-            min_y = min(min_y, y)
-            max_x = max(max_x, x)
-            max_y = max(max_y, y)
-        
-        # Find nodes near corners
-        landmarks = []
-        targets = [(min_x, min_y), (min_x, max_y), (max_x, min_y), (max_x, max_y)]
-        
-        for tx, ty in targets:
-            best_node = None
-            best_dist = float('inf')
-            for node in nodes:
-                x = graph.nodes[node].get('x', 0)
-                y = graph.nodes[node].get('y', 0)
-                dist = math.sqrt((x - tx)**2 + (y - ty)**2)
-                if dist < best_dist:
-                    best_dist = dist
-                    best_node = node
-            if best_node and best_node not in landmarks:
-                landmarks.append(best_node)
-        
-        # Fill remaining with farthest
-        while len(landmarks) < num_landmarks:
-            remaining = [n for n in nodes if n not in landmarks]
-            if not remaining:
-                break
-            
-            # Find farthest from current landmarks
-            farthest = None
-            max_dist = -1
-            for node in remaining:
-                min_dist = float('inf')
-                for lm in landmarks:
-                    dx = graph.nodes[node].get('x', 0) - graph.nodes[lm].get('x', 0)
-                    dy = graph.nodes[node].get('y', 0) - graph.nodes[lm].get('y', 0)
-                    dist = math.sqrt(dx*dx + dy*dy)
-                    if dist < min_dist:
-                        min_dist = dist
-                if min_dist > max_dist:
-                    max_dist = min_dist
-                    farthest = node
-            
-            if farthest:
-                landmarks.append(farthest)
-            else:
-                break
-        
-        return landmarks
+    for node in nodes:
+        x = graph.nodes[node].get('x', 0)
+        y = graph.nodes[node].get('y', 0)
+        min_x = min(min_x, x)
+        min_y = min(min_y, y)
+        max_x = max(max_x, x)
+        max_y = max(max_y, y)
     
-    return []
+    print(f"  Campus bounding box: ({min_x:.0f}, {min_y:.0f}) to ({max_x:.0f}, {max_y:.0f})")
+    
+    # Generate perimeter points (corners + evenly spaced along edges)
+    perimeter_points = []
+    
+    # Top edge (y = max_y)
+    for i in range(num_landmarks // 4 + 1):
+        t = i / (num_landmarks // 4)
+        x = min_x + t * (max_x - min_x)
+        perimeter_points.append((x, max_y))
+    
+    # Right edge (x = max_x)
+    for i in range(1, num_landmarks // 4 + 1):
+        t = i / (num_landmarks // 4)
+        y = max_y - t * (max_y - min_y)
+        perimeter_points.append((max_x, y))
+    
+    # Bottom edge (y = min_y)
+    for i in range(1, num_landmarks // 4 + 1):
+        t = i / (num_landmarks // 4)
+        x = max_x - t * (max_x - min_x)
+        perimeter_points.append((x, min_y))
+    
+    # Left edge (x = min_x)
+    for i in range(1, num_landmarks // 4):
+        t = i / (num_landmarks // 4)
+        y = min_y + t * (max_y - min_y)
+        perimeter_points.append((min_x, y))
+    
+    # Trim to exact number
+    perimeter_points = perimeter_points[:num_landmarks]
+    
+    # Find closest actual nodes
+    landmark_nodes = []
+    for px, py in perimeter_points:
+        closest = min(nodes, key=lambda n: (graph.nodes[n]['x'] - px)**2 + (graph.nodes[n]['y'] - py)**2)
+        if closest not in landmark_nodes:
+            landmark_nodes.append(closest)
+    
+    print(f"  Selected {len(landmark_nodes)} perimeter landmarks")
+    return landmark_nodes[:num_landmarks]
 
 
 def _dijkstra_distance(graph, source, target):
