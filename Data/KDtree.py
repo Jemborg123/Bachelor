@@ -1,4 +1,4 @@
-from Data.utils import simpleDistance, Heap
+from Data.utils import euclideanDistance, Heap
 from Data.Obstacle_algebra.spatial_intersection import check_edge_intersects
 
 class KDtreeNode():
@@ -51,7 +51,7 @@ def KNN_KDtree(tree: KDtreeNode,point,k):
 def KNNsearch(tree: KDtreeNode, point,KNN: Heap, k):
     if tree is None : return
 
-    distance = simpleDistance(tree.coords,point)
+    distance = euclideanDistance(tree.coords,point)
 
     if len(KNN)<k:
         KNN.add((distance, tree.coords))
@@ -75,7 +75,7 @@ def radiusSearch(tree: KDtreeNode, point, eps, result=None):
     if result is None: result = []
     if tree is None: return result
 
-    dist = simpleDistance(tree.coords, point)
+    dist = euclideanDistance(tree.coords, point)
     if dist <= eps and tree.coords[0] != point[0] and tree.coords[1] != point[1]:
         result.append((tree.coords, dist))
 
@@ -123,7 +123,7 @@ def KNNsearch_obstacles(tree: KDtreeNode, point, k, KNN: Heap, polygons, spatial
         if diff**2 < worst:
             KNNsearch_obstacles(furthest, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size, blockedPoints, graph, seed)
 
-    distance = simpleDistance(tree.coords, point)
+    distance = euclideanDistance(tree.coords, point)
     p = tuple(point)
     neighbours: set = graph.get(p)
     already_found = (distance,tree.coords) in neighbours

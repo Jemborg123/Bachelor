@@ -12,7 +12,7 @@ import networkx as nx
 
 # Import your modules
 from MapVisuals import create_path_map, create_comprehensive_comparison_map
-from Data.utils import load_adjacency_list
+from Data.utils import load_adjacency_list, euclideanDistance
 from DataSaver import save_path_data_to_files, save_graph_statistics
 
 from Algorithms import (
@@ -392,45 +392,7 @@ def costFromSquaredPath(path, adj_list:AdjacencyList):
     
     return cDistance
 
-def main():
-    print("=" * 80)
-    print("ALGORITHM COMPARISON: NetworkX vs AdjacencyList")
-    print("=" * 80)
-    
-    # Load both representations
-    # G_nx = load_nx_graph()
-    # adj_list, _, _ = load_adjacency_graph()
-    G_nx, nx_nodes, nx_edges = load_nx_graph()
-    adj_list, adj_nodes, adj_edges = load_adjacency_graph()
-    
-    # Get matching nodes
-    # nx_pair, adj_pair = select_same_points(adj_list, G_nx)
-    nx_pair, adj_pair = select_identical_points(adj_list, G_nx)
-
-    if nx_pair is None or adj_pair is None:
-        # print("❌ Could not find matching nodes! Trying closest match...")
-        nx_pair, adj_pair = select_same_points(adj_list, G_nx)
-    
-    if nx_pair is None or adj_pair is None:
-        # print("❌ Failed to get matching nodes. Exiting.")
-        return
-    
-    source_nx, target_nx = nx_pair
-    source_adj, target_adj = adj_pair
-    
-    print(f"\n🎯 SAME test pair for both representations:")
-    print(f"  NetworkX: node {source_nx} → node {target_nx}")
-    print(f"    Coordinates: ({G_nx.nodes[source_nx]['x']:.2f}, {G_nx.nodes[source_nx]['y']:.2f}) → ({G_nx.nodes[target_nx]['x']:.2f}, {G_nx.nodes[target_nx]['y']:.2f})")
-    print(f"  AdjacencyList: {source_adj} → {target_adj}")
-
-    # Calculate distance between chosen points
-    import math
-    dx = source_adj[0] - target_adj[0]
-    dy = source_adj[1] - target_adj[1]
-    direct_dist = math.sqrt(dx*dx + dy*dy)
-    print(f"  Direct distance between points: {direct_dist:.0f}m")
-    
-    # ========== NETWORKX ALGORITHMS ==========
+def nxAlgorithms(G_nx, source_nx, target_nx):
     print("\n" + "=" * 80)
     print("RUNNING NETWORKX ALGORITHMS")
     print("=" * 80)
@@ -472,8 +434,10 @@ def main():
     nx_results['ALT'] = (path, cost, stats)
     if path and len(path) > 0:
         create_path_map(G_nx, path, cost, source_nx, target_nx, "nx_alt.html")
-    
-    # ========== ADJACENCYLIST ALGORITHMS ==========
+
+    return nx_results
+
+def adjAlgorithms(adj_list,source_adj,target_adj):
     print("\n" + "=" * 80)
     print("RUNNING ADJACENCYLIST ALGORITHMS")
     print("=" * 80)
@@ -505,25 +469,10 @@ def main():
     #     print(f"  {name}: path length={len(path) if path else 0}, cost={cost}")
     #     if path and len(path) > 0:
     #         print(f"    First node: {path[0]}, type: {type(path[0])}")
-    
-    create_comprehensive_comparison_map(
-        G_nx, adj_list,
-        nx_results, adj_results,
-        source_nx, target_nx,
-        source_adj, target_adj,
-        "comprehensive_comparison.html"
-    )
 
-    # ========== SAVE PATH DATA TO FILES ==========
-    save_path_data_to_files(
-        G_nx, nx_results, adj_results,
-        source_nx, target_nx,
-        source_adj, target_adj
-    )
-    
-    save_graph_statistics(G_nx, adj_list, nx_nodes, nx_edges, adj_nodes, adj_edges)
+    return adj_results
 
-    # ========== SUMMARY ==========
+def comparisonSummary(nx_nodes,nx_edges,nx_results,adj_nodes,adj_edges,adj_results):
     print("\n" + "=" * 80)
     print("PERFORMANCE SUMMARY")
     print("=" * 80)
@@ -544,8 +493,72 @@ def main():
     for name, (path, cost, stats) in adj_results.items():
         time_ms = f"{stats.get('time_ms', 0):.3f}"
         print(f"{name:<30} {stats['nodes_visited']:<15} {time_ms:<12} {cost:<12.1f}")
+
+def compareAlgorithms():
+    print("=" * 80)
+    print("ALGORITHM COMPARISON: NetworkX vs AdjacencyList")
+    print("=" * 80)
+    
+    # Load both representations
+    # G_nx = load_nx_graph()
+    # adj_list, _, _ = load_adjacency_graph()
+    G_nx, nx_nodes, nx_edges = load_nx_graph()
+    adj_list, adj_nodes, adj_edges = load_adjacency_graph()
+    
+    # Get matching nodes
+    # nx_pair, adj_pair = select_same_points(adj_list, G_nx)
+    nx_pair, adj_pair = select_identical_points(adj_list, G_nx)
+
+    if nx_pair is None or adj_pair is None:
+        # print("❌ Could not find matching nodes! Trying closest match...")
+        nx_pair, adj_pair = select_same_points(adj_list, G_nx)
+    
+    if nx_pair is None or adj_pair is None:
+        # print("❌ Failed to get matching nodes. Exiting.")
+        return
+    
+    source_nx, target_nx = nx_pair
+    source_adj, target_adj = adj_pair
+    
+    print(f"\n🎯 SAME test pair for both representations:")
+    print(f"  NetworkX: node {source_nx} → node {target_nx}")
+    print(f"    Coordinates: ({G_nx.nodes[source_nx]['x']:.2f}, {G_nx.nodes[source_nx]['y']:.2f}) → ({G_nx.nodes[target_nx]['x']:.2f}, {G_nx.nodes[target_nx]['y']:.2f})")
+    print(f"  AdjacencyList: {source_adj} → {target_adj}")
+
+    # Calculate distance between chosen points
+    direct_dist = euclideanDistance(source_adj,target_adj)
+    print(f"  Direct distance between points: {direct_dist:.0f}m")
+    
+    # ========== NETWORKX ALGORITHMS ==========
+    nx_results = nxAlgorithms(G_nx,source_nx,target_nx)
+    
+    # ========== ADJACENCYLIST ALGORITHMS ==========
+    adj_results = adjAlgorithms(adj_list,source_adj,target_adj)
+    
+    create_comprehensive_comparison_map(
+        G_nx, adj_list,
+        nx_results, adj_results,
+        source_nx, target_nx,
+        source_adj, target_adj,
+        "comprehensive_comparison.html"
+    )
+
+    # ========== SAVE PATH DATA TO FILES ==========
+    save_path_data_to_files(
+        G_nx, nx_results, adj_results,
+        source_nx, target_nx,
+        source_adj, target_adj
+    )
+    
+    save_graph_statistics(G_nx, adj_list, nx_nodes, nx_edges, adj_nodes, adj_edges)
+
+    # ========== SUMMARY ==========
+    comparisonSummary(nx_nodes,nx_edges,nx_results,adj_nodes,adj_edges,adj_results)
     
     print("\n✅ Comparison complete! Maps saved to 'Maps/' folder")
+
+def main():
+    compareAlgorithms()
 
 
 if __name__ == "__main__":

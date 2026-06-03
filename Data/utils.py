@@ -1,4 +1,4 @@
-from math import floor
+from math import floor,sqrt
 import os
 import matplotlib.pyplot as plt
 import json
@@ -26,10 +26,10 @@ def _are_equal(a, b):
         except:
             return False
 
-def simpleDistance(p1, p2):
+def euclideanDistance(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
-    return (x1-x2)**2 + (y1-y2)**2
+    return sqrt((x1-x2)**2 + (y1-y2)**2)
 
 def minmaxxy(points):
     x0,y0 =points[0]
