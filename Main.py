@@ -9,10 +9,11 @@ import random
 import time
 import os
 import networkx as nx
+import sys
 
 # Import your modules
 from MapVisuals import create_path_map, create_comprehensive_comparison_map
-from Data.utils import load_adjacency_list, euclideanDistance
+from Data.utils import load_adjacency_list, euclideanDistance, loadPointsDataFromFile
 from DataSaver import save_path_data_to_files, save_graph_statistics
 
 from Algorithms import (
@@ -207,12 +208,22 @@ def select_same_points(adj_list, G_nx, num_pairs=1):
     
     return (source_nx, target_nx), (source_adj, target_adj)
 
-def select_identical_points(adj_list, G_nx):
+def randomPointsFromAdjList(adj_list):
+    all_adj_nodes = list(adj_list.keys())
+
+    if len(all_adj_nodes) < 2:
+        print("❌ Not enough nodes in adjacency list!")
+        return None, None
+    
+    source_adj, target_adj = random.sample(all_adj_nodes, 2)
+    return (source_adj, target_adj)
+
+
+def findPointsInNXGraph(pts, G_nx):
     """Pick random points from adjacency list, find EXACT match in NetworkX."""
     
     # Get random nodes from adjacency list
-    all_adj_nodes = list(adj_list.keys())
-    source_adj, target_adj = random.sample(all_adj_nodes, 2)
+    (source_adj, target_adj) = pts
     
     # Find EXACT matching coordinates in NetworkX
     source_nx = None
@@ -243,13 +254,15 @@ def select_identical_points(adj_list, G_nx):
     
     if source_nx is None or target_nx is None:
         print("❌ Could not find exact matching nodes!")
-        return None, None
+        
+        source_nx = find_closest_nx_node(G_nx, source_adj[0], source_adj[1])
+        target_nx = find_closest_nx_node(G_nx, target_adj[0], target_adj[1])
     
     print(f"\n🎯 EXACT matching points:")
     print(f"  AdjacencyList: {source_adj} → {target_adj}")
     print(f"  NetworkX: node {source_nx} → node {target_nx}")
     
-    return (source_nx, target_nx), (source_adj, target_adj)
+    return (source_nx, target_nx)
 
 
 # if __name__ == "__main__":
@@ -494,20 +507,17 @@ def comparisonSummary(nx_nodes,nx_edges,nx_results,adj_nodes,adj_edges,adj_resul
         time_ms = f"{stats.get('time_ms', 0):.3f}"
         print(f"{name:<30} {stats['nodes_visited']:<15} {time_ms:<12} {cost:<12.1f}")
 
-def compareAlgorithms():
-    print("=" * 80)
-    print("ALGORITHM COMPARISON: NetworkX vs AdjacencyList")
-    print("=" * 80)
-    
-    # Load both representations
-    # G_nx = load_nx_graph()
-    # adj_list, _, _ = load_adjacency_graph()
-    G_nx, nx_nodes, nx_edges = load_nx_graph()
-    adj_list, adj_nodes, adj_edges = load_adjacency_graph()
-    
-    # Get matching nodes
-    # nx_pair, adj_pair = select_same_points(adj_list, G_nx)
-    nx_pair, adj_pair = select_identical_points(adj_list, G_nx)
+def select_points(adj_list, G_nx,source=None,target=None):
+    print(f"source: {source}, target: {target}")
+    if source is None or target is None:
+        print(1)
+        adj_pair = randomPointsFromAdjList(adj_list)
+    else:
+        print(2)
+        adj_pair = searchFromLabel(source,target,adj_list)
+        if adj_pair is None: print(f"couldnt find {source} or {target}")
+
+    nx_pair = findPointsInNXGraph(adj_pair, G_nx)
 
     if nx_pair is None or adj_pair is None:
         # print("❌ Could not find matching nodes! Trying closest match...")
@@ -516,7 +526,6 @@ def compareAlgorithms():
     if nx_pair is None or adj_pair is None:
         # print("❌ Failed to get matching nodes. Exiting.")
         return
-    
     source_nx, target_nx = nx_pair
     source_adj, target_adj = adj_pair
     
@@ -529,6 +538,23 @@ def compareAlgorithms():
     direct_dist = euclideanDistance(source_adj,target_adj)
     print(f"  Direct distance between points: {direct_dist:.0f}m")
     
+    return source_nx, target_nx, source_adj, target_adj
+
+def compareAlgorithms():
+    print("=" * 80)
+    print("ALGORITHM COMPARISON: NetworkX vs AdjacencyList")
+    print("=" * 80)
+    
+    # Load both representations
+    # G_nx = load_nx_graph()
+    # adj_list, _, _ = load_adjacency_graph()
+    G_nx, nx_nodes, nx_edges = load_nx_graph()
+    adj_list, adj_nodes, adj_edges = load_adjacency_graph()
+    
+    # Get matching nodes
+    if len(sys.argv)>1 and sys.argv[1] == 'search': source_nx, target_nx, source_adj, target_adj = select_points(adj_list, G_nx,source=sys.argv[2],target=sys.argv[3]) 
+    else: source_nx, target_nx, source_adj, target_adj = select_points(adj_list, G_nx)
+
     # ========== NETWORKX ALGORITHMS ==========
     nx_results = nxAlgorithms(G_nx,source_nx,target_nx)
     
@@ -557,8 +583,20 @@ def compareAlgorithms():
     
     print("\n✅ Comparison complete! Maps saved to 'Maps/' folder")
 
+def searchFromLabel(src,trgt,adj_list,i=-1,labeledPoints=None):
+    print(f"Searching route from {src} to {trgt}")
+    if labeledPoints is None:
+        labeledPoints = loadPointsDataFromFile("Data/LabeledPoints.json")
+    if i < -1*len(labeledPoints.get(src)): return
+    sx,sy =labeledPoints.get(src)[i]
+    tx,ty =labeledPoints.get(trgt)[i]
+    sp,tp = find_adj_node_by_coords(adj_list,sx,sy),find_adj_node_by_coords(adj_list,tx,ty)
+    print(f"found points {sp} from {src} and {tp} from {trgt}")
+    return (sp,tp) if sp is not None and tp is not None else searchFromLabel(src,trgt,adj_list,i=i-1,labeledPoints=labeledPoints)
+    
 def main():
     compareAlgorithms()
+    print(sys.argv)
 
 
 if __name__ == "__main__":

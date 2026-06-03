@@ -61,6 +61,19 @@ def point_to_square(point,buffer):
             square.append([x,y])
     return square
 
+def savePointsDataToFile(data,filepath):
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, 'w') as f:
+        json.dump(data, f)
+    print(f"Saved {len(data)} entries to {filepath}")
+
+def loadPointsDataFromFile(filepath):
+    if not os.path.exists(filepath):
+        return None, False
+    with open(filepath, 'r') as f:
+        raw = json.load(f)
+    return raw
+
 def save_adjacency_list(adjacency_list, filepath):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     serializable = {}
