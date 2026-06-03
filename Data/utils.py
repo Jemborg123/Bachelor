@@ -396,7 +396,7 @@ if __name__ == "__main__":
     l = Test.asList()
     print(l)
 
-def visualize_graph(adjacency_list, polygons=None):
+def visualize_graph(adjacency_list, polygons=None, labels=None):
     print("Visualizing graph with matplotlib")
     fig, ax = plt.subplots(figsize=(12, 12))
     # Draw obstacle polygons
@@ -426,7 +426,24 @@ def visualize_graph(adjacency_list, polygons=None):
     ys = [p[1] for p in adjacency_list.keys()]
     ax.scatter(xs, ys, c='blue', s=0.1, zorder=2)
 
+
+    if labels is not None:
+        draw_labels(ax,labels)
+
     ax.set_aspect('equal')
     ax.set_title(f"Graph — {adjacency_list.length()} nodes, {len(drawn_edges)} edges")
     plt.tight_layout()
     plt.show()
+
+def draw_labels(ax,labels):
+    labelPoints = labels
+    for (x, y), name in labelPoints:
+        ax.text(
+            x, y, str(name),
+            fontsize=6,
+            ha='center', va='center',
+            color='black',
+            zorder=3,                       # above the nodes (zorder=2)
+            bbox=dict(boxstyle='round,pad=0.2',
+                      fc='white', ec='none', alpha=0.7),
+        )

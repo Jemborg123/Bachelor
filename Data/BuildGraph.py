@@ -9,7 +9,7 @@ import Data.merging_techniques.grid_merge as grid_merge
 import Data.KDtree as KDtree
 import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
 from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList, Heap, visualize_graph
-
+from Database_access.loadFromDb import fetch_building_names
 
 def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
     print("script started")
@@ -19,7 +19,9 @@ def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
         polygons = loadFromDb.geodataframe_to_polygon_lists(obstacles)
         filtered_polygons = loadFromDb.remove_near_zero_polygon_outliers(polygons)
         print("succes, showing graph")
-        visualize_graph(adjacency_list,filtered_polygons)
+        labels = fetch_building_names("llyn_bygning_dtu")
+        print(assignPointsData(tree,labels))
+        visualize_graph(adjacency_list,filtered_polygons,labels)
     else:
         print("No adjacency list found at",ADJACENCY_PATH,", building graph from scratch...")
         obstacleAwareGraph(MergeType.DBSCANMERGE)
@@ -59,7 +61,11 @@ def obstacleAwareGraph(
     )
 
     save_adjacency_list(adjacency_list=adjacency_list, filepath=ADJACENCY_PATH)
-    visualize_graph(adjacency_list,polygons)
+    labels = fetch_building_names("llyn_bygning_dtu")
+    labeledpoints = assignPointsData(tree,labels)
+    for x in labeledpoints.items():
+        print(x)
+    visualize_graph(adjacency_list,polygons,labels)
 
 def obstacleIgnoringGraph(
         mergeType: MergeType, 
@@ -82,6 +88,18 @@ def obstacleIgnoringGraph(
 
     save_adjacency_list(adjacency_list=adjacency_list, filepath=ADJACENCY_PATH)
     visualize_graph(adjacency_list,polygons)
+
+def assignPointsData(tree,data):
+    labeled = {}
+    for p,d in data:
+        hits = KDtree.KNN_KDtree(tree,p,5)
+        labeled[d] = []
+        while True:
+            hit = hits.extractMax()
+            if hit is None: break
+            _,p = hit
+            labeled.get(d).extend(p)
+    return labeled
 
 def mergePoints(points,mergeType):
     match mergeType:

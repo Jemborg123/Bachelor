@@ -86,6 +86,18 @@ def fetch_gdfs_from_layer(layer):
     return gdfs
 
 # ---------------------------------------------------------------------------
+# Get label names
+# ---------------------------------------------------------------------------
+
+def fetch_building_names(layer):
+    gdf = fetch_wfs_layer(layer)
+    if gdf is None or len(gdf) == 0:
+        return []
+    pts = gdf.geometry.representative_point()
+    names = gdf["dtubygnnr"]
+    return [((p.x, p.y), name) for p, name in zip(pts, names)]
+
+# ---------------------------------------------------------------------------
 # Data cleaning
 # ---------------------------------------------------------------------------
 
