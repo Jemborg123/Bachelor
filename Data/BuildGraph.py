@@ -8,7 +8,7 @@ from Data.merging_techniques.merge_types import MergeType
 import Data.merging_techniques.grid_merge as grid_merge
 import Data.KDtree as KDtree
 import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
-from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList, Heap, visualize_graph
+from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList, Heap, visualize_graph, savePointsDataToFile
 from Database_access.loadFromDb import fetch_building_names
 
 def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
@@ -20,7 +20,6 @@ def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
         filtered_polygons = loadFromDb.remove_near_zero_polygon_outliers(polygons)
         print("succes, showing graph")
         labels = fetch_building_names("llyn_bygning_dtu")
-        print(assignPointsData(tree,labels))
         visualize_graph(adjacency_list,filtered_polygons,labels)
     else:
         print("No adjacency list found at",ADJACENCY_PATH,", building graph from scratch...")
@@ -65,6 +64,7 @@ def obstacleAwareGraph(
     labeledpoints = assignPointsData(tree,labels)
     for x in labeledpoints.items():
         print(x)
+    savePointsDataToFile(labeledpoints,"Data/LabeledPoints.json")
     visualize_graph(adjacency_list,polygons,labels)
 
 def obstacleIgnoringGraph(
@@ -98,8 +98,10 @@ def assignPointsData(tree,data):
             hit = hits.extractMax()
             if hit is None: break
             _,p = hit
-            labeled.get(d).extend(p)
+            labeled.get(d).append(p)
     return labeled
+
+
 
 def mergePoints(points,mergeType):
     match mergeType:
@@ -153,7 +155,7 @@ import io
 
 if __name__ == "__main__":
     with cProfile.Profile() as pr:
-        showGraph()
+        showGraph("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
     
     stream = io.StringIO()
     stats = pstats.Stats(pr, stream=stream)

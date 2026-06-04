@@ -586,7 +586,7 @@ def compareAlgorithms():
 def searchFromLabel(src,trgt,adj_list,i=-1,labeledPoints=None):
     print(f"Searching route from {src} to {trgt}")
     if labeledPoints is None:
-        labeledPoints = loadPointsDataFromFile("Data/LabeledPoints.json")
+        labeledPoints = loadPointsDataFromFile("Data/LabeledPointsNew.json")
     if i < -1*len(labeledPoints.get(src)): return
     sx,sy =labeledPoints.get(src)[i]
     tx,ty =labeledPoints.get(trgt)[i]

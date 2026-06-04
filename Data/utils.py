@@ -112,53 +112,38 @@ def load_adjacency_list(filepath):
     print(f"Loaded {adjacency_list.length()} nodes from {filepath}")
     return adjacency_list, True
 
-class AdjacencyList:
-    def __init__(self, vertices: list):
-        self.keyVertices = vertices.copy()
-        self.elements = {}
-        self.numedges = 0
-        for keyVertex in self.keyVertices:
-            self.elements[keyVertex] = LinkedList()
+class Queue:
+    def __init__(self, fromList=[],space = 1000):
+        self.head = 0
+        self.tail = 0
+        self.size = space
+        self.array = [None for _ in range(space)]
+        for element in fromList:
+            self.enqueue(element)
 
-    def addPoint(self, point):
-        self.elements[point] = LinkedList()
-
-    def popPoint(self, point):
-        llist = self.elements.pop(point)
-        self.numedges = self.numedges - len(llist)
-        return llist
-
-    def insertNeighbour(self, vertex, neighbour):
-        llist: LinkedList = self.elements.get(vertex)
-        self.numedges = self.numedges+1
-        return llist.append(neighbour)
-
-    def neighbors(self, vertex):
-        return self.elements.get(vertex)
+    def enqueue(self, x):
+        self.array[self.tail] = x
+        self.tail = self.tail+1
+        if self.tail>=self.size and self.head>0:
+            self.tail = 0
+        if self.array[self.tail] is not None:
+            raise Exception(f"Queue couldn't handle all elements given its size {self.space}") 
+        
+    def dequeue(self):
+        x = self.array[self.head]
+        if x is None:
+            return
+        self.array[self.head] = None
+        self.head = self.head+1
+        if self.head >= self.size:
+            self.head = 0
+        return x
     
-    def hasNeighbour(self, vertex, neighbour):
-        llist = self.neighbors(vertex)
-        return llist.has(neighbour)
-
-    def length(self):
-        return len(self.keyVertices)
+    def isEmpty(self):
+        return self.array[self.head] is None
     
-    def numEdges(self):
-        return self.numedges
-    
-    def removeNeighbour(self, vertex, neighbour):
-        llist: LinkedList = self.elements.get(vertex)
-        self.numedges = self.numedges -1
-        return llist.popVal(neighbour)
-    
-    def items(self):
-        return self.elements.items()
-
-    def keys(self):
-        return self.elements.keys()
-    
-    def get_node_by_index(self, key):
-        return self.elements.keys()[key]
+    def __len__(self):
+        return self.tail-self.head if self.tail>=self.head else self.size-self.head+self.tail+1
 
 class LinkedListNode:
         def __init__(self, value = None):
@@ -307,6 +292,57 @@ class LinkedList:
     
     def __len__(self):
         return self.n
+    
+
+class AdjacencyList:
+    def __init__(self, vertices: list):
+        self.keyVertices = vertices.copy()
+        self.elements = {}
+        self.numedges = 0
+        for keyVertex in self.keyVertices:
+            self.elements[keyVertex] = LinkedList()
+
+    def addPoint(self, point):
+        self.elements[point] = LinkedList()
+
+    def popPoint(self, point):
+        llist = self.elements.pop(point)
+        self.numedges = self.numedges - len(llist)
+        return llist
+
+    def insertNeighbour(self, vertex, neighbour):
+        llist: LinkedList = self.elements.get(vertex)
+        self.numedges = self.numedges+1
+        return llist.append(neighbour)
+
+    def neighbors(self, vertex)->LinkedList:
+        return self.elements.get(vertex)
+    
+    def hasNeighbour(self, vertex, neighbour):
+        llist = self.neighbors(vertex)
+        return llist.has(neighbour)
+
+    def length(self):
+        return len(self.keyVertices)
+    
+    def numEdges(self):
+        return self.numedges
+    
+    def removeNeighbour(self, vertex, neighbour):
+        llist: LinkedList = self.elements.get(vertex)
+        self.numedges = self.numedges -1
+        return llist.popVal(neighbour)
+    
+    def items(self):
+        return self.elements.items()
+
+    def keys(self):
+        return self.elements.keys()
+    
+    def get_node_by_index(self, idx):
+        return list(self.elements.keys())[idx]
+
+
 
 class Heap:
     def __init__(self):
