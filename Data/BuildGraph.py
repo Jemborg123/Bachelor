@@ -23,8 +23,75 @@ def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
         visualize_graph(adjacency_list,filtered_polygons,labels)
     else:
         print("No adjacency list found at",ADJACENCY_PATH,", building graph from scratch...")
-        obstacleAwareGraph(MergeType.DBSCANMERGE)
+        gridMap(ADJACENCY_PATH,5)
+        # obstacleAwareGraph(MergeType.DBSCANMERGE)
         # obstacleIgnoringGraph(MergeType.SQUAREBUCKETMERGE)
+
+def gridNeighbours(idx:int, nodes:list,n:int,debug=False)->Heap:
+    neighbours = Heap()
+    neighboursPositions = [ idx-n-1, idx-n, idx-n+1,
+                            idx -1,         idx+1,
+                            idx+n-1, idx+n, idx+n+1]
+    straightNeighbours = [1,3,4,6]
+    leftNeighbours = [0,3,5]
+    rightNeighbours = [2,4,7]
+    sqrt2 = 1.414
+    # debug = True if idx <2*n else False
+    if debug : print(f"finding neighbours for {idx}")
+    for j,i in enumerate(neighboursPositions):
+        if i<0: 
+            if debug :print(f"out of top bound at index {i}")
+            continue
+        if idx%n==0 and j in leftNeighbours: 
+            if debug :print(f"out of left bound at index {i}")
+            continue
+        if idx%n==n-1 and j in rightNeighbours: 
+            if debug :print(f"out of right bound at index {i}")
+            continue
+        if i>=len(nodes): 
+            if debug :print(f"out of bottom bound at index {i}")
+            continue
+        neighbour = nodes[i]
+        if debug :    print(f"neighbour found {neighbour}, position {i}, in relation to index {idx}, it's {j}")
+        if j in straightNeighbours: neighbours.add((1,neighbour))
+        else: neighbours.add((sqrt2,neighbour))
+
+    return neighbours
+
+def gridMap(filepath, tileSize:int):
+    obstacles = loadFromDb.fetch_obstacle_gdfs()
+    obstacles = loadFromDb.geodataframe_to_polygon_lists(obstacles)
+    obstacles = loadFromDb.remove_near_zero_polygon_outliers(obstacles)
+    xs,ys = [],[]
+    for polygon in obstacles:
+        xs.extend( [p[0] for p in polygon])
+        ys.extend( [p[1] for p in polygon])
+    minPoint = (min(xs),min(ys))
+    maxPoint = (max(xs),max(ys))
+    dx,dy = int(maxPoint[0]-minPoint[0]),int(maxPoint[1]-minPoint[1])
+    nodes =[]
+    print(f"{dx}/{tileSize}={dx/tileSize}")
+    print(f"{dy}/{tileSize}={dy/tileSize}")
+    print(f"dx: {dx}, dy:{dy}")
+    for i in range(0,dy,tileSize):
+        for j in range(0,dx,tileSize):
+            node = (minPoint[0]+j,minPoint[1]+i)
+            nodes.append(node)
+    print(f"THERE ARE {len(nodes)} NODES")
+    adjacency_list = AdjacencyList(nodes)
+    
+    neighbourFunc = lambda point: gridNeighbours(
+            nodes.index(point),nodes,1+int(dx/tileSize)
+        )
+    
+    buildAdjacencyList(adjacency_list,nodes,neighbourFunc)
+    save_adjacency_list(adjacency_list=adjacency_list, filepath=filepath)
+    
+    tree = KDtree.buildKDtree(nodes)
+    labels = fetch_building_names("llyn_bygning_dtu")
+    labeledpoints = assignPointsData(tree,labels)
+    savePointsDataToFile(labeledpoints,"Data/GridLabeledPoints.json")
+    # visualize_graph(adjacency_list,obstacles)
 
 def obstacleAwareGraph(
         mergeType: MergeType, 
@@ -155,7 +222,8 @@ import io
 
 if __name__ == "__main__":
     with cProfile.Profile() as pr:
-        showGraph("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
+        # showGraph("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
+        showGraph("Data/Data/gridMapTest.json")
     
     stream = io.StringIO()
     stats = pstats.Stats(pr, stream=stream)
