@@ -8,8 +8,9 @@ from Data.merging_techniques.merge_types import MergeType
 import Data.merging_techniques.grid_merge as grid_merge
 import Data.KDtree as KDtree
 import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
-from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList, Heap, visualize_graph, savePointsDataToFile
+from Data.utils import save_adjacency_list,load_adjacency_list,AdjacencyList,LinkedList, Heap, visualize_graph, savePointsDataToFile, euclideanDistance
 from Database_access.loadFromDb import fetch_building_names
+import Data.Obstacle_algebra.polygon_offset as polygon_offset
 
 def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
     print("script started")
@@ -23,9 +24,70 @@ def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
         visualize_graph(adjacency_list,filtered_polygons,labels)
     else:
         print("No adjacency list found at",ADJACENCY_PATH,", building graph from scratch...")
-        gridMap(ADJACENCY_PATH,5)
+        obstacleBasedMap(ADJACENCY_PATH,10)
+        # gridMap(ADJACENCY_PATH,5)
         # obstacleAwareGraph(MergeType.DBSCANMERGE)
         # obstacleIgnoringGraph(MergeType.SQUAREBUCKETMERGE)
+
+def add_road_network(adjacency_list:AdjacencyList, polylines):
+    for line in polylines:
+        for a, b in zip(line, line[1:]):
+            a, b = tuple(a), tuple(b)
+            if a == b:
+                continue
+            adjacency_list.addPoint(a)
+            adjacency_list.addPoint(b)
+            distance = euclideanDistance(a, b)
+            adjacency_list.insertNeighbour(a, (distance, b))
+            adjacency_list.insertNeighbour(b, (distance, a))
+
+def obstacleBasedMap(filepath,CELLSIZE):
+    obstacles = loadFromDb.fetch_obstacle_gdfs()
+    obstacles = loadFromDb.geodataframe_to_polygon_lists(obstacles)
+    polygons = loadFromDb.remove_near_zero_polygon_outliers(obstacles)
+    polygon_bboxes = spatial_intersection.precompute_bboxes(polygons)
+    spatial_index = spatial_intersection.build_spatial_index(polygons, cell_size=CELLSIZE)
+
+    nodes = []
+    for poly in polygons:
+        nodes.extend(polygon_offset.offset_polygon_outward(poly, 1))
+    
+    nodes = mergePoints(nodes, MergeType.DBSCANMERGE)
+
+    road = loadFromDb.fetch_gdfs_from_layer(["mobilitetsnetvaerkfodgaengercykel", "mobilitetsnetvaerkdrift", "mobilitetsnetvaerkbil"])
+    road_lines = loadFromDb.geodataframe_to_polyline_lists(road)
+    road_lines = loadFromDb.remove_near_zero_polygon_outliers(road_lines)
+
+    road_verts = loadFromDb.geodataframe_to_vertex_lists(road)
+    road_verts_cleaned =loadFromDb.remove_near_zero_point_outliers(road_verts)
+    
+    nodes = list(dict.fromkeys(tuple(p) for p in nodes))
+    
+    nodes.extend( list(dict.fromkeys(tuple(p) for p in road_verts_cleaned)))
+    
+    graph = {tuple(p): set() for p in nodes}
+    blockedPoints = {tuple(p): set() for p in nodes} #Use this to track if we already know that a point is blocked (avoid checking twice)
+    
+    tree = KDtree.buildKDtree(nodes)
+    adjacency_list = AdjacencyList(nodes)
+    neighbourFunc = lambda point: KDtree.KNN_KDtree_obstacles(
+            tree=tree, point=point, k=8,
+            polygons=polygons, spatial_index=spatial_index,
+            polygon_bboxes=polygon_bboxes, cell_size=CELLSIZE,blockedPoints = blockedPoints,
+            graph=graph
+        )
+    
+    add_road_network(adjacency_list, road_lines) 
+    buildAdjacencyList(
+        adjacency_list,
+        nodes,
+        neighbourFunc,
+        graph
+    )
+    
+    save_adjacency_list(adjacency_list=adjacency_list, filepath=filepath)
+    visualize_graph(adjacency_list,polygons)
+
 
 def gridNeighbours(idx:int, nodes:list,n:int,debug=False)->Heap:
     neighbours = Heap()
@@ -223,7 +285,7 @@ import io
 if __name__ == "__main__":
     with cProfile.Profile() as pr:
         # showGraph("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
-        showGraph("Data/Data/gridMapTest.json")
+        showGraph("Data/Data/ObbyMap.json")
     
     stream = io.StringIO()
     stats = pstats.Stats(pr, stream=stream)

@@ -61,6 +61,77 @@ def point_to_square(point,buffer):
             square.append([x,y])
     return square
 
+def subtract(a, b):
+    return (a[0] - b[0], a[1] - b[1])
+
+def segment_box(start, end, half_width):
+    direction = scaled(normalized(subtract(end, start)), half_width)
+    sideways = perpendicular(direction)
+    tail = subtract(start, direction)
+    head = add(end, direction)
+    return [
+        list(add(tail, sideways)),
+        list(add(head, sideways)),
+        list(subtract(head, sideways)),
+        list(subtract(tail, sideways)),
+    ]
+
+def segment_boxes(points, half_width):
+    boxes = []
+    for index in range(len(points) - 1):
+        start, end = points[index], points[index + 1]
+        if tuple(start) != tuple(end):
+            boxes.append(segment_box(start, end, half_width))
+    return boxes
+
+def dot(a, b):
+    return a[0] * b[0] + a[1] * b[1]
+
+def add(a, b):
+    return (a[0] + b[0], a[1] + b[1])
+
+def scaled(vector, factor):
+    return (vector[0] * factor, vector[1] * factor)
+
+def length(vector):
+    return (vector[0] ** 2 + vector[1] ** 2) ** 0.5
+
+def normalized(vector):
+    return scaled(vector, 1.0 / length(vector))
+
+def perpendicular(vector):
+    return (vector[1], -vector[0])
+
+
+def signed_area(ring):
+    total = 0.0
+    for index in range(len(ring)):
+        x1, y1 = ring[index]
+        x2, y2 = ring[(index + 1) % len(ring)]
+        total += x1 * y2 - x2 * y1
+    return total / 2.0
+
+def is_clockwise(ring):
+    return signed_area(ring) < 0
+
+def edge_vector(ring, index):
+    start = ring[index]
+    end = ring[(index + 1) % len(ring)]
+    return (end[0] - start[0], end[1] - start[1])
+
+
+def without_closing_duplicate(polygon):
+    points = list(polygon)
+    if len(points) > 1 and points[0] == points[-1]:
+        return points[:-1]
+    return points
+
+def without_zero_length_edges(points):
+    return [
+        point for index, point in enumerate(points)
+        if tuple(point) != tuple(points[index - 1])
+    ]
+
 def savePointsDataToFile(data,filepath):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, 'w') as f:
@@ -303,7 +374,8 @@ class AdjacencyList:
             self.elements[keyVertex] = LinkedList()
 
     def addPoint(self, point):
-        self.elements[point] = LinkedList()
+        if point not in self.elements:
+            self.elements[point] = LinkedList()
 
     def popPoint(self, point):
         llist = self.elements.pop(point)
