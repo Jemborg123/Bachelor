@@ -34,7 +34,7 @@ from Data.utils import AdjacencyList, LinkedList
 
 # Configuration
 GRAPH_FILE = 'Data/Old_Graph_data/walkability_graph.pkl'
-ADJACENCY_PATH = "Data/Data/Adjacency_list_ObstacleAwareGraph.json"
+ADJACENCY_PATH = "Data/Data/ObbyMap32.json"
 
 # ============================================================================
 # NETWORKX LOADING (Original)
@@ -150,10 +150,6 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
     start_time = time.time()
     path, cost, stats = algorithm_func(adj_list, source, target)
     elapsed = time.time() - start_time
-    
-    # Fix cost if needed
-    if cost != float('inf'):
-        cost = math.sqrt(cost)
     
     stats['time_ms'] = elapsed * 1000
     
@@ -382,34 +378,6 @@ def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path
     m.save(filename)
     print(f"  ✅ Map saved to '{filename}'")
 
-def costFromSquaredPath(path, adj_list:AdjacencyList):
-    # print("Calculating distances from squared weights")
-    cDistance = 0.0 
-    for i in range(len(path)-1):
-        node = path[i]
-        nextnode = path[i+1]
-        if node in adj_list.keys():
-            # print("node",node,"in path getting neighbours")
-            nodeneighbours:LinkedList = adj_list.neighbors(node)
-        else:
-            # print("node not in adj list")
-            raise ValueError("node not in adj list")
-        
-        focusNode =nodeneighbours.head
-        for _ in range(nodeneighbours.n):
-            (dist, (x, y)) = focusNode.value
-            dx = abs(x - nextnode[0])
-            dy = abs(y - nextnode[1])
-            if dx<=1 and dy<=1: 
-                # print(nextnode,"is a neighbour, getting distance")
-                # print(dist)
-                cDistance = cDistance + math.sqrt(dist)
-                break
-            focusNode = focusNode.next
-        # print("cummulative distance is now",cDistance)
-    
-    return cDistance
-
 def nxAlgorithms(G_nx, source_nx, target_nx):
     print("\n" + "=" * 80)
     print("RUNNING NETWORKX ALGORITHMS")
@@ -468,22 +436,18 @@ def adjAlgorithms(adj_list,source_adj,target_adj):
     adj_results = {}
     
     path, cost, stats = run_single_algorithm_adj(adj_list, dijkstra_adj, source_adj, target_adj, "Dijkstra")
-    cost = costFromSquaredPath(path, adj_list)
     adj_results['Dijkstra (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_dijkstra.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
-    cost = costFromSquaredPath(path, adj_list)
     adj_results['A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_astar.html")
 
     path, cost, stats = run_single_algorithm_adj(adj_list, bidirectional_astar_adj, source_adj, target_adj, "Bidirectional A*")
-    cost = costFromSquaredPath(path, adj_list)
     adj_results['Bidirectional A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_bidirectional.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, alt_adj, source_adj, target_adj, "ALT")
-    cost = costFromSquaredPath(path, adj_list)
     adj_results['ALT (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_alt.html")
 
