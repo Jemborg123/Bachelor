@@ -150,17 +150,22 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
     start_time = time.time()
     path, cost, stats = algorithm_func(adj_list, source, target)
     elapsed = time.time() - start_time
-    cost = math.sqrt(cost)
-
+    
+    # Fix cost if needed
+    if cost != float('inf'):
+        cost = math.sqrt(cost)
+    
     stats['time_ms'] = elapsed * 1000
     
     print(f"  ✅ Path found: {len(path)} nodes, {cost:.1f} m")
     
-    from Algorithms.A_Dijkstra import analyze_complexity
+    # 👈 REMOVE THIS IMPORT - analyze_complexity is already in Main.py
+    # from Algorithms.A_Dijkstra import analyze_complexity
+    
+    # Just call analyze_complexity directly (it's in Main.py)
     analyze_complexity(V, E, stats, elapsed)
-    print(dir(adj_list)) 
+    
     return path, cost, stats
-
 # ============================================================================
 # MAIN COMPARISON
 # ============================================================================
@@ -454,6 +459,11 @@ def adjAlgorithms(adj_list,source_adj,target_adj):
     print("\n" + "=" * 80)
     print("RUNNING ADJACENCYLIST ALGORITHMS")
     print("=" * 80)
+
+    # Debug: Check if source and target exist
+    print(f"\n🔍 Debug: Checking nodes in adjacency list:")
+    print(f"  Source exists: {source_adj in adj_list.keys()}")
+    print(f"  Target exists: {target_adj in adj_list.keys()}")
     
     adj_results = {}
     
