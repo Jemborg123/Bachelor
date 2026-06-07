@@ -53,18 +53,18 @@ def addLabels(adj_list:AdjacencyList):
     savePointsDataToFile(labeledpoints,"Data/LabeledPointsNew.json")
 
 def main():
-    adj_list,_ = load_adjacency_list("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
+    adj_list,_ = load_adjacency_list("Data/Data/ObbyMap32.json")
     part = findParts(adj_list)
     print(len(part))
-    adj_list,_ = load_adjacency_list("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
+    adj_list,_ = load_adjacency_list("Data/Data/ObbyMap32.json")
     nodes = list(adj_list.keys())
     for node in nodes:
         if node in part: continue
         adj_list.popPoint(node)
-    save_adjacency_list(adj_list,"Data/Adjacency_List_pruned_disjoint.json")
+    save_adjacency_list(adj_list,"Data/ObbyMap32_pruned.json")
     addLabels(adj_list)
     visualize_graph(adj_list)
-    adj_list,_ = load_adjacency_list("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
+    adj_list,_ = load_adjacency_list("Data/Data/ObbyMap32.json")
     visualize_graph(adj_list)
 
 if __name__ == "__main__":

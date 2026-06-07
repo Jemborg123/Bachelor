@@ -184,7 +184,7 @@ def load_adjacency_list(filepath):
     return adjacency_list, True
 
 class Queue:
-    def __init__(self, fromList=[],space = 1000):
+    def __init__(self, fromList=[],space = 100000):
         self.head = 0
         self.tail = 0
         self.size = space

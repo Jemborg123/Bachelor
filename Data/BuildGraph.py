@@ -21,6 +21,12 @@ def showGraph(ADJACENCY_PATH="Data/Adjacency_list_DBSCANMERGED.json"):
         filtered_polygons = loadFromDb.remove_near_zero_polygon_outliers(polygons)
         print("succes, showing graph")
         labels = fetch_building_names("llyn_bygning_dtu")
+        tree = KDtree.buildKDtree(adjacency_list.keys())
+        labeledpoints = assignPointsData(tree,labels)
+        for x in labeledpoints.items():
+            print(x)
+        savePointsDataToFile(labeledpoints,"Data/LabeledPoints.json")
+        
         visualize_graph(adjacency_list,filtered_polygons,labels)
     else:
         print("No adjacency list found at",ADJACENCY_PATH,", building graph from scratch...")

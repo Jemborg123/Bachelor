@@ -34,7 +34,7 @@ from Data.utils import AdjacencyList, LinkedList
 
 # Configuration
 GRAPH_FILE = 'Data/Old_Graph_data/walkability_graph.pkl'
-ADJACENCY_PATH = "Data/Data/ObbyMap32.json"
+ADJACENCY_PATH = "Data/ObbyMap32_pruned.json"
 
 # ============================================================================
 # NETWORKX LOADING (Original)
@@ -560,7 +560,7 @@ def compareAlgorithms():
 def searchFromLabel(src,trgt,adj_list,i=-1,labeledPoints=None):
     print(f"Searching route from {src} to {trgt}")
     if labeledPoints is None:
-        labeledPoints = loadPointsDataFromFile("Data/LabeledPointsNew.json")
+        labeledPoints = loadPointsDataFromFile("Data/LabeledPoints.json")
     if i < -1*len(labeledPoints.get(src)): return
     sx,sy =labeledPoints.get(src)[i]
     tx,ty =labeledPoints.get(trgt)[i]
