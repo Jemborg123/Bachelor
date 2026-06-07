@@ -168,12 +168,22 @@ def alt(adj_list, source, target, landmarks=None, dist_to=None, dist_from=None,
         print(f"  Selected {len(landmarks)} landmarks using '{strategy}' strategy")
         dist_to, dist_from = precompute_landmark_distances_adj(adj_list, landmarks, max_distance)
         stats['preprocessing_done'] = True
+
+    debug_count = 0
     
     # Create ALT heuristic function for A*
     def heuristic(node):
-        return alt_heuristic(node, target, landmarks, dist_to, dist_from)
-    
+        # return alt_heuristic(node, target, landmarks, dist_to, dist_from)
+        nonlocal debug_count
+        h = alt_heuristic(node, target, landmarks, dist_to, dist_from)
+        
+        if debug_count < 5:
+            print(f"    [DEBUG ALT] Heuristic for node {node[:2]}...: {h:.1f}")
+            debug_count += 1
+        
+        return h
     # 👈 REUSE A* from A_AStar!
+    print(f"  Running A* with ALT heuristic...")
     path, cost, stats_astar = astar(adj_list, source, target, heuristic=heuristic)
     
     # Merge stats
