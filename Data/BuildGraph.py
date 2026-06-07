@@ -50,7 +50,7 @@ def obstacleBasedMap(filepath,CELLSIZE):
 
     nodes = []
     for poly in polygons:
-        nodes.extend(polygon_offset.offset_polygon_outward(poly, 1))
+        nodes.extend(polygon_offset.offset_polygon_outward(poly, 1.5))
     
     nodes = mergePoints(nodes, MergeType.DBSCANMERGE)
 
@@ -71,7 +71,7 @@ def obstacleBasedMap(filepath,CELLSIZE):
     tree = KDtree.buildKDtree(nodes)
     adjacency_list = AdjacencyList(nodes)
     neighbourFunc = lambda point: KDtree.KNN_KDtree_obstacles(
-            tree=tree, point=point, k=8,
+            tree=tree, point=point, k=32,
             polygons=polygons, spatial_index=spatial_index,
             polygon_bboxes=polygon_bboxes, cell_size=CELLSIZE,blockedPoints = blockedPoints,
             graph=graph
@@ -285,7 +285,7 @@ import io
 if __name__ == "__main__":
     with cProfile.Profile() as pr:
         # showGraph("Data/Data/Adjacency_list_ObstacleAwareGraph.json")
-        showGraph("Data/Data/ObbyMap.json")
+        showGraph("Data/Data/ObbyMap32.json")
     
     stream = io.StringIO()
     stats = pstats.Stats(pr, stream=stream)

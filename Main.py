@@ -34,7 +34,7 @@ from Data.utils import AdjacencyList, LinkedList
 
 # Configuration
 GRAPH_FILE = 'Data/Old_Graph_data/walkability_graph.pkl'
-ADJACENCY_PATH = "Data/Data/Adjacency_list_ObstacleAwareGraph.json"
+ADJACENCY_PATH = "Data/Data/ObbyMap.json"
 
 # ============================================================================
 # NETWORKX LOADING (Original)
@@ -150,7 +150,6 @@ def run_single_algorithm_adj(adj_list, algorithm_func, source, target, algo_name
     start_time = time.time()
     path, cost, stats = algorithm_func(adj_list, source, target)
     elapsed = time.time() - start_time
-    cost = math.sqrt(cost)
 
     stats['time_ms'] = elapsed * 1000
     
@@ -458,22 +457,22 @@ def adjAlgorithms(adj_list,source_adj,target_adj):
     adj_results = {}
     
     path, cost, stats = run_single_algorithm_adj(adj_list, dijkstra_adj, source_adj, target_adj, "Dijkstra")
-    cost = costFromSquaredPath(path, adj_list)
+    # cost = costFromSquaredPath(path, adj_list)
     adj_results['Dijkstra (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_dijkstra.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, astar_adj, source_adj, target_adj, "A*")
-    cost = costFromSquaredPath(path, adj_list)
+    # cost = costFromSquaredPath(path, adj_list)
     adj_results['A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_astar.html")
 
     path, cost, stats = run_single_algorithm_adj(adj_list, bidirectional_astar_adj, source_adj, target_adj, "Bidirectional A*")
-    cost = costFromSquaredPath(path, adj_list)
+    # cost = costFromSquaredPath(path, adj_list)
     adj_results['Bidirectional A* (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_bidirectional.html")
     
     path, cost, stats = run_single_algorithm_adj(adj_list, alt_adj, source_adj, target_adj, "ALT")
-    cost = costFromSquaredPath(path, adj_list)
+    # cost = costFromSquaredPath(path, adj_list)
     adj_results['ALT (Adj)'] = (path, cost, stats)
     create_adj_path_map(adj_list, path, cost, source_adj, target_adj, "Maps/adj_alt.html")
 
