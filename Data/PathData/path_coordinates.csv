@@ -1,725 +1,609 @@
 Algorithm,Type,Point_Index,X,Y
-Dijkstra (Adj),AdjacencyList,0,648054.66,1184743.56
-Dijkstra (Adj),AdjacencyList,1,648057.86,1184743.02
-Dijkstra (Adj),AdjacencyList,2,648060.76,1184748.25
-Dijkstra (Adj),AdjacencyList,3,648064.74,1184754.70
-Dijkstra (Adj),AdjacencyList,4,648069.19,1184757.40
-Dijkstra (Adj),AdjacencyList,5,648070.52,1184762.26
-Dijkstra (Adj),AdjacencyList,6,648071.70,1184765.70
-Dijkstra (Adj),AdjacencyList,7,648067.91,1184770.60
-Dijkstra (Adj),AdjacencyList,8,648068.17,1184778.52
-Dijkstra (Adj),AdjacencyList,9,648071.63,1184783.15
-Dijkstra (Adj),AdjacencyList,10,648073.65,1184790.06
-Dijkstra (Adj),AdjacencyList,11,648071.62,1184794.35
-Dijkstra (Adj),AdjacencyList,12,648076.20,1184796.87
-Dijkstra (Adj),AdjacencyList,13,648072.89,1184804.21
-Dijkstra (Adj),AdjacencyList,14,648079.25,1184807.12
-Dijkstra (Adj),AdjacencyList,15,648076.43,1184813.50
-Dijkstra (Adj),AdjacencyList,16,648084.24,1184825.57
-Dijkstra (Adj),AdjacencyList,17,648085.72,1184838.73
-Dijkstra (Adj),AdjacencyList,18,648082.03,1184844.63
-Dijkstra (Adj),AdjacencyList,19,648086.27,1184851.57
-Dijkstra (Adj),AdjacencyList,20,648088.34,1184856.65
-Dijkstra (Adj),AdjacencyList,21,648095.11,1184862.81
-Dijkstra (Adj),AdjacencyList,22,648101.02,1184877.21
-Dijkstra (Adj),AdjacencyList,23,648095.61,1184883.82
-Dijkstra (Adj),AdjacencyList,24,648095.76,1184890.74
-Dijkstra (Adj),AdjacencyList,25,648092.71,1184891.93
-Dijkstra (Adj),AdjacencyList,26,648095.44,1184904.51
-Dijkstra (Adj),AdjacencyList,27,648099.41,1184909.89
-Dijkstra (Adj),AdjacencyList,28,648095.73,1184921.12
-Dijkstra (Adj),AdjacencyList,29,648097.20,1184924.43
-Dijkstra (Adj),AdjacencyList,30,648093.54,1184927.49
-Dijkstra (Adj),AdjacencyList,31,648088.81,1184927.96
-Dijkstra (Adj),AdjacencyList,32,648085.05,1184934.26
-Dijkstra (Adj),AdjacencyList,33,648086.68,1184937.06
-Dijkstra (Adj),AdjacencyList,34,648087.75,1184940.53
-Dijkstra (Adj),AdjacencyList,35,648087.52,1184947.03
-Dijkstra (Adj),AdjacencyList,36,648085.53,1184951.61
-Dijkstra (Adj),AdjacencyList,37,648082.45,1184963.51
-Dijkstra (Adj),AdjacencyList,38,648078.19,1184967.00
-Dijkstra (Adj),AdjacencyList,39,648073.79,1184967.11
-Dijkstra (Adj),AdjacencyList,40,648073.83,1184971.02
-Dijkstra (Adj),AdjacencyList,41,648071.29,1184973.65
-Dijkstra (Adj),AdjacencyList,42,648064.35,1184976.56
-Dijkstra (Adj),AdjacencyList,43,648063.32,1184983.59
-Dijkstra (Adj),AdjacencyList,44,648065.72,1184987.04
-Dijkstra (Adj),AdjacencyList,45,648064.73,1184989.86
-Dijkstra (Adj),AdjacencyList,46,648067.06,1184993.45
-Dijkstra (Adj),AdjacencyList,47,648069.58,1184998.45
-Dijkstra (Adj),AdjacencyList,48,648072.25,1185001.87
-Dijkstra (Adj),AdjacencyList,49,648076.27,1185007.73
-Dijkstra (Adj),AdjacencyList,50,648077.03,1185013.14
-Dijkstra (Adj),AdjacencyList,51,648080.25,1185015.23
-Dijkstra (Adj),AdjacencyList,52,648079.49,1185019.95
-Dijkstra (Adj),AdjacencyList,53,648085.89,1185031.48
-Dijkstra (Adj),AdjacencyList,54,648092.06,1185042.31
-Dijkstra (Adj),AdjacencyList,55,648093.89,1185046.02
-Dijkstra (Adj),AdjacencyList,56,648094.03,1185051.89
-Dijkstra (Adj),AdjacencyList,57,648095.63,1185058.21
-Dijkstra (Adj),AdjacencyList,58,648097.40,1185063.09
-Dijkstra (Adj),AdjacencyList,59,648101.23,1185068.87
-Dijkstra (Adj),AdjacencyList,60,648103.07,1185073.78
-Dijkstra (Adj),AdjacencyList,61,648107.85,1185079.42
-Dijkstra (Adj),AdjacencyList,62,648109.42,1185086.77
-Dijkstra (Adj),AdjacencyList,63,648113.03,1185094.41
-Dijkstra (Adj),AdjacencyList,64,648115.51,1185097.63
-Dijkstra (Adj),AdjacencyList,65,648117.69,1185101.29
-Dijkstra (Adj),AdjacencyList,66,648123.43,1185105.49
-Dijkstra (Adj),AdjacencyList,67,648128.22,1185111.37
-Dijkstra (Adj),AdjacencyList,68,648133.15,1185118.36
-Dijkstra (Adj),AdjacencyList,69,648139.18,1185127.98
-Dijkstra (Adj),AdjacencyList,70,648141.44,1185130.83
-Dijkstra (Adj),AdjacencyList,71,648144.50,1185138.07
-Dijkstra (Adj),AdjacencyList,72,648147.95,1185146.16
-Dijkstra (Adj),AdjacencyList,73,648152.48,1185152.49
-Dijkstra (Adj),AdjacencyList,74,648155.98,1185156.94
-Dijkstra (Adj),AdjacencyList,75,648161.83,1185165.82
-Dijkstra (Adj),AdjacencyList,76,648166.42,1185174.11
-Dijkstra (Adj),AdjacencyList,77,648167.87,1185179.36
-Dijkstra (Adj),AdjacencyList,78,648170.41,1185183.43
-Dijkstra (Adj),AdjacencyList,79,648173.18,1185190.04
-Dijkstra (Adj),AdjacencyList,80,648176.11,1185195.30
-Dijkstra (Adj),AdjacencyList,81,648177.55,1185198.99
-Dijkstra (Adj),AdjacencyList,82,648180.50,1185202.05
-Dijkstra (Adj),AdjacencyList,83,648183.88,1185206.24
-Dijkstra (Adj),AdjacencyList,84,648187.39,1185213.46
-Dijkstra (Adj),AdjacencyList,85,648190.63,1185219.00
-Dijkstra (Adj),AdjacencyList,86,648186.09,1185224.58
-Dijkstra (Adj),AdjacencyList,87,648183.41,1185225.93
-Dijkstra (Adj),AdjacencyList,88,648179.32,1185232.56
-Dijkstra (Adj),AdjacencyList,89,648174.94,1185240.29
-Dijkstra (Adj),AdjacencyList,90,648174.91,1185244.40
-Dijkstra (Adj),AdjacencyList,91,648175.18,1185250.41
-Dijkstra (Adj),AdjacencyList,92,648178.69,1185256.13
-Dijkstra (Adj),AdjacencyList,93,648181.81,1185262.80
-Dijkstra (Adj),AdjacencyList,94,648184.54,1185269.09
-Dijkstra (Adj),AdjacencyList,95,648188.08,1185275.26
-Dijkstra (Adj),AdjacencyList,96,648190.19,1185281.31
-Dijkstra (Adj),AdjacencyList,97,648189.90,1185285.01
-Dijkstra (Adj),AdjacencyList,98,648194.23,1185294.21
-Dijkstra (Adj),AdjacencyList,99,648195.55,1185298.91
-Dijkstra (Adj),AdjacencyList,100,648197.26,1185303.55
-Dijkstra (Adj),AdjacencyList,101,648195.24,1185311.69
-Dijkstra (Adj),AdjacencyList,102,648202.24,1185316.71
-Dijkstra (Adj),AdjacencyList,103,648208.35,1185320.58
-Dijkstra (Adj),AdjacencyList,104,648212.64,1185323.45
-Dijkstra (Adj),AdjacencyList,105,648221.09,1185328.11
-Dijkstra (Adj),AdjacencyList,106,648229.53,1185324.60
-Dijkstra (Adj),AdjacencyList,107,648239.00,1185327.32
-Dijkstra (Adj),AdjacencyList,108,648240.58,1185330.16
-Dijkstra (Adj),AdjacencyList,109,648241.49,1185333.17
-Dijkstra (Adj),AdjacencyList,110,648245.86,1185343.19
-Dijkstra (Adj),AdjacencyList,111,648248.52,1185347.13
-Dijkstra (Adj),AdjacencyList,112,648251.32,1185353.02
-Dijkstra (Adj),AdjacencyList,113,648259.31,1185362.88
-Dijkstra (Adj),AdjacencyList,114,648262.51,1185367.37
-Dijkstra (Adj),AdjacencyList,115,648266.24,1185373.33
-Dijkstra (Adj),AdjacencyList,116,648269.63,1185379.86
-Dijkstra (Adj),AdjacencyList,117,648271.23,1185385.15
-Dijkstra (Adj),AdjacencyList,118,648273.68,1185388.81
-Dijkstra (Adj),AdjacencyList,119,648276.05,1185394.58
-Dijkstra (Adj),AdjacencyList,120,648274.80,1185400.76
-Dijkstra (Adj),AdjacencyList,121,648278.13,1185403.06
-Dijkstra (Adj),AdjacencyList,122,648279.92,1185411.05
-Dijkstra (Adj),AdjacencyList,123,648284.05,1185415.97
-Dijkstra (Adj),AdjacencyList,124,648285.78,1185422.83
-Dijkstra (Adj),AdjacencyList,125,648288.88,1185428.91
-Dijkstra (Adj),AdjacencyList,126,648289.69,1185434.65
-Dijkstra (Adj),AdjacencyList,127,648288.83,1185440.43
-Dijkstra (Adj),AdjacencyList,128,648290.43,1185443.47
-Dijkstra (Adj),AdjacencyList,129,648290.35,1185449.83
-Dijkstra (Adj),AdjacencyList,130,648291.78,1185454.95
-Dijkstra (Adj),AdjacencyList,131,648295.23,1185461.35
-Dijkstra (Adj),AdjacencyList,132,648296.85,1185465.66
-Dijkstra (Adj),AdjacencyList,133,648300.45,1185473.27
-Dijkstra (Adj),AdjacencyList,134,648303.40,1185476.25
-Dijkstra (Adj),AdjacencyList,135,648304.81,1185479.11
-Dijkstra (Adj),AdjacencyList,136,648306.44,1185481.96
-Dijkstra (Adj),AdjacencyList,137,648310.67,1185483.36
-Dijkstra (Adj),AdjacencyList,138,648313.89,1185484.97
-Dijkstra (Adj),AdjacencyList,139,648316.78,1185487.40
-Dijkstra (Adj),AdjacencyList,140,648327.99,1185490.15
-Dijkstra (Adj),AdjacencyList,141,648336.66,1185494.59
-Dijkstra (Adj),AdjacencyList,142,648345.94,1185490.85
-Dijkstra (Adj),AdjacencyList,143,648350.48,1185489.21
-Dijkstra (Adj),AdjacencyList,144,648357.85,1185487.99
-Dijkstra (Adj),AdjacencyList,145,648361.71,1185487.72
-Dijkstra (Adj),AdjacencyList,146,648368.30,1185488.15
-Dijkstra (Adj),AdjacencyList,147,648372.29,1185487.80
-Dijkstra (Adj),AdjacencyList,148,648377.78,1185486.59
-Dijkstra (Adj),AdjacencyList,149,648382.61,1185488.50
-Dijkstra (Adj),AdjacencyList,150,648389.66,1185482.40
-Dijkstra (Adj),AdjacencyList,151,648395.72,1185483.56
-Dijkstra (Adj),AdjacencyList,152,648400.88,1185488.12
-Dijkstra (Adj),AdjacencyList,153,648404.10,1185486.24
-Dijkstra (Adj),AdjacencyList,154,648409.09,1185484.99
-Dijkstra (Adj),AdjacencyList,155,648411.63,1185479.89
-Dijkstra (Adj),AdjacencyList,156,648415.75,1185476.27
-Dijkstra (Adj),AdjacencyList,157,648421.54,1185472.01
-Dijkstra (Adj),AdjacencyList,158,648429.12,1185466.39
-Dijkstra (Adj),AdjacencyList,159,648434.85,1185464.28
-Dijkstra (Adj),AdjacencyList,160,648442.40,1185463.46
-Dijkstra (Adj),AdjacencyList,161,648447.37,1185462.16
-Dijkstra (Adj),AdjacencyList,162,648456.36,1185459.08
-Dijkstra (Adj),AdjacencyList,163,648464.71,1185456.25
-Dijkstra (Adj),AdjacencyList,164,648468.59,1185455.17
-Dijkstra (Adj),AdjacencyList,165,648477.55,1185454.07
-Dijkstra (Adj),AdjacencyList,166,648484.83,1185458.16
-Dijkstra (Adj),AdjacencyList,167,648489.76,1185451.74
-Dijkstra (Adj),AdjacencyList,168,648494.03,1185453.38
-Dijkstra (Adj),AdjacencyList,169,648498.11,1185454.22
-Dijkstra (Adj),AdjacencyList,170,648500.88,1185449.01
-Dijkstra (Adj),AdjacencyList,171,648503.48,1185439.54
-Dijkstra (Adj),AdjacencyList,172,648505.75,1185434.78
-Dijkstra (Adj),AdjacencyList,173,648509.20,1185431.34
-Dijkstra (Adj),AdjacencyList,174,648516.25,1185427.67
-Dijkstra (Adj),AdjacencyList,175,648524.58,1185424.93
-Dijkstra (Adj),AdjacencyList,176,648534.73,1185421.21
-Dijkstra (Adj),AdjacencyList,177,648539.82,1185425.85
-Dijkstra (Adj),AdjacencyList,178,648548.69,1185426.32
-Dijkstra (Adj),AdjacencyList,179,648551.78,1185429.26
-Dijkstra (Adj),AdjacencyList,180,648562.71,1185435.05
-Dijkstra (Adj),AdjacencyList,181,648566.62,1185433.89
-Dijkstra (Adj),AdjacencyList,182,648571.47,1185432.45
-Dijkstra (Adj),AdjacencyList,183,648577.18,1185430.75
-Dijkstra (Adj),AdjacencyList,184,648583.69,1185428.82
-Dijkstra (Adj),AdjacencyList,185,648591.71,1185428.21
-Dijkstra (Adj),AdjacencyList,186,648598.77,1185424.35
-Dijkstra (Adj),AdjacencyList,187,648606.16,1185423.18
-Dijkstra (Adj),AdjacencyList,188,648614.78,1185420.80
-Dijkstra (Adj),AdjacencyList,189,648625.38,1185416.45
-Dijkstra (Adj),AdjacencyList,190,648635.20,1185416.43
-Dijkstra (Adj),AdjacencyList,191,648641.70,1185413.79
-Dijkstra (Adj),AdjacencyList,192,648646.91,1185420.43
-Dijkstra (Adj),AdjacencyList,193,648648.40,1185424.35
-Dijkstra (Adj),AdjacencyList,194,648651.94,1185431.52
-Dijkstra (Adj),AdjacencyList,195,648662.32,1185435.19
-Dijkstra (Adj),AdjacencyList,196,648664.31,1185438.37
-Dijkstra (Adj),AdjacencyList,197,648664.24,1185441.79
-Dijkstra (Adj),AdjacencyList,198,648667.86,1185447.36
-Dijkstra (Adj),AdjacencyList,199,648676.95,1185451.59
-Dijkstra (Adj),AdjacencyList,200,648678.49,1185449.93
-Dijkstra (Adj),AdjacencyList,201,648696.05,1185447.17
-Dijkstra (Adj),AdjacencyList,202,648706.05,1185447.78
-Dijkstra (Adj),AdjacencyList,203,648707.67,1185444.43
-Dijkstra (Adj),AdjacencyList,204,648714.70,1185443.94
-Dijkstra (Adj),AdjacencyList,205,648718.55,1185445.58
-Dijkstra (Adj),AdjacencyList,206,648719.34,1185452.73
-Dijkstra (Adj),AdjacencyList,207,648723.96,1185455.30
-Dijkstra (Adj),AdjacencyList,208,648725.09,1185459.80
-Dijkstra (Adj),AdjacencyList,209,648729.63,1185469.02
-Dijkstra (Adj),AdjacencyList,210,648735.77,1185485.23
-Dijkstra (Adj),AdjacencyList,211,648751.20,1185481.78
-Dijkstra (Adj),AdjacencyList,212,648758.24,1185479.13
-Dijkstra (Adj),AdjacencyList,213,648755.76,1185470.86
-Dijkstra (Adj),AdjacencyList,214,648754.67,1185466.66
-A* (Adj),AdjacencyList,0,648054.66,1184743.56
-A* (Adj),AdjacencyList,1,648060.76,1184748.25
-A* (Adj),AdjacencyList,2,648064.74,1184754.70
-A* (Adj),AdjacencyList,3,648069.19,1184757.40
-A* (Adj),AdjacencyList,4,648074.07,1184770.08
-A* (Adj),AdjacencyList,5,648067.91,1184770.60
-A* (Adj),AdjacencyList,6,648068.17,1184778.52
-A* (Adj),AdjacencyList,7,648073.65,1184790.06
-A* (Adj),AdjacencyList,8,648072.89,1184804.21
-A* (Adj),AdjacencyList,9,648076.43,1184813.50
-A* (Adj),AdjacencyList,10,648084.24,1184825.57
-A* (Adj),AdjacencyList,11,648082.03,1184844.63
-A* (Adj),AdjacencyList,12,648090.90,1184849.19
-A* (Adj),AdjacencyList,13,648095.07,1184854.85
-A* (Adj),AdjacencyList,14,648106.67,1184859.81
-A* (Adj),AdjacencyList,15,648122.31,1184855.17
-A* (Adj),AdjacencyList,16,648131.59,1184852.41
-A* (Adj),AdjacencyList,17,648139.17,1184840.89
-A* (Adj),AdjacencyList,18,648155.28,1184840.10
-A* (Adj),AdjacencyList,19,648162.48,1184845.44
-A* (Adj),AdjacencyList,20,648170.08,1184842.08
-A* (Adj),AdjacencyList,21,648174.70,1184841.79
-A* (Adj),AdjacencyList,22,648181.83,1184839.66
-A* (Adj),AdjacencyList,23,648186.35,1184835.95
-A* (Adj),AdjacencyList,24,648190.65,1184822.63
-A* (Adj),AdjacencyList,25,648203.61,1184832.27
-A* (Adj),AdjacencyList,26,648213.85,1184835.74
-A* (Adj),AdjacencyList,27,648216.49,1184843.03
-A* (Adj),AdjacencyList,28,648225.79,1184850.60
-A* (Adj),AdjacencyList,29,648232.01,1184863.07
-A* (Adj),AdjacencyList,30,648246.99,1184864.89
-A* (Adj),AdjacencyList,31,648250.23,1184872.83
-A* (Adj),AdjacencyList,32,648257.09,1184885.40
-A* (Adj),AdjacencyList,33,648256.61,1184889.47
-A* (Adj),AdjacencyList,34,648259.92,1184901.18
-A* (Adj),AdjacencyList,35,648263.11,1184915.85
-A* (Adj),AdjacencyList,36,648275.21,1184910.52
-A* (Adj),AdjacencyList,37,648291.90,1184907.98
-A* (Adj),AdjacencyList,38,648301.53,1184904.21
-A* (Adj),AdjacencyList,39,648317.03,1184896.37
-A* (Adj),AdjacencyList,40,648323.88,1184899.01
-A* (Adj),AdjacencyList,41,648337.82,1184893.60
-A* (Adj),AdjacencyList,42,648343.90,1184892.53
-A* (Adj),AdjacencyList,43,648349.86,1184887.40
-A* (Adj),AdjacencyList,44,648363.30,1184885.14
-A* (Adj),AdjacencyList,45,648378.34,1184885.19
-A* (Adj),AdjacencyList,46,648390.54,1184890.31
-A* (Adj),AdjacencyList,47,648392.77,1184898.20
-A* (Adj),AdjacencyList,48,648394.49,1184906.15
-A* (Adj),AdjacencyList,49,648398.77,1184921.79
-A* (Adj),AdjacencyList,50,648408.15,1184927.54
-A* (Adj),AdjacencyList,51,648411.93,1184935.05
-A* (Adj),AdjacencyList,52,648413.39,1184942.76
-A* (Adj),AdjacencyList,53,648415.07,1184951.33
-A* (Adj),AdjacencyList,54,648417.96,1184958.51
-A* (Adj),AdjacencyList,55,648421.67,1184966.52
-A* (Adj),AdjacencyList,56,648426.19,1184976.00
-A* (Adj),AdjacencyList,57,648421.67,1184991.36
-A* (Adj),AdjacencyList,58,648428.89,1184997.85
-A* (Adj),AdjacencyList,59,648431.62,1185005.59
-A* (Adj),AdjacencyList,60,648429.84,1185014.30
-A* (Adj),AdjacencyList,61,648439.23,1185019.76
-A* (Adj),AdjacencyList,62,648448.24,1185025.47
-A* (Adj),AdjacencyList,63,648457.65,1185031.35
-A* (Adj),AdjacencyList,64,648468.27,1185036.50
-A* (Adj),AdjacencyList,65,648469.76,1185044.61
-A* (Adj),AdjacencyList,66,648477.33,1185050.79
-A* (Adj),AdjacencyList,67,648483.11,1185057.59
-A* (Adj),AdjacencyList,68,648485.40,1185065.34
-A* (Adj),AdjacencyList,69,648488.01,1185072.73
-A* (Adj),AdjacencyList,70,648490.04,1185081.34
-A* (Adj),AdjacencyList,71,648492.91,1185088.93
-A* (Adj),AdjacencyList,72,648494.55,1185096.29
-A* (Adj),AdjacencyList,73,648497.24,1185103.55
-A* (Adj),AdjacencyList,74,648510.51,1185107.24
-A* (Adj),AdjacencyList,75,648511.48,1185115.66
-A* (Adj),AdjacencyList,76,648518.94,1185121.91
-A* (Adj),AdjacencyList,77,648521.97,1185132.07
-A* (Adj),AdjacencyList,78,648525.00,1185142.22
-A* (Adj),AdjacencyList,79,648534.02,1185148.39
-A* (Adj),AdjacencyList,80,648536.45,1185163.01
-A* (Adj),AdjacencyList,81,648537.34,1185166.56
-A* (Adj),AdjacencyList,82,648541.47,1185179.87
-A* (Adj),AdjacencyList,83,648535.29,1185181.95
-A* (Adj),AdjacencyList,84,648532.33,1185184.70
-A* (Adj),AdjacencyList,85,648521.37,1185191.00
-A* (Adj),AdjacencyList,86,648525.23,1185202.21
-A* (Adj),AdjacencyList,87,648529.05,1185212.18
-A* (Adj),AdjacencyList,88,648531.30,1185219.97
-A* (Adj),AdjacencyList,89,648533.78,1185226.98
-A* (Adj),AdjacencyList,90,648549.35,1185226.63
-A* (Adj),AdjacencyList,91,648560.75,1185237.78
-A* (Adj),AdjacencyList,92,648560.48,1185242.44
-A* (Adj),AdjacencyList,93,648551.23,1185250.72
-A* (Adj),AdjacencyList,94,648542.61,1185257.97
-A* (Adj),AdjacencyList,95,648544.83,1185265.60
-A* (Adj),AdjacencyList,96,648545.95,1185273.14
-A* (Adj),AdjacencyList,97,648549.48,1185280.64
-A* (Adj),AdjacencyList,98,648550.51,1185288.45
-A* (Adj),AdjacencyList,99,648552.82,1185296.40
-A* (Adj),AdjacencyList,100,648554.87,1185303.74
-A* (Adj),AdjacencyList,101,648560.22,1185310.75
-A* (Adj),AdjacencyList,102,648563.33,1185317.36
-A* (Adj),AdjacencyList,103,648561.20,1185327.33
-A* (Adj),AdjacencyList,104,648565.02,1185335.59
-A* (Adj),AdjacencyList,105,648573.51,1185323.80
-A* (Adj),AdjacencyList,106,648583.27,1185328.66
-A* (Adj),AdjacencyList,107,648587.77,1185328.69
-A* (Adj),AdjacencyList,108,648609.60,1185337.34
-A* (Adj),AdjacencyList,109,648622.93,1185336.10
-A* (Adj),AdjacencyList,110,648644.07,1185334.60
-A* (Adj),AdjacencyList,111,648653.64,1185331.21
-A* (Adj),AdjacencyList,112,648654.54,1185318.08
-A* (Adj),AdjacencyList,113,648664.96,1185314.11
-A* (Adj),AdjacencyList,114,648671.18,1185305.18
-A* (Adj),AdjacencyList,115,648675.38,1185302.57
-A* (Adj),AdjacencyList,116,648688.85,1185298.28
-A* (Adj),AdjacencyList,117,648693.89,1185295.57
-A* (Adj),AdjacencyList,118,648694.24,1185290.85
-A* (Adj),AdjacencyList,119,648697.12,1185286.62
-A* (Adj),AdjacencyList,120,648700.11,1185284.14
-A* (Adj),AdjacencyList,121,648710.79,1185281.87
-A* (Adj),AdjacencyList,122,648719.86,1185278.52
-A* (Adj),AdjacencyList,123,648730.43,1185275.38
-A* (Adj),AdjacencyList,124,648739.24,1185273.21
-A* (Adj),AdjacencyList,125,648748.39,1185270.45
-A* (Adj),AdjacencyList,126,648754.97,1185266.88
-A* (Adj),AdjacencyList,127,648759.99,1185269.32
-A* (Adj),AdjacencyList,128,648765.41,1185268.67
-A* (Adj),AdjacencyList,129,648780.02,1185268.96
-A* (Adj),AdjacencyList,130,648782.49,1185278.57
-A* (Adj),AdjacencyList,131,648780.53,1185296.08
-A* (Adj),AdjacencyList,132,648773.34,1185314.21
-A* (Adj),AdjacencyList,133,648761.04,1185331.42
-A* (Adj),AdjacencyList,134,648781.04,1185345.06
-A* (Adj),AdjacencyList,135,648791.49,1185351.31
-A* (Adj),AdjacencyList,136,648794.70,1185356.46
-A* (Adj),AdjacencyList,137,648798.29,1185365.04
-A* (Adj),AdjacencyList,138,648790.40,1185373.30
-A* (Adj),AdjacencyList,139,648781.91,1185380.92
-A* (Adj),AdjacencyList,140,648777.69,1185387.38
-A* (Adj),AdjacencyList,141,648774.27,1185395.05
-A* (Adj),AdjacencyList,142,648769.51,1185406.13
-A* (Adj),AdjacencyList,143,648765.55,1185416.83
-A* (Adj),AdjacencyList,144,648758.13,1185430.72
-A* (Adj),AdjacencyList,145,648753.02,1185438.68
-A* (Adj),AdjacencyList,146,648755.56,1185451.97
-A* (Adj),AdjacencyList,147,648758.12,1185465.47
-A* (Adj),AdjacencyList,148,648754.67,1185466.66
-Bidirectional A* (Adj),AdjacencyList,0,648054.66,1184743.56
-Bidirectional A* (Adj),AdjacencyList,1,648060.76,1184748.25
-Bidirectional A* (Adj),AdjacencyList,2,648064.74,1184754.70
-Bidirectional A* (Adj),AdjacencyList,3,648069.19,1184757.40
-Bidirectional A* (Adj),AdjacencyList,4,648074.07,1184770.08
-Bidirectional A* (Adj),AdjacencyList,5,648067.91,1184770.60
-Bidirectional A* (Adj),AdjacencyList,6,648068.17,1184778.52
-Bidirectional A* (Adj),AdjacencyList,7,648073.65,1184790.06
-Bidirectional A* (Adj),AdjacencyList,8,648072.89,1184804.21
-Bidirectional A* (Adj),AdjacencyList,9,648076.43,1184813.50
-Bidirectional A* (Adj),AdjacencyList,10,648084.24,1184825.57
-Bidirectional A* (Adj),AdjacencyList,11,648082.03,1184844.63
-Bidirectional A* (Adj),AdjacencyList,12,648090.90,1184849.19
-Bidirectional A* (Adj),AdjacencyList,13,648095.07,1184854.85
-Bidirectional A* (Adj),AdjacencyList,14,648106.67,1184859.81
-Bidirectional A* (Adj),AdjacencyList,15,648122.31,1184855.17
-Bidirectional A* (Adj),AdjacencyList,16,648131.59,1184852.41
-Bidirectional A* (Adj),AdjacencyList,17,648139.17,1184840.89
-Bidirectional A* (Adj),AdjacencyList,18,648155.28,1184840.10
-Bidirectional A* (Adj),AdjacencyList,19,648162.48,1184845.44
-Bidirectional A* (Adj),AdjacencyList,20,648170.08,1184842.08
-Bidirectional A* (Adj),AdjacencyList,21,648178.99,1184838.35
-Bidirectional A* (Adj),AdjacencyList,22,648186.35,1184835.95
-Bidirectional A* (Adj),AdjacencyList,23,648190.65,1184822.63
-Bidirectional A* (Adj),AdjacencyList,24,648203.61,1184832.27
-Bidirectional A* (Adj),AdjacencyList,25,648213.85,1184835.74
-Bidirectional A* (Adj),AdjacencyList,26,648216.49,1184843.03
-Bidirectional A* (Adj),AdjacencyList,27,648225.79,1184850.60
-Bidirectional A* (Adj),AdjacencyList,28,648232.01,1184863.07
-Bidirectional A* (Adj),AdjacencyList,29,648246.99,1184864.89
-Bidirectional A* (Adj),AdjacencyList,30,648250.23,1184872.83
-Bidirectional A* (Adj),AdjacencyList,31,648257.09,1184885.40
-Bidirectional A* (Adj),AdjacencyList,32,648256.61,1184889.47
-Bidirectional A* (Adj),AdjacencyList,33,648259.92,1184901.18
-Bidirectional A* (Adj),AdjacencyList,34,648263.11,1184915.85
-Bidirectional A* (Adj),AdjacencyList,35,648275.21,1184910.52
-Bidirectional A* (Adj),AdjacencyList,36,648291.90,1184907.98
-Bidirectional A* (Adj),AdjacencyList,37,648301.53,1184904.21
-Bidirectional A* (Adj),AdjacencyList,38,648317.03,1184896.37
-Bidirectional A* (Adj),AdjacencyList,39,648323.88,1184899.01
-Bidirectional A* (Adj),AdjacencyList,40,648337.82,1184893.60
-Bidirectional A* (Adj),AdjacencyList,41,648343.90,1184892.53
-Bidirectional A* (Adj),AdjacencyList,42,648349.86,1184887.40
-Bidirectional A* (Adj),AdjacencyList,43,648363.30,1184885.14
-Bidirectional A* (Adj),AdjacencyList,44,648378.34,1184885.19
-Bidirectional A* (Adj),AdjacencyList,45,648390.54,1184890.31
-Bidirectional A* (Adj),AdjacencyList,46,648392.77,1184898.20
-Bidirectional A* (Adj),AdjacencyList,47,648394.49,1184906.15
-Bidirectional A* (Adj),AdjacencyList,48,648398.77,1184921.79
-Bidirectional A* (Adj),AdjacencyList,49,648408.15,1184927.54
-Bidirectional A* (Adj),AdjacencyList,50,648411.93,1184935.05
-Bidirectional A* (Adj),AdjacencyList,51,648413.39,1184942.76
-Bidirectional A* (Adj),AdjacencyList,52,648415.07,1184951.33
-Bidirectional A* (Adj),AdjacencyList,53,648417.96,1184958.51
-Bidirectional A* (Adj),AdjacencyList,54,648421.67,1184966.52
-Bidirectional A* (Adj),AdjacencyList,55,648426.19,1184976.00
-Bidirectional A* (Adj),AdjacencyList,56,648421.67,1184991.36
-Bidirectional A* (Adj),AdjacencyList,57,648428.89,1184997.85
-Bidirectional A* (Adj),AdjacencyList,58,648431.62,1185005.59
-Bidirectional A* (Adj),AdjacencyList,59,648429.84,1185014.30
-Bidirectional A* (Adj),AdjacencyList,60,648439.23,1185019.76
-Bidirectional A* (Adj),AdjacencyList,61,648448.24,1185025.47
-Bidirectional A* (Adj),AdjacencyList,62,648457.65,1185031.35
-Bidirectional A* (Adj),AdjacencyList,63,648468.27,1185036.50
-Bidirectional A* (Adj),AdjacencyList,64,648469.76,1185044.61
-Bidirectional A* (Adj),AdjacencyList,65,648477.33,1185050.79
-Bidirectional A* (Adj),AdjacencyList,66,648483.11,1185057.59
-Bidirectional A* (Adj),AdjacencyList,67,648485.40,1185065.34
-Bidirectional A* (Adj),AdjacencyList,68,648488.01,1185072.73
-Bidirectional A* (Adj),AdjacencyList,69,648490.04,1185081.34
-Bidirectional A* (Adj),AdjacencyList,70,648492.91,1185088.93
-Bidirectional A* (Adj),AdjacencyList,71,648494.55,1185096.29
-Bidirectional A* (Adj),AdjacencyList,72,648497.24,1185103.55
-Bidirectional A* (Adj),AdjacencyList,73,648510.51,1185107.24
-Bidirectional A* (Adj),AdjacencyList,74,648511.48,1185115.66
-Bidirectional A* (Adj),AdjacencyList,75,648518.94,1185121.91
-Bidirectional A* (Adj),AdjacencyList,76,648521.97,1185132.07
-Bidirectional A* (Adj),AdjacencyList,77,648525.00,1185142.22
-Bidirectional A* (Adj),AdjacencyList,78,648534.02,1185148.39
-Bidirectional A* (Adj),AdjacencyList,79,648536.45,1185163.01
-Bidirectional A* (Adj),AdjacencyList,80,648537.34,1185166.56
-Bidirectional A* (Adj),AdjacencyList,81,648541.47,1185179.87
-Bidirectional A* (Adj),AdjacencyList,82,648532.33,1185184.70
-Bidirectional A* (Adj),AdjacencyList,83,648521.37,1185191.00
-Bidirectional A* (Adj),AdjacencyList,84,648525.23,1185202.21
-Bidirectional A* (Adj),AdjacencyList,85,648529.05,1185212.18
-Bidirectional A* (Adj),AdjacencyList,86,648531.30,1185219.97
-Bidirectional A* (Adj),AdjacencyList,87,648533.78,1185226.98
-Bidirectional A* (Adj),AdjacencyList,88,648549.35,1185226.63
-Bidirectional A* (Adj),AdjacencyList,89,648560.75,1185237.78
-Bidirectional A* (Adj),AdjacencyList,90,648560.48,1185242.44
-Bidirectional A* (Adj),AdjacencyList,91,648551.23,1185250.72
-Bidirectional A* (Adj),AdjacencyList,92,648542.61,1185257.97
-Bidirectional A* (Adj),AdjacencyList,93,648544.83,1185265.60
-Bidirectional A* (Adj),AdjacencyList,94,648545.95,1185273.14
-Bidirectional A* (Adj),AdjacencyList,95,648549.48,1185280.64
-Bidirectional A* (Adj),AdjacencyList,96,648550.51,1185288.45
-Bidirectional A* (Adj),AdjacencyList,97,648552.82,1185296.40
-Bidirectional A* (Adj),AdjacencyList,98,648554.87,1185303.74
-Bidirectional A* (Adj),AdjacencyList,99,648560.22,1185310.75
-Bidirectional A* (Adj),AdjacencyList,100,648563.33,1185317.36
-Bidirectional A* (Adj),AdjacencyList,101,648561.20,1185327.33
-Bidirectional A* (Adj),AdjacencyList,102,648565.02,1185335.59
-Bidirectional A* (Adj),AdjacencyList,103,648573.51,1185323.80
-Bidirectional A* (Adj),AdjacencyList,104,648583.27,1185328.66
-Bidirectional A* (Adj),AdjacencyList,105,648587.77,1185328.69
-Bidirectional A* (Adj),AdjacencyList,106,648609.60,1185337.34
-Bidirectional A* (Adj),AdjacencyList,107,648634.05,1185332.62
-Bidirectional A* (Adj),AdjacencyList,108,648644.07,1185334.60
-Bidirectional A* (Adj),AdjacencyList,109,648658.55,1185334.49
-Bidirectional A* (Adj),AdjacencyList,110,648674.17,1185322.25
-Bidirectional A* (Adj),AdjacencyList,111,648664.96,1185314.11
-Bidirectional A* (Adj),AdjacencyList,112,648671.18,1185305.18
-Bidirectional A* (Adj),AdjacencyList,113,648675.38,1185302.57
-Bidirectional A* (Adj),AdjacencyList,114,648688.85,1185298.28
-Bidirectional A* (Adj),AdjacencyList,115,648693.89,1185295.57
-Bidirectional A* (Adj),AdjacencyList,116,648694.24,1185290.85
-Bidirectional A* (Adj),AdjacencyList,117,648697.12,1185286.62
-Bidirectional A* (Adj),AdjacencyList,118,648710.79,1185281.87
-Bidirectional A* (Adj),AdjacencyList,119,648719.86,1185278.52
-Bidirectional A* (Adj),AdjacencyList,120,648730.43,1185275.38
-Bidirectional A* (Adj),AdjacencyList,121,648739.24,1185273.21
-Bidirectional A* (Adj),AdjacencyList,122,648748.39,1185270.45
-Bidirectional A* (Adj),AdjacencyList,123,648759.99,1185269.32
-Bidirectional A* (Adj),AdjacencyList,124,648765.41,1185268.67
-Bidirectional A* (Adj),AdjacencyList,125,648780.02,1185268.96
-Bidirectional A* (Adj),AdjacencyList,126,648782.49,1185278.57
-Bidirectional A* (Adj),AdjacencyList,127,648780.53,1185296.08
-Bidirectional A* (Adj),AdjacencyList,128,648773.34,1185314.21
-Bidirectional A* (Adj),AdjacencyList,129,648761.04,1185331.42
-Bidirectional A* (Adj),AdjacencyList,130,648781.04,1185345.06
-Bidirectional A* (Adj),AdjacencyList,131,648791.49,1185351.31
-Bidirectional A* (Adj),AdjacencyList,132,648794.70,1185356.46
-Bidirectional A* (Adj),AdjacencyList,133,648798.29,1185365.04
-Bidirectional A* (Adj),AdjacencyList,134,648790.40,1185373.30
-Bidirectional A* (Adj),AdjacencyList,135,648781.91,1185380.92
-Bidirectional A* (Adj),AdjacencyList,136,648777.69,1185387.38
-Bidirectional A* (Adj),AdjacencyList,137,648774.27,1185395.05
-Bidirectional A* (Adj),AdjacencyList,138,648769.51,1185406.13
-Bidirectional A* (Adj),AdjacencyList,139,648765.55,1185416.83
-Bidirectional A* (Adj),AdjacencyList,140,648758.13,1185430.72
-Bidirectional A* (Adj),AdjacencyList,141,648753.02,1185438.68
-Bidirectional A* (Adj),AdjacencyList,142,648755.56,1185451.97
-Bidirectional A* (Adj),AdjacencyList,143,648758.12,1185465.47
-Bidirectional A* (Adj),AdjacencyList,144,648754.67,1185466.66
-ALT (Adj),AdjacencyList,0,648054.66,1184743.56
-ALT (Adj),AdjacencyList,1,648057.86,1184743.02
-ALT (Adj),AdjacencyList,2,648060.76,1184748.25
-ALT (Adj),AdjacencyList,3,648064.74,1184754.70
-ALT (Adj),AdjacencyList,4,648069.19,1184757.40
-ALT (Adj),AdjacencyList,5,648070.52,1184762.26
-ALT (Adj),AdjacencyList,6,648071.70,1184765.70
-ALT (Adj),AdjacencyList,7,648067.91,1184770.60
-ALT (Adj),AdjacencyList,8,648068.17,1184778.52
-ALT (Adj),AdjacencyList,9,648071.63,1184783.15
-ALT (Adj),AdjacencyList,10,648073.65,1184790.06
-ALT (Adj),AdjacencyList,11,648071.62,1184794.35
-ALT (Adj),AdjacencyList,12,648076.20,1184796.87
-ALT (Adj),AdjacencyList,13,648072.89,1184804.21
-ALT (Adj),AdjacencyList,14,648079.25,1184807.12
-ALT (Adj),AdjacencyList,15,648076.43,1184813.50
-ALT (Adj),AdjacencyList,16,648084.24,1184825.57
-ALT (Adj),AdjacencyList,17,648085.72,1184838.73
-ALT (Adj),AdjacencyList,18,648082.03,1184844.63
-ALT (Adj),AdjacencyList,19,648086.27,1184851.57
-ALT (Adj),AdjacencyList,20,648088.34,1184856.65
-ALT (Adj),AdjacencyList,21,648095.11,1184862.81
-ALT (Adj),AdjacencyList,22,648101.02,1184877.21
-ALT (Adj),AdjacencyList,23,648095.61,1184883.82
-ALT (Adj),AdjacencyList,24,648095.76,1184890.74
-ALT (Adj),AdjacencyList,25,648092.71,1184891.93
-ALT (Adj),AdjacencyList,26,648095.44,1184904.51
-ALT (Adj),AdjacencyList,27,648099.41,1184909.89
-ALT (Adj),AdjacencyList,28,648095.73,1184921.12
-ALT (Adj),AdjacencyList,29,648097.20,1184924.43
-ALT (Adj),AdjacencyList,30,648093.54,1184927.49
-ALT (Adj),AdjacencyList,31,648088.81,1184927.96
-ALT (Adj),AdjacencyList,32,648085.05,1184934.26
-ALT (Adj),AdjacencyList,33,648086.68,1184937.06
-ALT (Adj),AdjacencyList,34,648087.75,1184940.53
-ALT (Adj),AdjacencyList,35,648087.52,1184947.03
-ALT (Adj),AdjacencyList,36,648085.53,1184951.61
-ALT (Adj),AdjacencyList,37,648082.45,1184963.51
-ALT (Adj),AdjacencyList,38,648078.19,1184967.00
-ALT (Adj),AdjacencyList,39,648073.79,1184967.11
-ALT (Adj),AdjacencyList,40,648073.83,1184971.02
-ALT (Adj),AdjacencyList,41,648071.29,1184973.65
-ALT (Adj),AdjacencyList,42,648064.35,1184976.56
-ALT (Adj),AdjacencyList,43,648063.32,1184983.59
-ALT (Adj),AdjacencyList,44,648065.72,1184987.04
-ALT (Adj),AdjacencyList,45,648064.73,1184989.86
-ALT (Adj),AdjacencyList,46,648067.06,1184993.45
-ALT (Adj),AdjacencyList,47,648069.58,1184998.45
-ALT (Adj),AdjacencyList,48,648072.25,1185001.87
-ALT (Adj),AdjacencyList,49,648076.27,1185007.73
-ALT (Adj),AdjacencyList,50,648077.03,1185013.14
-ALT (Adj),AdjacencyList,51,648080.25,1185015.23
-ALT (Adj),AdjacencyList,52,648079.49,1185019.95
-ALT (Adj),AdjacencyList,53,648085.89,1185031.48
-ALT (Adj),AdjacencyList,54,648092.06,1185042.31
-ALT (Adj),AdjacencyList,55,648093.89,1185046.02
-ALT (Adj),AdjacencyList,56,648094.03,1185051.89
-ALT (Adj),AdjacencyList,57,648095.63,1185058.21
-ALT (Adj),AdjacencyList,58,648097.40,1185063.09
-ALT (Adj),AdjacencyList,59,648101.23,1185068.87
-ALT (Adj),AdjacencyList,60,648103.07,1185073.78
-ALT (Adj),AdjacencyList,61,648107.85,1185079.42
-ALT (Adj),AdjacencyList,62,648109.42,1185086.77
-ALT (Adj),AdjacencyList,63,648113.03,1185094.41
-ALT (Adj),AdjacencyList,64,648115.51,1185097.63
-ALT (Adj),AdjacencyList,65,648117.69,1185101.29
-ALT (Adj),AdjacencyList,66,648123.43,1185105.49
-ALT (Adj),AdjacencyList,67,648128.22,1185111.37
-ALT (Adj),AdjacencyList,68,648133.15,1185118.36
-ALT (Adj),AdjacencyList,69,648139.18,1185127.98
-ALT (Adj),AdjacencyList,70,648141.44,1185130.83
-ALT (Adj),AdjacencyList,71,648144.50,1185138.07
-ALT (Adj),AdjacencyList,72,648147.95,1185146.16
-ALT (Adj),AdjacencyList,73,648152.48,1185152.49
-ALT (Adj),AdjacencyList,74,648155.98,1185156.94
-ALT (Adj),AdjacencyList,75,648161.83,1185165.82
-ALT (Adj),AdjacencyList,76,648166.42,1185174.11
-ALT (Adj),AdjacencyList,77,648167.87,1185179.36
-ALT (Adj),AdjacencyList,78,648170.41,1185183.43
-ALT (Adj),AdjacencyList,79,648173.18,1185190.04
-ALT (Adj),AdjacencyList,80,648176.11,1185195.30
-ALT (Adj),AdjacencyList,81,648177.55,1185198.99
-ALT (Adj),AdjacencyList,82,648180.50,1185202.05
-ALT (Adj),AdjacencyList,83,648183.88,1185206.24
-ALT (Adj),AdjacencyList,84,648187.39,1185213.46
-ALT (Adj),AdjacencyList,85,648190.63,1185219.00
-ALT (Adj),AdjacencyList,86,648186.09,1185224.58
-ALT (Adj),AdjacencyList,87,648183.41,1185225.93
-ALT (Adj),AdjacencyList,88,648179.32,1185232.56
-ALT (Adj),AdjacencyList,89,648174.94,1185240.29
-ALT (Adj),AdjacencyList,90,648174.91,1185244.40
-ALT (Adj),AdjacencyList,91,648175.18,1185250.41
-ALT (Adj),AdjacencyList,92,648178.69,1185256.13
-ALT (Adj),AdjacencyList,93,648181.81,1185262.80
-ALT (Adj),AdjacencyList,94,648184.54,1185269.09
-ALT (Adj),AdjacencyList,95,648188.08,1185275.26
-ALT (Adj),AdjacencyList,96,648190.19,1185281.31
-ALT (Adj),AdjacencyList,97,648189.90,1185285.01
-ALT (Adj),AdjacencyList,98,648194.23,1185294.21
-ALT (Adj),AdjacencyList,99,648195.55,1185298.91
-ALT (Adj),AdjacencyList,100,648197.26,1185303.55
-ALT (Adj),AdjacencyList,101,648195.24,1185311.69
-ALT (Adj),AdjacencyList,102,648202.24,1185316.71
-ALT (Adj),AdjacencyList,103,648208.35,1185320.58
-ALT (Adj),AdjacencyList,104,648212.64,1185323.45
-ALT (Adj),AdjacencyList,105,648221.09,1185328.11
-ALT (Adj),AdjacencyList,106,648229.53,1185324.60
-ALT (Adj),AdjacencyList,107,648239.00,1185327.32
-ALT (Adj),AdjacencyList,108,648240.58,1185330.16
-ALT (Adj),AdjacencyList,109,648241.49,1185333.17
-ALT (Adj),AdjacencyList,110,648245.86,1185343.19
-ALT (Adj),AdjacencyList,111,648248.52,1185347.13
-ALT (Adj),AdjacencyList,112,648251.32,1185353.02
-ALT (Adj),AdjacencyList,113,648259.31,1185362.88
-ALT (Adj),AdjacencyList,114,648262.51,1185367.37
-ALT (Adj),AdjacencyList,115,648266.24,1185373.33
-ALT (Adj),AdjacencyList,116,648269.63,1185379.86
-ALT (Adj),AdjacencyList,117,648271.23,1185385.15
-ALT (Adj),AdjacencyList,118,648273.68,1185388.81
-ALT (Adj),AdjacencyList,119,648276.05,1185394.58
-ALT (Adj),AdjacencyList,120,648274.80,1185400.76
-ALT (Adj),AdjacencyList,121,648278.13,1185403.06
-ALT (Adj),AdjacencyList,122,648279.92,1185411.05
-ALT (Adj),AdjacencyList,123,648284.05,1185415.97
-ALT (Adj),AdjacencyList,124,648285.78,1185422.83
-ALT (Adj),AdjacencyList,125,648288.88,1185428.91
-ALT (Adj),AdjacencyList,126,648289.69,1185434.65
-ALT (Adj),AdjacencyList,127,648288.83,1185440.43
-ALT (Adj),AdjacencyList,128,648290.43,1185443.47
-ALT (Adj),AdjacencyList,129,648290.35,1185449.83
-ALT (Adj),AdjacencyList,130,648291.78,1185454.95
-ALT (Adj),AdjacencyList,131,648295.23,1185461.35
-ALT (Adj),AdjacencyList,132,648296.85,1185465.66
-ALT (Adj),AdjacencyList,133,648300.45,1185473.27
-ALT (Adj),AdjacencyList,134,648303.40,1185476.25
-ALT (Adj),AdjacencyList,135,648304.81,1185479.11
-ALT (Adj),AdjacencyList,136,648306.44,1185481.96
-ALT (Adj),AdjacencyList,137,648310.67,1185483.36
-ALT (Adj),AdjacencyList,138,648313.89,1185484.97
-ALT (Adj),AdjacencyList,139,648316.78,1185487.40
-ALT (Adj),AdjacencyList,140,648327.99,1185490.15
-ALT (Adj),AdjacencyList,141,648336.66,1185494.59
-ALT (Adj),AdjacencyList,142,648345.94,1185490.85
-ALT (Adj),AdjacencyList,143,648350.48,1185489.21
-ALT (Adj),AdjacencyList,144,648357.85,1185487.99
-ALT (Adj),AdjacencyList,145,648361.71,1185487.72
-ALT (Adj),AdjacencyList,146,648368.30,1185488.15
-ALT (Adj),AdjacencyList,147,648372.29,1185487.80
-ALT (Adj),AdjacencyList,148,648377.78,1185486.59
-ALT (Adj),AdjacencyList,149,648382.61,1185488.50
-ALT (Adj),AdjacencyList,150,648389.66,1185482.40
-ALT (Adj),AdjacencyList,151,648395.72,1185483.56
-ALT (Adj),AdjacencyList,152,648400.88,1185488.12
-ALT (Adj),AdjacencyList,153,648404.10,1185486.24
-ALT (Adj),AdjacencyList,154,648409.09,1185484.99
-ALT (Adj),AdjacencyList,155,648411.63,1185479.89
-ALT (Adj),AdjacencyList,156,648415.75,1185476.27
-ALT (Adj),AdjacencyList,157,648421.54,1185472.01
-ALT (Adj),AdjacencyList,158,648429.12,1185466.39
-ALT (Adj),AdjacencyList,159,648434.85,1185464.28
-ALT (Adj),AdjacencyList,160,648442.40,1185463.46
-ALT (Adj),AdjacencyList,161,648447.37,1185462.16
-ALT (Adj),AdjacencyList,162,648456.36,1185459.08
-ALT (Adj),AdjacencyList,163,648464.71,1185456.25
-ALT (Adj),AdjacencyList,164,648468.59,1185455.17
-ALT (Adj),AdjacencyList,165,648477.55,1185454.07
-ALT (Adj),AdjacencyList,166,648484.83,1185458.16
-ALT (Adj),AdjacencyList,167,648489.76,1185451.74
-ALT (Adj),AdjacencyList,168,648494.03,1185453.38
-ALT (Adj),AdjacencyList,169,648498.11,1185454.22
-ALT (Adj),AdjacencyList,170,648500.88,1185449.01
-ALT (Adj),AdjacencyList,171,648503.48,1185439.54
-ALT (Adj),AdjacencyList,172,648505.75,1185434.78
-ALT (Adj),AdjacencyList,173,648509.20,1185431.34
-ALT (Adj),AdjacencyList,174,648516.25,1185427.67
-ALT (Adj),AdjacencyList,175,648524.58,1185424.93
-ALT (Adj),AdjacencyList,176,648534.73,1185421.21
-ALT (Adj),AdjacencyList,177,648539.82,1185425.85
-ALT (Adj),AdjacencyList,178,648548.69,1185426.32
-ALT (Adj),AdjacencyList,179,648551.78,1185429.26
-ALT (Adj),AdjacencyList,180,648562.71,1185435.05
-ALT (Adj),AdjacencyList,181,648566.62,1185433.89
-ALT (Adj),AdjacencyList,182,648571.47,1185432.45
-ALT (Adj),AdjacencyList,183,648577.18,1185430.75
-ALT (Adj),AdjacencyList,184,648583.69,1185428.82
-ALT (Adj),AdjacencyList,185,648591.71,1185428.21
-ALT (Adj),AdjacencyList,186,648598.77,1185424.35
-ALT (Adj),AdjacencyList,187,648606.16,1185423.18
-ALT (Adj),AdjacencyList,188,648614.78,1185420.80
-ALT (Adj),AdjacencyList,189,648625.38,1185416.45
-ALT (Adj),AdjacencyList,190,648635.20,1185416.43
-ALT (Adj),AdjacencyList,191,648641.70,1185413.79
-ALT (Adj),AdjacencyList,192,648646.91,1185420.43
-ALT (Adj),AdjacencyList,193,648648.40,1185424.35
-ALT (Adj),AdjacencyList,194,648651.94,1185431.52
-ALT (Adj),AdjacencyList,195,648662.32,1185435.19
-ALT (Adj),AdjacencyList,196,648664.31,1185438.37
-ALT (Adj),AdjacencyList,197,648664.24,1185441.79
-ALT (Adj),AdjacencyList,198,648667.86,1185447.36
-ALT (Adj),AdjacencyList,199,648676.95,1185451.59
-ALT (Adj),AdjacencyList,200,648678.49,1185449.93
-ALT (Adj),AdjacencyList,201,648696.05,1185447.17
-ALT (Adj),AdjacencyList,202,648706.05,1185447.78
-ALT (Adj),AdjacencyList,203,648707.67,1185444.43
-ALT (Adj),AdjacencyList,204,648714.70,1185443.94
-ALT (Adj),AdjacencyList,205,648718.55,1185445.58
-ALT (Adj),AdjacencyList,206,648719.34,1185452.73
-ALT (Adj),AdjacencyList,207,648723.96,1185455.30
-ALT (Adj),AdjacencyList,208,648725.09,1185459.80
-ALT (Adj),AdjacencyList,209,648729.63,1185469.02
-ALT (Adj),AdjacencyList,210,648735.77,1185485.23
-ALT (Adj),AdjacencyList,211,648751.20,1185481.78
-ALT (Adj),AdjacencyList,212,648758.24,1185479.13
-ALT (Adj),AdjacencyList,213,648755.76,1185470.86
-ALT (Adj),AdjacencyList,214,648754.67,1185466.66
+Dijkstra,NetworkX,0,648319.09,1184560.36
+Dijkstra,NetworkX,1,648320.15,1184568.02
+Dijkstra,NetworkX,2,648323.18,1184574.97
+Dijkstra,NetworkX,3,648324.01,1184583.65
+Dijkstra,NetworkX,4,648327.89,1184589.72
+Dijkstra,NetworkX,5,648329.21,1184598.76
+Dijkstra,NetworkX,6,648331.13,1184606.54
+Dijkstra,NetworkX,7,648334.27,1184614.51
+Dijkstra,NetworkX,8,648335.80,1184621.92
+Dijkstra,NetworkX,9,648341.99,1184630.29
+Dijkstra,NetworkX,10,648350.11,1184634.97
+Dijkstra,NetworkX,11,648353.06,1184641.70
+Dijkstra,NetworkX,12,648355.42,1184649.45
+Dijkstra,NetworkX,13,648361.31,1184656.29
+Dijkstra,NetworkX,14,648363.90,1184663.52
+Dijkstra,NetworkX,15,648365.74,1184670.94
+Dijkstra,NetworkX,16,648367.55,1184679.19
+Dijkstra,NetworkX,17,648374.00,1184691.28
+Dijkstra,NetworkX,18,648378.54,1184702.60
+Dijkstra,NetworkX,19,648391.90,1184708.26
+Dijkstra,NetworkX,20,648401.53,1184712.39
+Dijkstra,NetworkX,21,648411.41,1184712.85
+Dijkstra,NetworkX,22,648421.85,1184713.73
+Dijkstra,NetworkX,23,648430.69,1184709.78
+Dijkstra,NetworkX,24,648443.96,1184701.97
+Dijkstra,NetworkX,25,648456.10,1184697.81
+Dijkstra,NetworkX,26,648460.97,1184696.03
+Dijkstra,NetworkX,27,648476.93,1184693.04
+Dijkstra,NetworkX,28,648488.41,1184690.01
+Dijkstra,NetworkX,29,648500.14,1184691.05
+Dijkstra,NetworkX,30,648511.69,1184692.43
+Dijkstra,NetworkX,31,648520.71,1184689.46
+Dijkstra,NetworkX,32,648532.89,1184686.60
+Dijkstra,NetworkX,33,648547.79,1184686.02
+Dijkstra,NetworkX,34,648560.51,1184687.31
+Dijkstra,NetworkX,35,648567.43,1184698.69
+Dijkstra,NetworkX,36,648576.98,1184706.74
+Dijkstra,NetworkX,37,648581.56,1184725.01
+Dijkstra,NetworkX,38,648587.95,1184742.35
+Dijkstra,NetworkX,39,648591.22,1184751.18
+Dijkstra,NetworkX,40,648600.52,1184762.62
+Dijkstra,NetworkX,41,648607.46,1184772.08
+Dijkstra,NetworkX,42,648622.02,1184777.48
+Dijkstra,NetworkX,43,648634.58,1184790.68
+Dijkstra,NetworkX,44,648649.72,1184805.30
+Dijkstra,NetworkX,45,648656.26,1184827.34
+Dijkstra,NetworkX,46,648675.69,1184836.65
+Dijkstra,NetworkX,47,648684.78,1184839.64
+Dijkstra,NetworkX,48,648693.09,1184847.50
+Dijkstra,NetworkX,49,648696.40,1184859.32
+Dijkstra,NetworkX,50,648692.71,1184874.67
+Dijkstra,NetworkX,51,648686.06,1184896.47
+Dijkstra,NetworkX,52,648689.84,1184911.53
+Dijkstra,NetworkX,53,648692.55,1184924.07
+Dijkstra,NetworkX,54,648697.25,1184936.28
+Dijkstra,NetworkX,55,648703.84,1184949.81
+Dijkstra,NetworkX,56,648708.30,1184963.81
+Dijkstra,NetworkX,57,648709.28,1184973.27
+Dijkstra,NetworkX,58,648711.80,1184983.91
+Dijkstra,NetworkX,59,648718.47,1184996.36
+Dijkstra,NetworkX,60,648725.67,1185011.55
+Dijkstra,NetworkX,61,648729.78,1185030.67
+Dijkstra,NetworkX,62,648733.96,1185048.32
+Dijkstra,NetworkX,63,648743.01,1185063.13
+Dijkstra,NetworkX,64,648746.16,1185067.55
+Dijkstra,NetworkX,65,648745.70,1185079.37
+Dijkstra,NetworkX,66,648747.20,1185093.42
+Dijkstra,NetworkX,67,648746.51,1185110.04
+Dijkstra,NetworkX,68,648751.86,1185126.40
+Dijkstra,NetworkX,69,648754.40,1185137.23
+Dijkstra,NetworkX,70,648756.57,1185153.24
+Dijkstra,NetworkX,71,648759.43,1185168.20
+Dijkstra,NetworkX,72,648759.92,1185182.90
+Dijkstra,NetworkX,73,648762.08,1185185.65
+Dijkstra,NetworkX,74,648765.76,1185202.82
+Dijkstra,NetworkX,75,648766.18,1185216.51
+Dijkstra,NetworkX,76,648768.43,1185231.08
+Dijkstra,NetworkX,77,648768.64,1185241.97
+Dijkstra,NetworkX,78,648761.46,1185255.79
+Dijkstra,NetworkX,79,648756.84,1185267.93
+Dijkstra,NetworkX,80,648758.75,1185279.32
+Dijkstra,NetworkX,81,648767.23,1185296.57
+Dijkstra,NetworkX,82,648773.34,1185314.21
+Dijkstra,NetworkX,83,648777.74,1185334.04
+Dijkstra,NetworkX,84,648766.40,1185349.57
+Dijkstra,NetworkX,85,648770.72,1185373.33
+Dijkstra,NetworkX,86,648773.13,1185385.40
+Dijkstra,NetworkX,87,648767.44,1185395.86
+Dijkstra,NetworkX,88,648768.88,1185406.56
+Dijkstra,NetworkX,89,648765.55,1185416.83
+Dijkstra,NetworkX,90,648769.75,1185431.11
+Dijkstra,NetworkX,91,648779.95,1185445.28
+Dijkstra,NetworkX,92,648785.41,1185460.13
+Dijkstra,NetworkX,93,648787.39,1185478.46
+Dijkstra,NetworkX,94,648766.48,1185493.23
+Dijkstra,NetworkX,95,648758.24,1185479.13
+A*,NetworkX,0,648319.09,1184560.36
+A*,NetworkX,1,648320.15,1184568.02
+A*,NetworkX,2,648323.18,1184574.97
+A*,NetworkX,3,648324.01,1184583.65
+A*,NetworkX,4,648327.89,1184589.72
+A*,NetworkX,5,648329.21,1184598.76
+A*,NetworkX,6,648331.13,1184606.54
+A*,NetworkX,7,648334.27,1184614.51
+A*,NetworkX,8,648335.80,1184621.92
+A*,NetworkX,9,648341.99,1184630.29
+A*,NetworkX,10,648350.11,1184634.97
+A*,NetworkX,11,648353.06,1184641.70
+A*,NetworkX,12,648355.42,1184649.45
+A*,NetworkX,13,648361.31,1184656.29
+A*,NetworkX,14,648363.90,1184663.52
+A*,NetworkX,15,648365.74,1184670.94
+A*,NetworkX,16,648367.55,1184679.19
+A*,NetworkX,17,648374.00,1184691.28
+A*,NetworkX,18,648378.54,1184702.60
+A*,NetworkX,19,648391.90,1184708.26
+A*,NetworkX,20,648401.53,1184712.39
+A*,NetworkX,21,648411.41,1184712.85
+A*,NetworkX,22,648421.85,1184713.73
+A*,NetworkX,23,648430.69,1184709.78
+A*,NetworkX,24,648443.96,1184701.97
+A*,NetworkX,25,648456.10,1184697.81
+A*,NetworkX,26,648460.97,1184696.03
+A*,NetworkX,27,648476.93,1184693.04
+A*,NetworkX,28,648488.41,1184690.01
+A*,NetworkX,29,648500.14,1184691.05
+A*,NetworkX,30,648511.69,1184692.43
+A*,NetworkX,31,648520.71,1184689.46
+A*,NetworkX,32,648532.89,1184686.60
+A*,NetworkX,33,648547.79,1184686.02
+A*,NetworkX,34,648560.51,1184687.31
+A*,NetworkX,35,648567.43,1184698.69
+A*,NetworkX,36,648576.98,1184706.74
+A*,NetworkX,37,648581.56,1184725.01
+A*,NetworkX,38,648587.95,1184742.35
+A*,NetworkX,39,648591.22,1184751.18
+A*,NetworkX,40,648600.52,1184762.62
+A*,NetworkX,41,648607.46,1184772.08
+A*,NetworkX,42,648622.02,1184777.48
+A*,NetworkX,43,648634.58,1184790.68
+A*,NetworkX,44,648649.72,1184805.30
+A*,NetworkX,45,648656.26,1184827.34
+A*,NetworkX,46,648675.69,1184836.65
+A*,NetworkX,47,648684.78,1184839.64
+A*,NetworkX,48,648693.09,1184847.50
+A*,NetworkX,49,648696.40,1184859.32
+A*,NetworkX,50,648692.71,1184874.67
+A*,NetworkX,51,648686.06,1184896.47
+A*,NetworkX,52,648689.84,1184911.53
+A*,NetworkX,53,648692.55,1184924.07
+A*,NetworkX,54,648697.25,1184936.28
+A*,NetworkX,55,648703.84,1184949.81
+A*,NetworkX,56,648708.30,1184963.81
+A*,NetworkX,57,648709.28,1184973.27
+A*,NetworkX,58,648711.80,1184983.91
+A*,NetworkX,59,648718.47,1184996.36
+A*,NetworkX,60,648725.67,1185011.55
+A*,NetworkX,61,648729.78,1185030.67
+A*,NetworkX,62,648733.96,1185048.32
+A*,NetworkX,63,648743.01,1185063.13
+A*,NetworkX,64,648746.16,1185067.55
+A*,NetworkX,65,648745.70,1185079.37
+A*,NetworkX,66,648747.20,1185093.42
+A*,NetworkX,67,648746.51,1185110.04
+A*,NetworkX,68,648751.86,1185126.40
+A*,NetworkX,69,648754.40,1185137.23
+A*,NetworkX,70,648756.57,1185153.24
+A*,NetworkX,71,648759.43,1185168.20
+A*,NetworkX,72,648759.92,1185182.90
+A*,NetworkX,73,648762.08,1185185.65
+A*,NetworkX,74,648765.76,1185202.82
+A*,NetworkX,75,648766.18,1185216.51
+A*,NetworkX,76,648768.43,1185231.08
+A*,NetworkX,77,648768.64,1185241.97
+A*,NetworkX,78,648761.46,1185255.79
+A*,NetworkX,79,648756.84,1185267.93
+A*,NetworkX,80,648758.75,1185279.32
+A*,NetworkX,81,648767.23,1185296.57
+A*,NetworkX,82,648773.34,1185314.21
+A*,NetworkX,83,648777.74,1185334.04
+A*,NetworkX,84,648766.40,1185349.57
+A*,NetworkX,85,648770.72,1185373.33
+A*,NetworkX,86,648773.13,1185385.40
+A*,NetworkX,87,648767.44,1185395.86
+A*,NetworkX,88,648768.88,1185406.56
+A*,NetworkX,89,648765.55,1185416.83
+A*,NetworkX,90,648769.75,1185431.11
+A*,NetworkX,91,648779.95,1185445.28
+A*,NetworkX,92,648785.41,1185460.13
+A*,NetworkX,93,648787.39,1185478.46
+A*,NetworkX,94,648766.48,1185493.23
+A*,NetworkX,95,648758.24,1185479.13
+Bidirectional A*,NetworkX,0,648319.09,1184560.36
+Bidirectional A*,NetworkX,1,648320.15,1184568.02
+Bidirectional A*,NetworkX,2,648323.18,1184574.97
+Bidirectional A*,NetworkX,3,648324.01,1184583.65
+Bidirectional A*,NetworkX,4,648327.89,1184589.72
+Bidirectional A*,NetworkX,5,648329.21,1184598.76
+Bidirectional A*,NetworkX,6,648331.13,1184606.54
+Bidirectional A*,NetworkX,7,648334.27,1184614.51
+Bidirectional A*,NetworkX,8,648335.80,1184621.92
+Bidirectional A*,NetworkX,9,648341.99,1184630.29
+Bidirectional A*,NetworkX,10,648350.11,1184634.97
+Bidirectional A*,NetworkX,11,648353.06,1184641.70
+Bidirectional A*,NetworkX,12,648355.42,1184649.45
+Bidirectional A*,NetworkX,13,648361.31,1184656.29
+Bidirectional A*,NetworkX,14,648363.90,1184663.52
+Bidirectional A*,NetworkX,15,648365.74,1184670.94
+Bidirectional A*,NetworkX,16,648367.55,1184679.19
+Bidirectional A*,NetworkX,17,648374.00,1184691.28
+Bidirectional A*,NetworkX,18,648378.54,1184702.60
+Bidirectional A*,NetworkX,19,648391.90,1184708.26
+Bidirectional A*,NetworkX,20,648401.53,1184712.39
+Bidirectional A*,NetworkX,21,648411.41,1184712.85
+Bidirectional A*,NetworkX,22,648421.85,1184713.73
+Bidirectional A*,NetworkX,23,648430.69,1184709.78
+Bidirectional A*,NetworkX,24,648443.96,1184701.97
+Bidirectional A*,NetworkX,25,648456.10,1184697.81
+Bidirectional A*,NetworkX,26,648460.97,1184696.03
+Bidirectional A*,NetworkX,27,648476.93,1184693.04
+Bidirectional A*,NetworkX,28,648488.41,1184690.01
+Bidirectional A*,NetworkX,29,648500.14,1184691.05
+Bidirectional A*,NetworkX,30,648511.69,1184692.43
+Bidirectional A*,NetworkX,31,648520.71,1184689.46
+Bidirectional A*,NetworkX,32,648532.89,1184686.60
+Bidirectional A*,NetworkX,33,648547.79,1184686.02
+Bidirectional A*,NetworkX,34,648560.51,1184687.31
+Bidirectional A*,NetworkX,35,648567.43,1184698.69
+Bidirectional A*,NetworkX,36,648576.98,1184706.74
+Bidirectional A*,NetworkX,37,648581.56,1184725.01
+Bidirectional A*,NetworkX,38,648587.95,1184742.35
+Bidirectional A*,NetworkX,39,648591.22,1184751.18
+Bidirectional A*,NetworkX,40,648600.52,1184762.62
+Bidirectional A*,NetworkX,41,648607.46,1184772.08
+Bidirectional A*,NetworkX,42,648622.02,1184777.48
+Bidirectional A*,NetworkX,43,648634.58,1184790.68
+Bidirectional A*,NetworkX,44,648649.72,1184805.30
+Bidirectional A*,NetworkX,45,648656.26,1184827.34
+Bidirectional A*,NetworkX,46,648675.69,1184836.65
+Bidirectional A*,NetworkX,47,648684.78,1184839.64
+Bidirectional A*,NetworkX,48,648693.09,1184847.50
+Bidirectional A*,NetworkX,49,648696.40,1184859.32
+Bidirectional A*,NetworkX,50,648692.71,1184874.67
+Bidirectional A*,NetworkX,51,648686.06,1184896.47
+Bidirectional A*,NetworkX,52,648689.84,1184911.53
+Bidirectional A*,NetworkX,53,648692.55,1184924.07
+Bidirectional A*,NetworkX,54,648697.25,1184936.28
+Bidirectional A*,NetworkX,55,648703.84,1184949.81
+Bidirectional A*,NetworkX,56,648708.30,1184963.81
+Bidirectional A*,NetworkX,57,648709.28,1184973.27
+Bidirectional A*,NetworkX,58,648711.80,1184983.91
+Bidirectional A*,NetworkX,59,648718.47,1184996.36
+Bidirectional A*,NetworkX,60,648725.67,1185011.55
+Bidirectional A*,NetworkX,61,648729.78,1185030.67
+Bidirectional A*,NetworkX,62,648733.96,1185048.32
+Bidirectional A*,NetworkX,63,648735.63,1185054.16
+Bidirectional A*,NetworkX,64,648746.16,1185067.55
+Bidirectional A*,NetworkX,65,648745.70,1185079.37
+Bidirectional A*,NetworkX,66,648747.20,1185093.42
+Bidirectional A*,NetworkX,67,648746.51,1185110.04
+Bidirectional A*,NetworkX,68,648751.86,1185126.40
+Bidirectional A*,NetworkX,69,648754.40,1185137.23
+Bidirectional A*,NetworkX,70,648756.57,1185153.24
+Bidirectional A*,NetworkX,71,648759.43,1185168.20
+Bidirectional A*,NetworkX,72,648759.92,1185182.90
+Bidirectional A*,NetworkX,73,648762.08,1185185.65
+Bidirectional A*,NetworkX,74,648765.76,1185202.82
+Bidirectional A*,NetworkX,75,648766.18,1185216.51
+Bidirectional A*,NetworkX,76,648768.43,1185231.08
+Bidirectional A*,NetworkX,77,648768.64,1185241.97
+Bidirectional A*,NetworkX,78,648761.46,1185255.79
+Bidirectional A*,NetworkX,79,648756.84,1185267.93
+Bidirectional A*,NetworkX,80,648758.75,1185279.32
+Bidirectional A*,NetworkX,81,648767.23,1185296.57
+Bidirectional A*,NetworkX,82,648773.34,1185314.21
+Bidirectional A*,NetworkX,83,648777.74,1185334.04
+Bidirectional A*,NetworkX,84,648766.40,1185349.57
+Bidirectional A*,NetworkX,85,648770.72,1185373.33
+Bidirectional A*,NetworkX,86,648773.13,1185385.40
+Bidirectional A*,NetworkX,87,648767.44,1185395.86
+Bidirectional A*,NetworkX,88,648768.88,1185406.56
+Bidirectional A*,NetworkX,89,648765.55,1185416.83
+Bidirectional A*,NetworkX,90,648769.75,1185431.11
+Bidirectional A*,NetworkX,91,648779.95,1185445.28
+Bidirectional A*,NetworkX,92,648785.41,1185460.13
+Bidirectional A*,NetworkX,93,648787.39,1185478.46
+Bidirectional A*,NetworkX,94,648766.48,1185493.23
+Bidirectional A*,NetworkX,95,648758.24,1185479.13
+ALT,NetworkX,0,648319.09,1184560.36
+ALT,NetworkX,1,648325.38,1184549.53
+ALT,NetworkX,2,648330.83,1184556.28
+ALT,NetworkX,3,648334.02,1184563.88
+ALT,NetworkX,4,648338.06,1184574.02
+ALT,NetworkX,5,648340.90,1184586.89
+ALT,NetworkX,6,648341.39,1184595.24
+ALT,NetworkX,7,648331.13,1184606.54
+ALT,NetworkX,8,648345.99,1184610.52
+ALT,NetworkX,9,648345.45,1184618.60
+ALT,NetworkX,10,648338.87,1184629.22
+ALT,NetworkX,11,648340.08,1184637.18
+ALT,NetworkX,12,648353.06,1184641.70
+ALT,NetworkX,13,648355.65,1184633.47
+ALT,NetworkX,14,648365.97,1184631.07
+ALT,NetworkX,15,648374.44,1184644.53
+ALT,NetworkX,16,648382.99,1184657.51
+ALT,NetworkX,17,648372.96,1184660.48
+ALT,NetworkX,18,648365.74,1184670.94
+ALT,NetworkX,19,648367.55,1184679.19
+ALT,NetworkX,20,648372.68,1184694.42
+ALT,NetworkX,21,648369.30,1184704.91
+ALT,NetworkX,22,648377.64,1184711.18
+ALT,NetworkX,23,648391.37,1184715.55
+ALT,NetworkX,24,648401.53,1184712.39
+ALT,NetworkX,25,648411.41,1184712.85
+ALT,NetworkX,26,648421.85,1184713.73
+ALT,NetworkX,27,648430.69,1184709.78
+ALT,NetworkX,28,648443.96,1184701.97
+ALT,NetworkX,29,648451.43,1184706.79
+ALT,NetworkX,30,648460.97,1184696.03
+ALT,NetworkX,31,648467.38,1184703.96
+ALT,NetworkX,32,648476.74,1184710.86
+ALT,NetworkX,33,648482.76,1184714.18
+ALT,NetworkX,34,648496.77,1184710.48
+ALT,NetworkX,35,648508.29,1184698.68
+ALT,NetworkX,36,648509.07,1184684.45
+ALT,NetworkX,37,648520.71,1184689.46
+ALT,NetworkX,38,648532.33,1184688.78
+ALT,NetworkX,39,648544.81,1184681.03
+ALT,NetworkX,40,648550.30,1184672.40
+ALT,NetworkX,41,648553.37,1184666.96
+ALT,NetworkX,42,648566.15,1184671.80
+ALT,NetworkX,43,648569.74,1184662.29
+ALT,NetworkX,44,648579.98,1184654.73
+ALT,NetworkX,45,648594.43,1184656.95
+ALT,NetworkX,46,648604.70,1184661.05
+ALT,NetworkX,47,648612.60,1184657.72
+ALT,NetworkX,48,648624.35,1184651.05
+ALT,NetworkX,49,648637.33,1184658.44
+ALT,NetworkX,50,648637.34,1184672.49
+ALT,NetworkX,51,648642.41,1184688.82
+ALT,NetworkX,52,648654.61,1184697.40
+ALT,NetworkX,53,648670.29,1184694.97
+ALT,NetworkX,54,648677.21,1184709.49
+ALT,NetworkX,55,648685.97,1184713.86
+ALT,NetworkX,56,648688.38,1184725.84
+ALT,NetworkX,57,648689.15,1184738.09
+ALT,NetworkX,58,648687.41,1184744.53
+ALT,NetworkX,59,648686.27,1184751.30
+ALT,NetworkX,60,648696.65,1184759.00
+ALT,NetworkX,61,648702.37,1184770.54
+ALT,NetworkX,62,648715.81,1184775.74
+ALT,NetworkX,63,648717.23,1184785.81
+ALT,NetworkX,64,648700.63,1184790.02
+ALT,NetworkX,65,648686.72,1184798.39
+ALT,NetworkX,66,648683.30,1184809.50
+ALT,NetworkX,67,648683.52,1184824.74
+ALT,NetworkX,68,648684.78,1184839.64
+ALT,NetworkX,69,648693.09,1184847.50
+ALT,NetworkX,70,648710.84,1184846.87
+ALT,NetworkX,71,648715.13,1184859.13
+ALT,NetworkX,72,648717.05,1184877.43
+ALT,NetworkX,73,648692.71,1184874.67
+ALT,NetworkX,74,648686.06,1184896.47
+ALT,NetworkX,75,648689.84,1184911.53
+ALT,NetworkX,76,648692.55,1184924.07
+ALT,NetworkX,77,648703.14,1184944.05
+ALT,NetworkX,78,648703.84,1184949.81
+ALT,NetworkX,79,648708.30,1184963.81
+ALT,NetworkX,80,648709.28,1184973.27
+ALT,NetworkX,81,648710.61,1184988.75
+ALT,NetworkX,82,648701.08,1184997.98
+ALT,NetworkX,83,648692.92,1185004.28
+ALT,NetworkX,84,648683.24,1185012.89
+ALT,NetworkX,85,648669.41,1185017.39
+ALT,NetworkX,86,648654.65,1185021.27
+ALT,NetworkX,87,648644.71,1185015.57
+ALT,NetworkX,88,648631.96,1185012.25
+ALT,NetworkX,89,648631.94,1184998.36
+ALT,NetworkX,90,648619.46,1184992.69
+ALT,NetworkX,91,648612.74,1184977.24
+ALT,NetworkX,92,648591.76,1184982.72
+ALT,NetworkX,93,648583.23,1184985.91
+ALT,NetworkX,94,648571.93,1185005.94
+ALT,NetworkX,95,648592.48,1185023.11
+ALT,NetworkX,96,648573.19,1185037.39
+ALT,NetworkX,97,648540.22,1185052.69
+ALT,NetworkX,98,648507.42,1185059.72
+ALT,NetworkX,99,648489.17,1185040.33
+ALT,NetworkX,100,648498.70,1185025.85
+ALT,NetworkX,101,648494.30,1185014.60
+ALT,NetworkX,102,648480.18,1185013.73
+ALT,NetworkX,103,648466.39,1185011.66
+ALT,NetworkX,104,648461.58,1184996.24
+ALT,NetworkX,105,648456.81,1184989.00
+ALT,NetworkX,106,648443.66,1184984.94
+ALT,NetworkX,107,648442.60,1184975.87
+ALT,NetworkX,108,648440.28,1184967.81
+ALT,NetworkX,109,648429.58,1184963.54
+ALT,NetworkX,110,648433.92,1184952.28
+ALT,NetworkX,111,648431.91,1184948.55
+ALT,NetworkX,112,648423.29,1184940.13
+ALT,NetworkX,113,648411.93,1184935.05
+ALT,NetworkX,114,648408.15,1184927.54
+ALT,NetworkX,115,648398.77,1184921.79
+ALT,NetworkX,116,648394.49,1184906.15
+ALT,NetworkX,117,648382.33,1184897.49
+ALT,NetworkX,118,648378.47,1184884.01
+ALT,NetworkX,119,648363.30,1184885.14
+ALT,NetworkX,120,648349.86,1184887.40
+ALT,NetworkX,121,648337.82,1184893.60
+ALT,NetworkX,122,648317.03,1184896.37
+ALT,NetworkX,123,648295.28,1184902.83
+ALT,NetworkX,124,648285.79,1184906.70
+ALT,NetworkX,125,648262.37,1184915.02
+ALT,NetworkX,126,648255.38,1184918.68
+ALT,NetworkX,127,648247.16,1184929.05
+ALT,NetworkX,128,648240.38,1184929.89
+ALT,NetworkX,129,648233.13,1184922.43
+ALT,NetworkX,130,648223.13,1184916.76
+ALT,NetworkX,131,648220.99,1184899.50
+ALT,NetworkX,132,648211.14,1184884.33
+ALT,NetworkX,133,648219.89,1184880.81
+ALT,NetworkX,134,648234.31,1184870.06
+ALT,NetworkX,135,648229.85,1184855.83
+ALT,NetworkX,136,648224.82,1184850.72
+ALT,NetworkX,137,648212.11,1184852.46
+ALT,NetworkX,138,648214.43,1184837.68
+ALT,NetworkX,139,648209.65,1184824.77
+ALT,NetworkX,140,648194.47,1184824.50
+ALT,NetworkX,141,648190.45,1184828.58
+ALT,NetworkX,142,648186.35,1184835.95
+ALT,NetworkX,143,648172.24,1184835.48
+ALT,NetworkX,144,648163.10,1184826.56
+ALT,NetworkX,145,648153.68,1184830.15
+ALT,NetworkX,146,648142.65,1184832.63
+ALT,NetworkX,147,648135.38,1184843.70
+ALT,NetworkX,148,648131.97,1184851.55
+ALT,NetworkX,149,648122.31,1184855.17
+ALT,NetworkX,150,648106.67,1184859.81
+ALT,NetworkX,151,648095.11,1184862.81
+ALT,NetworkX,152,648088.60,1184849.88
+ALT,NetworkX,153,648082.03,1184844.63
+ALT,NetworkX,154,648062.28,1184850.40
+ALT,NetworkX,155,648046.06,1184862.42
+ALT,NetworkX,156,648042.23,1184877.86
+ALT,NetworkX,157,648031.04,1184889.62
+ALT,NetworkX,158,648027.80,1184907.24
+ALT,NetworkX,159,648022.49,1184913.20
+ALT,NetworkX,160,648022.07,1184924.03
+ALT,NetworkX,161,648033.38,1184927.20
+ALT,NetworkX,162,648048.06,1184928.81
+ALT,NetworkX,163,648051.70,1184941.70
+ALT,NetworkX,164,648061.01,1184949.42
+ALT,NetworkX,165,648072.39,1184950.64
+ALT,NetworkX,166,648085.42,1184951.45
+ALT,NetworkX,167,648091.38,1184952.15
+ALT,NetworkX,168,648092.32,1184966.48
+ALT,NetworkX,169,648103.50,1184993.89
+ALT,NetworkX,170,648110.13,1185015.42
+ALT,NetworkX,171,648095.43,1185019.34
+ALT,NetworkX,172,648082.54,1185027.63
+ALT,NetworkX,173,648073.89,1185039.06
+ALT,NetworkX,174,648074.41,1185052.38
+ALT,NetworkX,175,648077.74,1185058.48
+ALT,NetworkX,176,648087.79,1185062.08
+ALT,NetworkX,177,648091.22,1185073.58
+ALT,NetworkX,178,648096.82,1185080.45
+ALT,NetworkX,179,648097.72,1185088.27
+ALT,NetworkX,180,648107.85,1185079.42
+ALT,NetworkX,181,648113.65,1185095.22
+ALT,NetworkX,182,648111.74,1185109.38
+ALT,NetworkX,183,648128.22,1185111.37
+ALT,NetworkX,184,648125.24,1185132.14
+ALT,NetworkX,185,648136.04,1185142.99
+ALT,NetworkX,186,648138.19,1185158.10
+ALT,NetworkX,187,648134.11,1185177.27
+ALT,NetworkX,188,648150.96,1185181.18
+ALT,NetworkX,189,648159.99,1185187.22
+ALT,NetworkX,190,648164.85,1185202.69
+ALT,NetworkX,191,648171.27,1185214.43
+ALT,NetworkX,192,648179.15,1185227.63
+ALT,NetworkX,193,648185.81,1185239.49
+ALT,NetworkX,194,648191.89,1185251.72
+ALT,NetworkX,195,648197.89,1185263.27
+ALT,NetworkX,196,648205.81,1185272.47
+ALT,NetworkX,197,648209.50,1185284.70
+ALT,NetworkX,198,648214.24,1185296.42
+ALT,NetworkX,199,648217.54,1185308.74
+ALT,NetworkX,200,648226.18,1185321.76
+ALT,NetworkX,201,648240.41,1185330.20
+ALT,NetworkX,202,648258.68,1185337.31
+ALT,NetworkX,203,648259.31,1185362.88
+ALT,NetworkX,204,648262.51,1185367.37
+ALT,NetworkX,205,648271.93,1185385.92
+ALT,NetworkX,206,648278.13,1185403.06
+ALT,NetworkX,207,648284.79,1185415.04
+ALT,NetworkX,208,648298.41,1185416.59
+ALT,NetworkX,209,648325.04,1185415.17
+ALT,NetworkX,210,648352.15,1185409.70
+ALT,NetworkX,211,648379.55,1185401.97
+ALT,NetworkX,212,648405.87,1185394.16
+ALT,NetworkX,213,648432.22,1185386.98
+ALT,NetworkX,214,648456.40,1185388.83
+ALT,NetworkX,215,648473.29,1185383.81
+ALT,NetworkX,216,648493.58,1185378.14
+ALT,NetworkX,217,648511.17,1185381.87
+ALT,NetworkX,218,648515.99,1185397.04
+ALT,NetworkX,219,648521.06,1185409.99
+ALT,NetworkX,220,648534.73,1185421.21
+ALT,NetworkX,221,648537.48,1185425.26
+ALT,NetworkX,222,648547.69,1185438.30
+ALT,NetworkX,223,648557.87,1185439.06
+ALT,NetworkX,224,648577.18,1185430.75
+ALT,NetworkX,225,648592.07,1185427.86
+ALT,NetworkX,226,648603.58,1185422.53
+ALT,NetworkX,227,648614.42,1185418.64
+ALT,NetworkX,228,648625.38,1185416.45
+ALT,NetworkX,229,648637.11,1185425.55
+ALT,NetworkX,230,648651.86,1185430.64
+ALT,NetworkX,231,648664.27,1185440.32
+ALT,NetworkX,232,648673.92,1185446.86
+ALT,NetworkX,233,648677.64,1185452.61
+ALT,NetworkX,234,648696.05,1185447.17
+ALT,NetworkX,235,648706.86,1185446.10
+ALT,NetworkX,236,648724.81,1185458.88
+ALT,NetworkX,237,648729.63,1185469.02
+ALT,NetworkX,238,648735.77,1185485.23
+ALT,NetworkX,239,648753.00,1185488.28
+ALT,NetworkX,240,648758.24,1185479.13
+Dijkstra (Adj),AdjacencyList,0,648320.84,1184560.48
+Dijkstra (Adj),AdjacencyList,1,648329.20,1184588.55
+Dijkstra (Adj),AdjacencyList,2,648344.73,1184640.62
+Dijkstra (Adj),AdjacencyList,3,648354.84,1184674.56
+Dijkstra (Adj),AdjacencyList,4,648369.38,1184695.14
+Dijkstra (Adj),AdjacencyList,5,648385.69,1184717.68
+Dijkstra (Adj),AdjacencyList,6,648419.44,1184830.89
+Dijkstra (Adj),AdjacencyList,7,648420.52,1184832.12
+Dijkstra (Adj),AdjacencyList,8,648426.37,1184854.15
+Dijkstra (Adj),AdjacencyList,9,648566.92,1185325.67
+Dijkstra (Adj),AdjacencyList,10,648566.56,1185324.47
+Dijkstra (Adj),AdjacencyList,11,648598.28,1185430.90
+Dijkstra (Adj),AdjacencyList,12,648601.27,1185433.21
+Dijkstra (Adj),AdjacencyList,13,648678.05,1185453.46
+Dijkstra (Adj),AdjacencyList,14,648697.39,1185453.75
+Dijkstra (Adj),AdjacencyList,15,648737.13,1185486.22
+Dijkstra (Adj),AdjacencyList,16,648759.69,1185479.03
+A* (Adj),AdjacencyList,0,648320.84,1184560.48
+A* (Adj),AdjacencyList,1,648337.15,1184615.20
+A* (Adj),AdjacencyList,2,648353.73,1184670.83
+A* (Adj),AdjacencyList,3,648359.38,1184687.48
+A* (Adj),AdjacencyList,4,648492.21,1184777.32
+A* (Adj),AdjacencyList,5,648568.00,1184754.64
+A* (Adj),AdjacencyList,6,648555.50,1184687.99
+A* (Adj),AdjacencyList,7,648619.58,1184694.37
+A* (Adj),AdjacencyList,8,648571.75,1184728.96
+A* (Adj),AdjacencyList,9,648582.32,1184764.48
+A* (Adj),AdjacencyList,10,648588.07,1184782.77
+A* (Adj),AdjacencyList,11,648616.68,1184856.99
+A* (Adj),AdjacencyList,12,648685.58,1184833.79
+A* (Adj),AdjacencyList,13,648684.80,1184898.43
+A* (Adj),AdjacencyList,14,648719.20,1184959.46
+A* (Adj),AdjacencyList,15,648722.10,1184999.76
+A* (Adj),AdjacencyList,16,648697.39,1185050.35
+A* (Adj),AdjacencyList,17,648747.25,1185068.38
+A* (Adj),AdjacencyList,18,648714.85,1185137.81
+A* (Adj),AdjacencyList,19,648737.88,1185130.93
+A* (Adj),AdjacencyList,20,648775.48,1185164.02
+A* (Adj),AdjacencyList,21,648728.23,1185193.01
+A* (Adj),AdjacencyList,22,648775.78,1185238.35
+A* (Adj),AdjacencyList,23,648750.97,1185283.58
+A* (Adj),AdjacencyList,24,648763.14,1185324.36
+A* (Adj),AdjacencyList,25,648766.61,1185374.55
+A* (Adj),AdjacencyList,26,648742.81,1185423.80
+A* (Adj),AdjacencyList,27,648759.69,1185479.03
+Bidirectional A* (Adj),AdjacencyList,0,648320.84,1184560.48
+Bidirectional A* (Adj),AdjacencyList,1,648328.99,1184587.84
+Bidirectional A* (Adj),AdjacencyList,2,648341.05,1184628.28
+Bidirectional A* (Adj),AdjacencyList,3,648337.54,1184680.93
+Bidirectional A* (Adj),AdjacencyList,4,648338.78,1184704.22
+Bidirectional A* (Adj),AdjacencyList,5,648322.13,1184709.17
+Bidirectional A* (Adj),AdjacencyList,6,648301.91,1184660.90
+Bidirectional A* (Adj),AdjacencyList,7,648366.63,1184884.68
+Bidirectional A* (Adj),AdjacencyList,8,648448.55,1185160.95
+Bidirectional A* (Adj),AdjacencyList,9,648516.48,1185340.83
+Bidirectional A* (Adj),AdjacencyList,10,648510.21,1185397.04
+Bidirectional A* (Adj),AdjacencyList,11,648518.37,1185427.97
+Bidirectional A* (Adj),AdjacencyList,12,648577.18,1185430.75
+Bidirectional A* (Adj),AdjacencyList,13,648625.38,1185416.45
+Bidirectional A* (Adj),AdjacencyList,14,648685.41,1185398.64
+Bidirectional A* (Adj),AdjacencyList,15,648742.81,1185423.80
+Bidirectional A* (Adj),AdjacencyList,16,648759.69,1185479.03
+ALT (Adj),AdjacencyList,0,648320.84,1184560.48
+ALT (Adj),AdjacencyList,1,648329.20,1184588.55
+ALT (Adj),AdjacencyList,2,648344.73,1184640.62
+ALT (Adj),AdjacencyList,3,648354.84,1184674.56
+ALT (Adj),AdjacencyList,4,648369.38,1184695.14
+ALT (Adj),AdjacencyList,5,648385.69,1184717.68
+ALT (Adj),AdjacencyList,6,648419.44,1184830.89
+ALT (Adj),AdjacencyList,7,648420.52,1184832.12
+ALT (Adj),AdjacencyList,8,648426.37,1184854.15
+ALT (Adj),AdjacencyList,9,648566.92,1185325.67
+ALT (Adj),AdjacencyList,10,648566.56,1185324.47
+ALT (Adj),AdjacencyList,11,648598.28,1185430.90
+ALT (Adj),AdjacencyList,12,648601.27,1185433.21
+ALT (Adj),AdjacencyList,13,648678.05,1185453.46
+ALT (Adj),AdjacencyList,14,648697.39,1185453.75
+ALT (Adj),AdjacencyList,15,648737.13,1185486.22
+ALT (Adj),AdjacencyList,16,648759.69,1185479.03

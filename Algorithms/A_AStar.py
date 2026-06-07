@@ -116,24 +116,29 @@ def astar_search(adj_list, source, target, heuristic, stats=None):
         if neighbors_list:
             current_node = neighbors_list.head
             while current_node:
-                if hasattr(current_node, 'value'):
-                    weight, neighbor = current_node.value
-                else:
-                    weight, neighbor = current_node
+                weight, neighbor = current_node.value if hasattr(current_node, 'value') else current_node
+                # if hasattr(current_node, 'value'):
+                #     weight, neighbor = current_node.value
+                # else:
+                #     weight, neighbor = current_node
                 
-                if neighbor in closed_set:
-                    current_node = current_node.next
-                    continue
+                # if neighbor in closed_set:
+                #     current_node = current_node.next
+                #     continue
                 
-                stats['edges_relaxed'] += 1
-                tentative_g = g_score[current] + weight
+                # stats['edges_relaxed'] += 1
+                # tentative_g = g_score[current] + weight
                 
-                if neighbor not in g_score or tentative_g < g_score[neighbor]:
-                    parent[neighbor] = current
-                    g_score[neighbor] = tentative_g
-                    heapq.heappush(open_set, (tentative_g + heuristic(neighbor, target), neighbor))
-                    stats['heap_operations'] += 1
-                
+                if neighbor not in closed_set:
+                    stats['edges_relaxed'] += 1
+                    tentative_g = g_score[current] + weight
+
+                    if neighbor not in g_score or tentative_g < g_score[neighbor]:
+                        parent[neighbor] = current
+                        g_score[neighbor] = tentative_g
+                        heapq.heappush(open_set, (tentative_g + heuristic(neighbor, target), neighbor))
+                        stats['heap_operations'] += 1
+                    
                 current_node = current_node.next
     
     return g_score, parent, closed_set, open_set, stats
