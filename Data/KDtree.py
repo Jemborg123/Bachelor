@@ -68,7 +68,7 @@ def KNNsearch(tree: KDtreeNode, point,KNN: Heap, k):
     KNNsearch(closest,point,KNN,k)
 
     worst = KNN.peekMax()[0] if len(KNN) == k else float('inf')
-    if diff**2 < worst:
+    if diff < worst:
         KNNsearch(furthest,point,KNN,k)
 
 def radiusSearch(tree: KDtreeNode, point, eps, result=None):
@@ -86,7 +86,7 @@ def radiusSearch(tree: KDtreeNode, point, eps, result=None):
     furthest = tree.rightChild if diff < 0 else tree.leftChild
 
     radiusSearch(closest, point, eps, result)
-    if diff**2 <= eps:  
+    if diff <= eps:  
         radiusSearch(furthest, point, eps, result)
 
     return result
@@ -118,9 +118,9 @@ def KNNsearch_obstacles(tree: KDtreeNode, point, k, KNN: Heap, polygons, spatial
         KNNsearch_obstacles(closest, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size, blockedPoints, graph, seed)
 
         # Pruning: only explore far side if it could contain a valid closer neighbour
-        max_dist = 30**2 #cut-off value if we can't find 8 neighbours not even in seed
+        max_dist = 250 #cut-off value if we can't find 8 neighbours not even in seed
         worst = KNN.peekMax()[0] if len(KNN) == k else min(seed.peekMax()[0] if seed.n == k else float('inf'),max_dist)
-        if diff**2 < worst:
+        if diff < worst:
             KNNsearch_obstacles(furthest, point, k, KNN, polygons, spatial_index, polygon_bboxes, cell_size, blockedPoints, graph, seed)
 
     distance = euclideanDistance(tree.coords, point)

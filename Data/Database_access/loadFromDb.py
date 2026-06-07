@@ -2,7 +2,7 @@ import requests
 import numpy as np
 import geopandas as gpd
 from geopandas import GeoDataFrame as GDF
-from utils import point_to_square
+from utils import point_to_square, segment_boxes
 
 WFS_URL   = "https://casgis.azurewebsites.net/geoserver/dtu/wfs"
 WMS_URL   = "https://casgis.azurewebsites.net/geoserver/dtu/wms"
@@ -196,7 +196,29 @@ def geodataframe_to_vertex_lists(gdfs):
 # Polygon extraction
 # ---------------------------------------------------------------------------
 
-def geodataframe_to_polygon_lists(gdfs, point_buffer=1.0):
+def geodataframe_to_polyline_lists(gdfs):
+    polylines = []
+    for geometry in getGeometries(gdfs):
+        for geom in geometry:
+            polylines.extend(geometry_to_polylines(geom))
+    return polylines
+
+def geometry_to_polylines(geometry):
+    lines = []
+    if geometry is None or geometry.is_empty:
+        return lines
+    geom_type = geometry.geom_type
+    if geom_type in ("LineString", "LineString Z"):
+        lines.append([(x, y) for x, y, *_ in geometry.coords])
+    elif geom_type in ("MultiLineString", "MultiLineString Z"):
+        for line in geometry.geoms:
+            lines.append([(x, y) for x, y, *_ in line.coords])
+    elif geom_type == "GeometryCollection":
+        for geom in geometry.geoms:
+            lines.extend(geometry_to_polylines(geom))
+    return lines
+
+def geodataframe_to_polygon_lists(gdfs, point_buffer=0.1):
     """
     Takes a GeoDataFrame (or list of GeoDataFrames) and returns
     a flat list of all polygons as coordinate lists.
@@ -240,12 +262,12 @@ def geometry_to_polygons(geometry:GDF.geometry, buffer):
 
     elif geom_type in ("LineString", "LineString Z"):
         coords = [[x, y] for x, y, *_ in geometry.coords]
-        polygons.append(coords)
+        polygons.extend(segment_boxes(coords, buffer))
 
     elif geom_type in ("MultiLineString", "MultiLineString Z"):
         for line in geometry.geoms:
             coords = [[x, y] for x, y, *_ in line.coords]
-            polygons.append(coords)
+            polygons.extend(segment_boxes(coords, buffer))
 
     elif geom_type == "GeometryCollection":
         for geom in geometry.geoms:
