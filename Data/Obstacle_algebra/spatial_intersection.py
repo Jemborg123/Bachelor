@@ -1,4 +1,8 @@
-from Obstacle_algebra.intersections import line_intersects_polygon
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from Data.Obstacle_algebra.intersections import line_intersects_polygon
 
 def build_spatial_index(polygons, cell_size):
     """

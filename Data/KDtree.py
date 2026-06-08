@@ -1,3 +1,7 @@
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Data.utils import euclideanDistance, Heap
 from Data.Obstacle_algebra.spatial_intersection import check_edge_intersects
 
