@@ -414,7 +414,74 @@ class AdjacencyList:
     def get_node_by_index(self, idx):
         return list(self.elements.keys())[idx]
 
+class MinHeap:
+    def __init__(self):
+        self.heap = [None]
+        self.n = 0
+    
+    def parent(self, x):
+        return floor(x/2)
+    
+    def left(self, x):
+        return 2*x
+    
+    def right(self, x):
+        return (2*x)+1
+    
+    def swap(self, x1, x2):
+        temp = self.heap[x1]
+        self.heap[x1] = self.heap[x2]
+        self.heap[x2] = temp
+    
+    def bubbleUp(self, x):
+        if x <= 1: return
+        key = self.heap[x]
+        pIdx = self.parent(x)
+        pKey = self.heap[pIdx]
+        if key < pKey:
+            self.swap(x,pIdx)
+            self.bubbleUp(pIdx)
 
+    def add(self, key):
+        self.n = self.n + 1
+        self.heap.append(key)
+        self.bubbleUp(self.n)
+
+    def bubbleDown(self, x):
+        lIdx = self.left(x)
+        rIdx = self.right(x)
+
+        if lIdx > self.n: return
+
+        if rIdx > self.n:
+            if self.heap[x] > self.heap[lIdx]:
+                self.swap(x, lIdx)
+            return
+
+        key = self.heap[x]
+        lKey = self.heap[lIdx]
+        rKey = self.heap[rIdx]
+
+        if key <= lKey and key <= rKey: return
+
+        smallestChild = lIdx if lKey < rKey else rIdx
+        self.swap(x,smallestChild)
+        self.bubbleDown(smallestChild)
+
+    def extractMin(self):
+        if self.n == 0: return None
+        r = self.heap[1]
+        self.heap[1] = self.heap[self.n]
+        self.heap.pop()
+        self.n = self.n-1
+        self.bubbleDown(1)
+        return r
+    
+    def peekMin(self):
+        return self.heap[1]
+    
+    def __len__(self):
+        return self.n
 
 class Heap:
     def __init__(self):
