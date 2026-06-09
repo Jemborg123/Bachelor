@@ -4,212 +4,43 @@
     <title>DTU Campus Navigator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        #map {
-            height: 100%;
-            width: 100%;
-        }
-        .info-panel {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: white;
-            padding: 12px 16px;
-            border-radius: 12px;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-size: 14px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .info-panel.loading {
-            background: rgba(255,255,255,0.95);
-        }
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #ccc;
-            border-top-color: #ff4444;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .start-marker div, .end-marker div {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .status-distance { color: #ff4444; font-weight: bold; }
-        .status-time { color: #4CAF50; font-weight: bold; }
-        .status-nodes { color: #2196F3; font-weight: bold; }
-    </style>
 </head>
 <body>
     <div id="map"></div>
-    <div id="info" class="info-panel">
-        👆 Tap on map to set start point
+
+    <!-- Floating search button -->
+    <div id="searchFab" class="search-fab">
+        <svg viewBox="0 0 24 24">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
     </div>
 
-    <script>
-        // Change this to your computer's IP address when testing on phone
-        const API_URL = window.location.hostname === 'localhost' 
-            ? 'http://localhost:5000' 
-            : 'http://' + window.location.hostname + ':5000';
-        
-        let map;
-        let startMarker = null;
-        let endMarker = null;
-        let currentPath = null;
-        let startPoint = null;
-        let endPoint = null;
-        let loading = false;
-        
-        console.log('API_URL:', API_URL);
-        
-        // Initialize map
-        function initMap() {
-            map = L.map('map').setView([55.7858, 12.5215], 16);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-            
-            // Add DTU buildings overlay
-            L.tileLayer.wms('https://casgis.azurewebsites.net/geoserver/dtu/wms', {
-                layers: 'dtu:llyn_bygning_dtu',
-                format: 'image/png',
-                transparent: true,
-                attribution: 'DTU GeoServer'
-            }).addTo(map);
-            
-            map.on('click', onMapClick);
-            
-            console.log('Map initialized');
-        }
-        
-        // Handle map clicks
-        async function onMapClick(e) {
-            if (loading) return;
-            
-            const { lat, lng } = e.latlng;
-            console.log('Clicked:', lat, lng);
-            
-            if (startPoint === null) {
-                // Set start point
-                if (startMarker) startMarker.remove();
-                startMarker = L.marker([lat, lng], {
-                    icon: L.divIcon({
-                        className: 'start-marker',
-                        html: '<div style="background-color: #4CAF50; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div>',
-                        iconSize: [16, 16],
-                        className: 'start-marker'
-                    })
-                }).addTo(map);
-                startPoint = { lat, lng };
-                document.getElementById('info').innerHTML = '📍 Start set. Tap to set end point...';
-                document.getElementById('info').style.background = '#e8f5e9';
-            } 
-            else if (endPoint === null) {
-                // Set end point
-                if (endMarker) endMarker.remove();
-                endMarker = L.marker([lat, lng], {
-                    icon: L.divIcon({
-                        className: 'end-marker',
-                        html: '<div style="background-color: #f44336; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div>',
-                        iconSize: [16, 16]
-                    })
-                }).addTo(map);
-                endPoint = { lat, lng };
-                
-                loading = true;
-                document.getElementById('info').innerHTML = '<div class="spinner"></div> Calculating shortest path...';
-                document.getElementById('info').style.background = 'white';
-                
-                try {
-                    console.log('Calling API:', API_URL + '/path');
-                    console.log('Start:', startPoint);
-                    console.log('End:', endPoint);
-                    
-                    const response = await fetch(API_URL + '/path', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            source: startPoint,
-                            target: endPoint
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    console.log('Response:', data);
-                    
-                    if (data.error) {
-                        document.getElementById('info').innerHTML = '❌ Error: ' + data.error;
-                        setTimeout(reset, 3000);
-                        return;
-                    }
-                    
-                    // Draw path
-                    if (currentPath) currentPath.remove();
-                    if (data.path && data.path.length > 0) {
-                        currentPath = L.polyline(data.path, {
-                            color: '#ff4444',
-                            weight: 5,
-                            opacity: 0.8
-                        }).addTo(map);
-                        
-                        // Fit map to show the whole path
-                        map.fitBounds(currentPath.getBounds());
-                        
-                        document.getElementById('info').innerHTML = 
-                            '✅ Distance: <span class="status-distance">' + data.distance.toFixed(0) + 'm</span> | ' +
-                            'Time: <span class="status-time">' + data.time_ms.toFixed(0) + 'ms</span> | ' +
-                            'Nodes: <span class="status-nodes">' + data.nodes_visited + '</span>';
-                        document.getElementById('info').style.background = '#e8f5e9';
-                    } else {
-                        document.getElementById('info').innerHTML = '❌ No path found between these points';
-                        document.getElementById('info').style.background = '#ffebee';
-                    }
-                    
-                    setTimeout(reset, 5000);
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    document.getElementById('info').innerHTML = '❌ Cannot connect to server. Make sure backend is running.';
-                    document.getElementById('info').style.background = '#ffebee';
-                    setTimeout(reset, 4000);
-                } finally {
-                    loading = false;
-                }
-            }
-        }
-        
-        function reset() {
-            if (startMarker) startMarker.remove();
-            if (endMarker) endMarker.remove();
-            if (currentPath) currentPath.remove();
-            startPoint = null;
-            endPoint = null;
-            startMarker = null;
-            endMarker = null;
-            currentPath = null;
-            document.getElementById('info').innerHTML = '👆 Tap on map to set start point';
-            document.getElementById('info').style.background = 'white';
-        }
-        
-        // Start the app when page loads
-        window.addEventListener('load', initMap);
-    </script>
+    <!-- Expandable search panel -->
+    <div id="searchPanel" class="search-panel">
+        <div class="search-panel-content">
+            <input type="text" id="searchInput" class="search-panel-input" placeholder="Search building..." autocomplete="off">
+            <button id="searchBtn" class="search-panel-btn">Go</button>
+            <button id="closeSearchBtn" class="search-panel-close">×</button>
+        </div>
+        <div id="suggestions" class="search-panel-suggestions"></div>
+    </div>
+    <!-- Search bar
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search building (e.g., 'Building 101', 'Library')" autocomplete="off">
+        <button id="searchBtn" class="search-btn">Search</button>
+        <button id="clearBtn" class="search-btn clear-btn">Clear</button>
+    </div>
+    <div id="suggestions" class="suggestions"></div> -->
+    
+    <!-- Info panel -->
+    <div id="info" class="info-panel">
+        🔍 Search for a building or tap on map
+    </div>
+
+    <!-- Scripts -->
+    <script src="map.js"></script>
+    <script src="search.js"></script>
 </body>
 </html>
