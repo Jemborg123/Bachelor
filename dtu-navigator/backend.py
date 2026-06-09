@@ -1,3 +1,7 @@
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pickle
@@ -10,19 +14,15 @@ CORS(app)
 
 # ========== CONFIGURE PATHS ==========
 # Your Bachelor project root
-PROJECT_ROOT = r'C:\Users\amola\OneDrive\Dokumenter\GitHub\Bachelor'
-sys.path.append(PROJECT_ROOT)
 
 # Path to your adjacency list file (try different options)
-ADJACENCY_PATH_CANDIDATES = [
-    os.path.join(PROJECT_ROOT, "Data/Data/Adjacency_list_ObstacleAwareGraph.json"),
-    os.path.join(PROJECT_ROOT, "Data/Adjacency_list_ObstacleAwareGraph.json"),
-    "Adjacency_list_ObstacleAwareGraph.json",  # If copied to current folder
-]
+ADJACENCY_PATH = "../Data/ObbyMap32_pruned.json"
+
 
 # Import your modules
 from Data.utils import load_adjacency_list
 from Algorithms.A_AStar import astar
+from Algorithms.ALT import *
 
 # ========== LOAD GRAPH ==========
 print("📂 Loading adjacency list...")
@@ -30,21 +30,8 @@ print("📂 Loading adjacency list...")
 adj_list = None
 success = False
 
-for path in ADJACENCY_PATH_CANDIDATES:
-    print(f"   Trying: {path}")
-    if os.path.exists(path):
-        print(f"   ✅ File found!")
-        adj_list, success = load_adjacency_list(path)
-        if success:
-            print(f"   ✅ Loaded successfully!")
-            break
-    else:
-        print(f"   ❌ File not found")
 
-if not success or adj_list is None:
-    print("❌ Failed to load graph from all paths!")
-    print("   Make sure the adjacency list file exists.")
-    exit(1)
+adj_list, success = load_adjacency_list(ADJACENCY_PATH)
 
 print(f"✅ Graph loaded: {len(adj_list.keys())} nodes")
 
@@ -124,7 +111,10 @@ def get_path():
         # Run A* algorithm
         import time
         start_time = time.time()
-        path, distance, stats = astar(adj_list, source_node, target_node)
+        h_adj = lambda p1, p2: adj_euclidean(p1,p2)
+        
+        a_graph = adjGraph(adj_list)
+        path, distance, stats = new_astar(a_graph, source_node, target_node,h_adj)
         elapsed_ms = (time.time() - start_time) * 1000
         
         print(f"   Path found: {len(path)} nodes, {distance:.1f}m, {elapsed_ms:.1f}ms")
@@ -134,15 +124,22 @@ def get_path():
         for node in path:
             lat, lon = utm_to_lat_lon(node[0], node[1])
             path_latlon.append([lat, lon])
-        
+
         return jsonify({
             'path': path_latlon,
             'distance': distance,
             'time_ms': elapsed_ms,
-            'nodes_visited': stats['nodes_visited'],
-            'edges_relaxed': stats['edges_relaxed'],
-            'algorithm': stats.get('algorithm', 'A*')
+            'nodes_visited': stats,
+            'algorithm': str(a_graph)
         })
+        # return jsonify({
+        #     'path': path_latlon,
+        #     'distance': distance,
+        #     'time_ms': elapsed_ms,
+        #     'nodes_visited': stats['nodes_visited'],
+        #     'edges_relaxed': stats['edges_relaxed'],
+        #     'algorithm': stats.get('algorithm', 'A*')
+        # })
         
     except Exception as e:
         print(f"Error: {e}")
