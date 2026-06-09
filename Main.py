@@ -12,7 +12,7 @@ import networkx as nx
 import sys
 
 # Import your modules
-from MapVisuals import create_path_map, create_comprehensive_comparison_map
+from MapVisuals import create_path_map, create_comprehensive_comparison_map,create_adj_path_map
 from Data.utils import load_adjacency_list, euclideanDistance, loadPointsDataFromFile
 from DataSaver import save_path_data_to_files, save_graph_statistics
 
@@ -307,76 +307,7 @@ def select_matching_nodes(G_nx, adj_list, num_pairs=1):
     return None, None
 
 
-def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path_map.html"):
-    """Create a Folium map for adjacency list path."""
-    import folium
-    import numpy as np
-    import geopandas as gpd
-    from MapVisuals import detect_crs
-    from shapely.geometry import Point
-        
-    source_crs = detect_crs()
-    # Reproject path nodes to WGS84
-    path_points = gpd.GeoDataFrame(
-    [{'node': i} for i, n in enumerate(path)],
-    geometry=[Point(n[0], n[1]) for n in path], 
-    crs=source_crs
-).to_crs("EPSG:4326")
-    
-    path_latlon = [(row.geometry.y, row.geometry.x) for _, row in path_points.iterrows()]
-    
-    if len(path_latlon) == 0:
-        print(f"  ⚠️ No valid coordinates found in path, skipping map")
-        return
 
-    mid_lat = np.mean([p[0] for p in path_latlon])
-    mid_lon = np.mean([p[1] for p in path_latlon])
-
-    # Check for NaN values
-    if np.isnan(mid_lat) or np.isnan(mid_lon):
-        print(f"  ⚠️ Invalid map center coordinates, skipping map")
-        return
-    
-    m = folium.Map(location=[mid_lat, mid_lon], zoom_start=17, tiles='OpenStreetMap')
-    
-    # Add DTU buildings WMS layer
-    folium.WmsTileLayer(
-        url="https://casgis.azurewebsites.net/geoserver/dtu/wms",
-        name='DTU Buildings',
-        layers='dtu:llyn_bygning_dtu',
-        fmt='image/png',
-        transparent=True,
-        version='1.1.1',
-        attr='GeoServer DTU',
-        overlay=True,
-        control=True
-    ).add_to(m)
-    
-    # Add path
-    folium.PolyLine(
-        locations=path_latlon,
-        color='red',
-        weight=5,
-        opacity=0.8,
-        tooltip=f"Path: {cost:.1f} m"
-    ).add_to(m)
-    
-    # Add markers
-    folium.Marker(
-        location=path_latlon[0],
-        popup=f"Start",
-        icon=folium.Icon(color='green', icon='play')
-    ).add_to(m)
-    
-    folium.Marker(
-        location=path_latlon[-1],
-        popup=f"End",
-        icon=folium.Icon(color='red', icon='stop')
-    ).add_to(m)
-    
-    folium.LayerControl().add_to(m)
-    m.save(filename)
-    print(f"  ✅ Map saved to '{filename}'")
 
 def nxAlgorithms(G_nx, source_nx, target_nx):
     print("\n" + "=" * 80)
