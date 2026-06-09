@@ -111,6 +111,77 @@ def create_path_map(graph, path, cost, source_node, target_node, filename="path_
     
     return m
 
+def create_adj_path_map(adj_list, path, cost, source, target, filename="adj_path_map.html"):
+    """Create a Folium map for adjacency list path."""
+    import folium
+    import numpy as np
+    import geopandas as gpd
+    from MapVisuals import detect_crs
+    from shapely.geometry import Point
+        
+    source_crs = detect_crs()
+    # Reproject path nodes to WGS84
+    path_points = gpd.GeoDataFrame(
+    [{'node': i} for i, n in enumerate(path)],
+    geometry=[Point(n[0], n[1]) for n in path], 
+    crs=source_crs
+).to_crs("EPSG:4326")
+    
+    path_latlon = [(row.geometry.y, row.geometry.x) for _, row in path_points.iterrows()]
+    
+    if len(path_latlon) == 0:
+        print(f"  ⚠️ No valid coordinates found in path, skipping map")
+        return
+
+    mid_lat = np.mean([p[0] for p in path_latlon])
+    mid_lon = np.mean([p[1] for p in path_latlon])
+
+    # Check for NaN values
+    if np.isnan(mid_lat) or np.isnan(mid_lon):
+        print(f"  ⚠️ Invalid map center coordinates, skipping map")
+        return
+    
+    m = folium.Map(location=[mid_lat, mid_lon], zoom_start=17, tiles='OpenStreetMap')
+    
+    # Add DTU buildings WMS layer
+    folium.WmsTileLayer(
+        url="https://casgis.azurewebsites.net/geoserver/dtu/wms",
+        name='DTU Buildings',
+        layers='dtu:llyn_bygning_dtu',
+        fmt='image/png',
+        transparent=True,
+        version='1.1.1',
+        attr='GeoServer DTU',
+        overlay=True,
+        control=True
+    ).add_to(m)
+    
+    # Add path
+    folium.PolyLine(
+        locations=path_latlon,
+        color='red',
+        weight=5,
+        opacity=0.8,
+        tooltip=f"Path: {cost:.1f} m"
+    ).add_to(m)
+    
+    # Add markers
+    folium.Marker(
+        location=path_latlon[0],
+        popup=f"Start",
+        icon=folium.Icon(color='green', icon='play')
+    ).add_to(m)
+    
+    folium.Marker(
+        location=path_latlon[-1],
+        popup=f"End",
+        icon=folium.Icon(color='red', icon='stop')
+    ).add_to(m)
+    
+    folium.LayerControl().add_to(m)
+    m.save(filename)
+    print(f"  ✅ Map saved to '{filename}'")
+
 
 def create_comparison_map(graph, results_dict, filename="comparison_map.html"):
     """
