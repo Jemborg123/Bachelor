@@ -8,7 +8,6 @@ import pickle
 import math
 import sys
 import os
-
 from pyproj import Transformer
 
 app = Flask(__name__)
@@ -26,6 +25,9 @@ from Data.utils import load_adjacency_list
 from Algorithms.A_AStar import astar
 from Algorithms.ALT import *
 import Data.KDtree as KDtree
+from Data.routeToPath import build_continuous_path
+import Data.Database_access.loadFromDb as loadFromDb
+import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
 
 # ========== LOAD GRAPH ==========
 print("📂 Loading adjacency list...")
@@ -47,6 +49,32 @@ landmark_data = loadPointsDataFromFile("../Data/ObbyMap32_pruned_graph_landmark_
 Landmark_dist = {}
 for node, LandmarkDists in landmark_data.values():
     Landmark_dist[tuple(node)] = LandmarkDists
+
+
+print("✅ Landmarks ready")
+
+
+OBSTACLES_PATH = "../Data/obstacles.json"
+CELL_SIZE = 10
+
+def load_or_build_obstacles(path):
+    if os.path.exists(path):
+        print("📂 Loading cached obstacles...")
+        return loadPointsDataFromFile(path)          # list of polygons (lists of [x, y])
+    print("🌐 No cache found — fetching obstacles from geoserver...")
+    raw = loadFromDb.remove_near_zero_polygon_outliers(
+        loadFromDb.geodataframe_to_polygon_lists(loadFromDb.fetch_obstacle_gdfs()))
+    # coerce to plain floats so json.dump can serialise (geopandas gives numpy floats)
+    polygons = [[[float(pt[0]), float(pt[1])] for pt in poly] for poly in raw]
+    savePointsDataToFile(polygons, path)             # cache it for next time
+    return polygons
+
+polygons = load_or_build_obstacles(OBSTACLES_PATH)
+spatial_index = spatial_intersection.build_spatial_index(polygons, CELL_SIZE)
+polygon_bboxes = spatial_intersection.precompute_bboxes(polygons)
+print(f"✅ Obstacles ready: {len(polygons)} polygons")
+
+
 # ========== COORDINATE CONVERSION ==========
 _to_grid = Transformer.from_crs(4326, 4095, always_xy=True)
 _to_wgs  = Transformer.from_crs(4095, 4326, always_xy=True)
@@ -105,12 +133,23 @@ def get_path():
         start_time = time.time()
         # distance, path, stats = new_astar(a_graph, source_node, target_node,h_adj) #A star euclid
         distance, path, stats = new_astar(a_graph, source_node, target_node,h_alt) #A star landmarks
+
+        
         
         elapsed_ms = (time.time() - start_time) * 1000
         print(f"   Path found: {len(path)} nodes, {distance:.1f}m, {elapsed_ms:.1f}ms")
         # Convert path back to lat/lon for display
+
+
+        full_path, total_dist = build_continuous_path(
+            source_grid, target_grid, path,
+            polygons, spatial_index, CELL_SIZE, polygon_bboxes)
+
+        print(f"   Path: {len(path)} graph nodes -> {len(full_path)} pts, "
+              f"{total_dist:.1f} m (graph {distance:.1f} m), {elapsed_ms:.1f} ms")
         
-        path_latlon = [list(grid_to_lat_lon(node[0], node[1])) for node in path]
+        # path_latlon = [list(grid_to_lat_lon(node[0], node[1])) for node in path]
+        path_latlon = [list(grid_to_lat_lon(x, y)) for x, y in full_path]
 
         return jsonify({
             'path': path_latlon,
