@@ -95,6 +95,7 @@ if __name__ == "__main__":
     nx_graph = nxGraph(G)
     nx_landmarks = new_select_landmarks(nx_graph)
     nx_pp = landmark_distances(nx_graph,nx_landmarks)
+    savePointsDataToFile(nx_pp, "Data/nx_graph_landmark_distances.json")
 
     ADJACENCY_PATH = "Data/ObbyMap32_pruned.json"
     adjacency_list, success = load_adjacency_list(ADJACENCY_PATH)
@@ -102,6 +103,10 @@ if __name__ == "__main__":
     a_graph = adjGraph(adjacency_list)
     a_landmarks = new_select_landmarks(a_graph)
     a_pp = landmark_distances(a_graph,a_landmarks)
+    save_a_pp = {}
+    for i, (key, val) in enumerate(a_pp.items()):
+        save_a_pp[i] = key,val
+    savePointsDataToFile(save_a_pp, "Data/ObbyMap32_pruned_graph_landmark_distances.json")
 
 
 

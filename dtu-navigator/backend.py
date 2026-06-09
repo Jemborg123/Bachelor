@@ -9,6 +9,8 @@ import math
 import sys
 import os
 
+from pyproj import Transformer
+
 app = Flask(__name__)
 CORS(app)
 
@@ -23,6 +25,7 @@ ADJACENCY_PATH = "../Data/ObbyMap32_pruned.json"
 from Data.utils import load_adjacency_list
 from Algorithms.A_AStar import astar
 from Algorithms.ALT import *
+import Data.KDtree as KDtree
 
 # ========== LOAD GRAPH ==========
 print("📂 Loading adjacency list...")
@@ -35,47 +38,33 @@ adj_list, success = load_adjacency_list(ADJACENCY_PATH)
 
 print(f"✅ Graph loaded: {len(adj_list.keys())} nodes")
 
-# ========== COORDINATE CONVERSION ==========
-def lat_lon_to_utm(lat, lon):
-    """
-    Convert lat/lon to approximate UTM coordinates (EPSG:25832)
-    This is approximate - for production, use pyproj
-    """
-    # Rough conversion for DTU area (latitude ~55.78)
-    # 1 degree lat ≈ 111,000 m
-    # 1 degree lon ≈ 111,000 * cos(lat) m
-    
-    # Reference point: DTU (55.7858, 12.5215) should map to ~(648000, 1184000)
-    # Your graph coordinates are around this area
-    
-    # Simple offset approximation
-    x = lon * 111320 * math.cos(math.radians(lat))
-    y = lat * 110574
-    
-    # Adjust to match DTU's coordinate system
-    # You may need to calibrate these values
-    x = x + 648000 - (12.5215 * 111320 * math.cos(math.radians(55.7858)))
-    y = y + 1184000 - (55.7858 * 110574)
-    
-    return (x, y)
+node_tree = KDtree.buildKDtree(list(adj_list.keys()))
 
-def utm_to_lat_lon(x, y):
-    """Convert UTM to approximate lat/lon"""
-    # Reverse of above
-    lat = (y - 1184000) / 110574 + 55.7858
-    lon = (x - 648000) / (111320 * math.cos(math.radians(55.7858))) + 12.5215
+print("✅ KD-tree ready")
+
+landmark_data = loadPointsDataFromFile("../Data/ObbyMap32_pruned_graph_landmark_distances.json")
+
+Landmark_dist = {}
+for node, LandmarkDists in landmark_data.values():
+    Landmark_dist[tuple(node)] = LandmarkDists
+# ========== COORDINATE CONVERSION ==========
+_to_grid = Transformer.from_crs(4326, 4095, always_xy=True)
+_to_wgs  = Transformer.from_crs(4095, 4326, always_xy=True)
+ 
+def lat_lon_to_grid(lat, lon):
+    x, y = _to_grid.transform(lon, lat)
+    return (x, y)
+ 
+def grid_to_lat_lon(x, y):
+    lon, lat = _to_wgs.transform(x, y)
     return (lat, lon)
 
-def find_closest_node(adj_list, x, y):
-    """Find closest node in graph to given coordinates"""
-    min_dist = float('inf')
-    closest = None
-    for node in adj_list.keys():
-        dist = (node[0] - x)**2 + (node[1] - y)**2
-        if dist < min_dist:
-            min_dist = dist
-            closest = node
-    return closest
+
+def closest_node(point):
+    """Nearest graph node to `point`, plus its distance (grid units ≈ metres)."""
+    heap = KDtree.KNN_KDtree(node_tree, point, 1)
+    distance, coords = heap.extractMax()   # k=1 → the single nearest element
+    return coords, distance
 
 # ========== API ENDPOINTS ==========
 @app.route('/path', methods=['POST'])
@@ -91,39 +80,37 @@ def get_path():
         print(f"   Source: ({source_lat}, {source_lon})")
         print(f"   Target: ({target_lat}, {target_lon})")
         
-        # Convert to graph coordinates
-        source_utm = lat_lon_to_utm(source_lat, source_lon)
-        target_utm = lat_lon_to_utm(target_lat, target_lon)
-        
-        print(f"   Source UTM: {source_utm}")
-        print(f"   Target UTM: {target_utm}")
-        
-        # Find closest nodes in graph
-        source_node = find_closest_node(adj_list, source_utm[0], source_utm[1])
-        target_node = find_closest_node(adj_list, target_utm[0], target_utm[1])
-        
-        print(f"   Source node: {source_node}")
-        print(f"   Target node: {target_node}")
+
+        source_grid = lat_lon_to_grid(source_lat, source_lon)
+        target_grid = lat_lon_to_grid(target_lat, target_lon)
+        print(f"   Source grid: {source_grid}")
+        print(f"   Target grid: {target_grid}")
+ 
+        # Snap to nearest graph nodes
+        source_node, sdist = closest_node(source_grid)
+        target_node, tdist = closest_node(target_grid)
+        print(f"   Source node: {source_node}  (snap {sdist:.1f} m)")
+        print(f"   Target node: {target_node}  (snap {tdist:.1f} m)")
+
         
         if source_node is None or target_node is None:
             return jsonify({'error': 'Could not find nodes near clicked points'}), 400
         
         # Run A* algorithm
         import time
-        start_time = time.time()
         h_adj = lambda p1, p2: adj_euclidean(p1,p2)
-        
+        h_alt = lambda p1,p2: landmark_h(p1,p2,Landmark_dist,len(Landmark_dist.get(p1)))
         a_graph = adjGraph(adj_list)
-        path, distance, stats = new_astar(a_graph, source_node, target_node,h_adj)
+        
+        start_time = time.time()
+        # distance, path, stats = new_astar(a_graph, source_node, target_node,h_adj) #A star euclid
+        distance, path, stats = new_astar(a_graph, source_node, target_node,h_alt) #A star landmarks
+        
         elapsed_ms = (time.time() - start_time) * 1000
-        
         print(f"   Path found: {len(path)} nodes, {distance:.1f}m, {elapsed_ms:.1f}ms")
-        
         # Convert path back to lat/lon for display
-        path_latlon = []
-        for node in path:
-            lat, lon = utm_to_lat_lon(node[0], node[1])
-            path_latlon.append([lat, lon])
+        
+        path_latlon = [list(grid_to_lat_lon(node[0], node[1])) for node in path]
 
         return jsonify({
             'path': path_latlon,

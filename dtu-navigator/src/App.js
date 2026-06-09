@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, WMSTileLayer, Marker, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
@@ -139,10 +139,19 @@ function App() {
         />
         
         {/* DTU Buildings overlay (WMS) */}
-        <TileLayer
-          url="https://casgis.azurewebsites.net/geoserver/dtu/wms?service=WMS&version=1.1.1&request=GetMap&layers=dtu:llyn_bygning_dtu&styles=&format=image/png&transparent=true&bbox={bbox-epsg-3857}"
+        {/* DTU Buildings overlay (WMS) */}
+        <WMSTileLayer
+          url="https://casgis.azurewebsites.net/geoserver/dtu/wms"
+          layers="dtu:llyn_bygning_dtu"
+          format="image/png"
+          transparent={true}
+          version="1.1.1"
           attribution="DTU GeoServer"
         />
+        {/* <TileLayer
+          url="https://casgis.azurewebsites.net/geoserver/dtu/wms?service=WMS&version=1.1.1&request=GetMap&layers=dtu:llyn_bygning_dtu&styles=&format=image/png&transparent=true&bbox={bbox-epsg-3857}"
+          attribution="DTU GeoServer"
+        /> */}
         
         <MapClickHandler />
       </MapContainer>
