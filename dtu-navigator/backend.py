@@ -25,7 +25,7 @@ from Data.utils import load_adjacency_list
 from Algorithms.A_AStar import astar
 from Algorithms.ALT import *
 import Data.KDtree as KDtree
-from Data.routeToPath import build_continuous_path
+from Data.routeToPath import build_continuous_path, project_point_onto_path
 import Data.Database_access.loadFromDb as loadFromDb
 import Data.Obstacle_algebra.spatial_intersection as spatial_intersection
 
@@ -93,86 +93,147 @@ def closest_node(point):
     heap = KDtree.KNN_KDtree(node_tree, point, 1)
     distance, coords = heap.extractMax()   # k=1 → the single nearest element
     return coords, distance
-
+# ========== LIVE TRACKING STATE ==========
+ROUTES = {}              # route_id -> route in grid coords, consumed by /progress
+_next_route_id = 0
+STRAY_THRESHOLD_M = 10   # metres off the route before we flag "off route"
+REROUTE_THRESHOLD_M = 20 # metres off the route before we rebuild it from here
+ 
+ 
+def compute_route(source_grid, target_grid):
+    """A* + continuous path between two grid points, stored for live tracking.
+ 
+    Shared by /path and the reroute branch of /progress so the route-building
+    logic lives in exactly one place. Returns a dict, or None if no path exists.
+    """
+    import time
+ 
+    source_node, sdist = closest_node(source_grid)
+    target_node, tdist = closest_node(target_grid)
+    print(f"   Source node: {source_node}  (snap {sdist:.1f} m)")
+    print(f"   Target node: {target_node}  (snap {tdist:.1f} m)")
+    if source_node is None or target_node is None:
+        return None
+ 
+    h_alt = lambda p1, p2: landmark_h(p1, p2, Landmark_dist, len(Landmark_dist.get(p1)))
+    a_graph = adjGraph(adj_list)
+ 
+    start_time = time.time()
+    distance, path, stats = new_astar(a_graph, source_node, target_node, h_alt)  # A* landmarks
+    elapsed_ms = (time.time() - start_time) * 1000
+ 
+    full_path, total_dist = build_continuous_path(
+        source_grid, target_grid, path,
+        polygons, spatial_index, CELL_SIZE, polygon_bboxes)
+ 
+    print(f"   Path: {len(path)} graph nodes -> {len(full_path)} pts, "
+          f"{total_dist:.1f} m (graph {distance:.1f} m), {elapsed_ms:.1f} ms")
+ 
+    path_latlon = [list(grid_to_lat_lon(x, y)) for x, y in full_path]
+ 
+    global _next_route_id
+    route_id = _next_route_id
+    _next_route_id += 1
+    ROUTES[route_id] = [(float(x), float(y)) for x, y in full_path]
+    if len(ROUTES) > 50:                     # keep memory bounded
+        for k in list(ROUTES.keys())[:-50]:
+            ROUTES.pop(k, None)
+ 
+    return {
+        'route_id': route_id,
+        'path_latlon': path_latlon,
+        'distance': distance,
+        'time_ms': elapsed_ms,
+        'stats': stats,
+        'algorithm': str(a_graph),
+    }
+ 
+ 
 # ========== API ENDPOINTS ==========
 @app.route('/path', methods=['POST'])
 def get_path():
     """Get shortest path between two points"""
     try:
         data = request.json
-        source_lat = data['source']['lat']
-        source_lon = data['source']['lng']
-        target_lat = data['target']['lat']
-        target_lon = data['target']['lng']
-        
-        print(f"   Source: ({source_lat}, {source_lon})")
-        print(f"   Target: ({target_lat}, {target_lon})")
-        
-
-        source_grid = lat_lon_to_grid(source_lat, source_lon)
-        target_grid = lat_lon_to_grid(target_lat, target_lon)
+        source_grid = lat_lon_to_grid(data['source']['lat'], data['source']['lng'])
+        target_grid = lat_lon_to_grid(data['target']['lat'], data['target']['lng'])
         print(f"   Source grid: {source_grid}")
         print(f"   Target grid: {target_grid}")
  
-        # Snap to nearest graph nodes
-        source_node, sdist = closest_node(source_grid)
-        target_node, tdist = closest_node(target_grid)
-        print(f"   Source node: {source_node}  (snap {sdist:.1f} m)")
-        print(f"   Target node: {target_node}  (snap {tdist:.1f} m)")
-
-        
-        if source_node is None or target_node is None:
+        result = compute_route(source_grid, target_grid)
+        if result is None:
             return jsonify({'error': 'Could not find nodes near clicked points'}), 400
-        
-        # Run A* algorithm
-        import time
-        h_adj = lambda p1, p2: adj_euclidean(p1,p2)
-        h_alt = lambda p1,p2: landmark_h(p1,p2,Landmark_dist,len(Landmark_dist.get(p1)))
-        a_graph = adjGraph(adj_list)
-        
-        start_time = time.time()
-        # distance, path, stats = new_astar(a_graph, source_node, target_node,h_adj) #A star euclid
-        distance, path, stats = new_astar(a_graph, source_node, target_node,h_alt) #A star landmarks
-
-        
-        
-        elapsed_ms = (time.time() - start_time) * 1000
-        print(f"   Path found: {len(path)} nodes, {distance:.1f}m, {elapsed_ms:.1f}ms")
-        # Convert path back to lat/lon for display
-
-
-        full_path, total_dist = build_continuous_path(
-            source_grid, target_grid, path,
-            polygons, spatial_index, CELL_SIZE, polygon_bboxes)
-
-        print(f"   Path: {len(path)} graph nodes -> {len(full_path)} pts, "
-              f"{total_dist:.1f} m (graph {distance:.1f} m), {elapsed_ms:.1f} ms")
-        
-        # path_latlon = [list(grid_to_lat_lon(node[0], node[1])) for node in path]
-        path_latlon = [list(grid_to_lat_lon(x, y)) for x, y in full_path]
-
+ 
         return jsonify({
-            'path': path_latlon,
-            'distance': distance,
-            'time_ms': elapsed_ms,
-            'nodes_visited': stats,
-            'algorithm': str(a_graph)
+            'path': result['path_latlon'],
+            'distance': result['distance'],
+            'time_ms': result['time_ms'],
+            'nodes_visited': result['stats'],
+            'algorithm': result['algorithm'],
+            'route_id': result['route_id'],
         })
-        # return jsonify({
-        #     'path': path_latlon,
-        #     'distance': distance,
-        #     'time_ms': elapsed_ms,
-        #     'nodes_visited': stats['nodes_visited'],
-        #     'edges_relaxed': stats['edges_relaxed'],
-        #     'algorithm': stats.get('algorithm', 'A*')
-        # })
-        
+ 
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+ 
+ 
+@app.route('/progress', methods=['POST'])
+def progress():
+    """Project the live position onto a stored route and split it into the part
+    behind you (transparent) and ahead of you (visible). If the position strays
+    past REROUTE_THRESHOLD_M, rebuild the route from here to the destination."""
+    try:
+        data = request.json
+        route_id = data['route_id']
+        pos = data['position']
+ 
+        path_grid = ROUTES.get(route_id)
+        if not path_grid or len(path_grid) < 2:
+            return jsonify({'error': 'Route not found. Recompute the path.'}), 404
+ 
+        p_grid = lat_lon_to_grid(pos['lat'], pos['lng'])
+        cp, dist_m, seg_index, _t = project_point_onto_path(p_grid, path_grid)
+ 
+        # Strayed too far -> rebuild the route from the current position to the
+        # original destination (the last point of the stored route).
+        if dist_m > REROUTE_THRESHOLD_M:
+            new = compute_route(p_grid, path_grid[-1])
+            if new is not None:
+                # The new route starts at the marker, so nothing is "behind" yet.
+                return jsonify({
+                    'rerouted': True,
+                    'route_id': new['route_id'],
+                    'path': new['path_latlon'],
+                    'distance_m': 0.0,
+                    'off_route': False,
+                    'traveled': [],
+                    'remaining': new['path_latlon'],
+                })
+            # No path found from here -> fall through and just report off-route.
+ 
+        traveled_grid = list(path_grid[:seg_index + 1]) + [cp]
+        remaining_grid = [cp] + list(path_grid[seg_index + 1:])
+        to_ll = lambda pts: [list(grid_to_lat_lon(x, y)) for (x, y) in pts]
+ 
+        return jsonify({
+            'rerouted': False,
+            'closest': list(grid_to_lat_lon(cp[0], cp[1])),
+            'distance_m': dist_m,
+            'seg_index': seg_index,
+            'off_route': dist_m > STRAY_THRESHOLD_M,
+            'traveled': to_ll(traveled_grid),
+            'remaining': to_ll(remaining_grid),
+        })
     except Exception as e:
         print(f"Error: {e}")
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
+    
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'nodes': len(adj_list.keys())})

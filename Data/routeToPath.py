@@ -66,3 +66,25 @@ def build_continuous_path(source_grid, target_grid, main_path, polygons,
     total = sum(euclideanDistance(cleaned[k], cleaned[k + 1])
                 for k in range(len(cleaned) - 1))
     return cleaned, total
+
+def project_point_onto_segment(p, a, b):
+    """Closest point to p on segment a->b, plus t in [0, 1].
+    Uses the utils vector ops so the math matches the rest of the project."""
+    ab = subtract(b, a)
+    seg_len_sq = dot(ab, ab)
+    if seg_len_sq == 0.0:
+        return a, 0.0
+    t = dot(subtract(p, a), ab) / seg_len_sq
+    t = max(0.0, min(1.0, t))
+    return add(a, scaled(ab, t)), t
+
+def project_point_onto_path(point, path):
+    """Nearest point on polyline `path` to `point`.
+    Returns (closest_xy, distance, seg_index, t); distance in grid units ≈ metres."""
+    best = None  # (closest_xy, distance, seg_index, t)
+    for i in range(len(path) - 1):
+        cp, t = project_point_onto_segment(point, path[i], path[i + 1])
+        d = euclideanDistance(point, cp)
+        if best is None or d < best[1]:
+            best = (cp, d, i, t)
+    return best
