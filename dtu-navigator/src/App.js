@@ -42,7 +42,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const markersRef = useRef({ start: null, end: null });
 
-  
+
   const [demoSwitch, setDemoSwitch] = useState(false);
 
   // Route state. Geometry lives on the backend; the client only draws.
@@ -175,6 +175,65 @@ function App() {
     return m;
   }, [updateProgress]);
 
+  // Single source of truth: compute a path between two {lat,lng} points and draw
+  // the two tracking polylines. Used by both map clicks and the search box.
+  const drawRoute = useCallback(async (source, target) => {
+    const map = mapRef.current;
+    if (!map) return;
+    setStatus('Calculating path...');
+    setLoading(true);
+    try {
+      const { data } = await axios.post(`${API_URL}/path`, { source, target });
+      if (data.path && data.path.length > 0) {
+        const pathLatLng = data.path.map(c => [c[0], c[1]]);
+        pathCoordsRef.current = pathLatLng;
+        routeIdRef.current = data.route_id;
+
+        // Remove any previous lines so re-routing doesn't stack polylines.
+        if (remainingLineRef.current) remainingLineRef.current.remove();
+        if (traveledLineRef.current) traveledLineRef.current.remove();
+        remainingLineRef.current = L.polyline(pathLatLng, { color: '#ff4444', weight: 5, opacity: 0.8 }).addTo(map);
+        traveledLineRef.current  = L.polyline([],          { color: '#ff4444', weight: 5, opacity: 0   }).addTo(map);
+
+        setPath(remainingLineRef.current);
+        setDistance(data.distance);
+        setStats(data);
+        setStatus(`✓ Distance: ${data.distance.toFixed(0)}m | Time: ${data.time_ms.toFixed(0)}ms | Nodes visited: ${data.nodes_visited}`);
+      } else {
+        setStatus('No path found! Try different points.');
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      setStatus('Error finding path. Make sure backend is running.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Called by the search box when a destination is chosen.
+  const handleDestinationSelect = useCallback((lat, lng, name) => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (lat == null) { setStatus(`⚠️ ${name} has no coordinates available`); return; }
+
+    if (markersRef.current.end) markersRef.current.end.remove();
+    markersRef.current.end = L.marker([lat, lng], {
+      icon: L.divIcon({
+        className: 'custom-div-icon',
+        html: '<div style="background-color: red; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
+        iconSize: [16, 16]
+      })
+    }).addTo(map);
+    setEndPoint([lat, lng]);
+    map.flyTo([lat, lng], 18);
+
+    if (startPoint) {
+      drawRoute({ lat: startPoint[0], lng: startPoint[1] }, { lat, lng });
+    } else {
+      setStatus(`📍 Destination set to ${name}. Pick a start point (tap the map or enable GPS).`);
+    }
+  }, [startPoint, drawRoute]);
+
   // Drive the marker from GPS while tracking is on and the fix is in-bounds.
   useEffect(() => {
     if (!demoSwitch || !coords) return;
@@ -219,59 +278,23 @@ function App() {
           handleLiveFeedbackDemo(map, e);
           return;
         }
-              if (endPoint && !startPoint) {
-        // Set start point
-        const marker = L.marker([lat, lng], {
-          icon: L.divIcon({
-            className: 'custom-div-icon',
-            html: '<div style="background-color: green; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
-            iconSize: [16, 16]
-          })
-        }).addTo(map);
-        markersRef.current.start = marker;
 
-        setStartPoint([lat, lng]);
-        setStatus('Calculating path...');
-        setLoading(true);
+        if (endPoint && !startPoint) {
+          // Set start point, then route from here to the existing end point.
+          const marker = L.marker([lat, lng], {
+            icon: L.divIcon({
+              className: 'custom-div-icon',
+              html: '<div style="background-color: green; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
+              iconSize: [16, 16]
+            })
+          }).addTo(map);
+          markersRef.current.start = marker;
+          setStartPoint([lat, lng]);
 
-        try {
-          const response = await axios.post(`${API_URL}/path`, {
-            source: { lat, lng },
-            target: { lat: endPoint[0], lng: endPoint[1] }
-          });
-
-          const data = response.data;
-
-          if (data.path && data.path.length > 0) {
-            const pathLatLng = data.path.map(coord => [coord[0], coord[1]]);
-            pathCoordsRef.current = pathLatLng;
-            routeIdRef.current = data.route_id;
-
-            const remainingLine = L.polyline(pathLatLng, {
-              color: '#ff4444', weight: 5, opacity: 0.8
-            }).addTo(map);
-            const traveledLine = L.polyline([], {
-              color: '#ff4444', weight: 5, opacity: 0
-            }).addTo(map);
-
-            remainingLineRef.current = remainingLine;
-            traveledLineRef.current = traveledLine;
-
-            setPath(remainingLine);
-            setDistance(data.distance);
-            setStats(data);
-            setStatus(`✓ Distance: ${data.distance.toFixed(0)}m | Time: ${data.time_ms.toFixed(0)}ms | Nodes visited: ${data.nodes_visited}`);
-          } else {
-            setStatus('No path found! Try different points.');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          setStatus('Error finding path. Make sure backend is running.');
-        } finally {
-          setLoading(false);
+          drawRoute({ lat, lng }, { lat: endPoint[0], lng: endPoint[1] });
+          return;
         }
-        return;
-      }
+
         if (!startPoint) {
           const marker = L.marker([lat, lng], {
             icon: L.divIcon({
@@ -294,49 +317,9 @@ function App() {
             })
           }).addTo(map);
           markersRef.current.end = marker;
-
           setEndPoint([lat, lng]);
-          setStatus('Calculating path...');
-          setLoading(true);
 
-          try {
-            const response = await axios.post(`${API_URL}/path`, {
-              source: { lat: startPoint[0], lng: startPoint[1] },
-              target: { lat, lng }
-            });
-
-            const data = response.data;
-
-            if (data.path && data.path.length > 0) {
-              const pathLatLng = data.path.map(coord => [coord[0], coord[1]]);
-              pathCoordsRef.current = pathLatLng;
-              routeIdRef.current = data.route_id;
-
-              const remainingLine = L.polyline(pathLatLng, {
-                color: '#ff4444', weight: 5, opacity: 0.8
-              }).addTo(map);
-              const traveledLine = L.polyline([], {
-                color: '#ff4444', weight: 5, opacity: 0
-              }).addTo(map);
-
-              remainingLineRef.current = remainingLine;
-              traveledLineRef.current = traveledLine;
-
-              setPath(remainingLine);
-              setDistance(data.distance);
-              setStats(data);
-              setStatus(`✓ Distance: ${data.distance.toFixed(0)}m | Time: ${data.time_ms.toFixed(0)}ms | Nodes visited: ${data.nodes_visited}`);
-            } else {
-              setStatus('No path found! Try different points.');
-              setTimeout(resetRoute, 3000);
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            setStatus('Error finding path. Make sure backend is running.');
-            setTimeout(resetRoute, 3000);
-          } finally {
-            setLoading(false);
-          }
+          drawRoute({ lat: startPoint[0], lng: startPoint[1] }, { lat, lng });
         }
       }
     });
@@ -378,26 +361,13 @@ function App() {
     }
     updateProgress(ll);
   }
+
   const searchProps = {
-  L,
-  mapRef,
-  startPoint,
-  endPoint,
-  setStartPoint,
-  setEndPoint,
-  setStatus,
-  setLoading,
-  setPath,
-  setDistance,
-  setStats,
-  pathCoordsRef,
-  routeIdRef,
-  remainingLineRef,
-  traveledLineRef,
-  markersRef,
-  placeholder: "Search building...",
-  style: { width: '200px' }
+    onSelectDestination: handleDestinationSelect,
+    placeholder: "Search building...",
+    style: { width: '200px' },
   };
+
   return (
     <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
       <MapContainer

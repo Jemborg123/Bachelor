@@ -267,42 +267,18 @@ def bounds():
 @app.route('/search', methods=['GET'])
 def search_suggestions():
     query = request.args.get('q', '').strip().lower()
-    
     if not query:
         return jsonify({'suggestions': []})
-    
-    suggestions = []
-    
-    # Search for keys that start with the query
-    for key, values in search_library.items():
-        if key.lower().startswith(query):
-            for value in values:
-                # Check if this location has coordinates
-                if value in labeled_points:
-                    coords = labeled_points[value][-1]  # Last point in the list
-                    suggestions.append({
-                        'name': value,
-                        'coordinates': coords
-                    })
-                else:
-                    suggestions.append({
-                        'name': value,
-                        'coordinates': None
-                    })
-                if len(suggestions) >= 5:
-                    break
-            if len(suggestions) >= 5:
-                break
-    
-    return jsonify({'suggestions': suggestions})
 
-@app.route('/convert-grid-to-latlon', methods=['POST'])
-def convert_grid_to_latlon():
-    data = request.json
-    x = data['x']
-    y = data['y']
-    lat, lon = grid_to_lat_lon(x, y)
-    return jsonify({'lat': lat, 'lng': lon})
+    suggestions = []
+    for name in search_library.get(query, [])[:5]:      # direct hit, already an index
+        pts = labeled_points.get(name)
+        if pts:
+            lat, lng = grid_to_lat_lon(pts[-1][0], pts[-1][1])
+            suggestions.append({'name': name, 'lat': lat, 'lng': lng})
+        else:
+            suggestions.append({'name': name, 'lat': None, 'lng': None})
+    return jsonify({'suggestions': suggestions})
 
 if __name__ == '__main__':
     print("\n🚀 Starting backend server...")
