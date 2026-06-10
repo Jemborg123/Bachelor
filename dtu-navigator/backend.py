@@ -74,6 +74,13 @@ spatial_index = spatial_intersection.build_spatial_index(polygons, CELL_SIZE)
 polygon_bboxes = spatial_intersection.precompute_bboxes(polygons)
 print(f"✅ Obstacles ready: {len(polygons)} polygons")
 
+SEARCH_LIBRARY_PATH = "../Data/Data/SearchLibrary.json"
+search_library = loadPointsDataFromFile(SEARCH_LIBRARY_PATH)
+print(f"✅ Search library loaded: {len(search_library.keys())} search keys")
+
+LABELED_POINTS_PATH = "../Data/LabeledPoints.json"
+labeled_points = loadPointsDataFromFile(LABELED_POINTS_PATH)
+print(f"✅ Labeled points loaded: {len(labeled_points.keys())} locations")
 
 # ========== COORDINATE CONVERSION ==========
 _to_grid = Transformer.from_crs(4326, 4095, always_xy=True)
@@ -256,6 +263,46 @@ def health():
 @app.route('/bounds', methods=['GET'])
 def bounds():
     return jsonify(_AREA_BOUNDS)
+
+@app.route('/search', methods=['GET'])
+def search_suggestions():
+    query = request.args.get('q', '').strip().lower()
+    
+    if not query:
+        return jsonify({'suggestions': []})
+    
+    suggestions = []
+    
+    # Search for keys that start with the query
+    for key, values in search_library.items():
+        if key.lower().startswith(query):
+            for value in values:
+                # Check if this location has coordinates
+                if value in labeled_points:
+                    coords = labeled_points[value][-1]  # Last point in the list
+                    suggestions.append({
+                        'name': value,
+                        'coordinates': coords
+                    })
+                else:
+                    suggestions.append({
+                        'name': value,
+                        'coordinates': None
+                    })
+                if len(suggestions) >= 5:
+                    break
+            if len(suggestions) >= 5:
+                break
+    
+    return jsonify({'suggestions': suggestions})
+
+@app.route('/convert-grid-to-latlon', methods=['POST'])
+def convert_grid_to_latlon():
+    data = request.json
+    x = data['x']
+    y = data['y']
+    lat, lon = grid_to_lat_lon(x, y)
+    return jsonify({'lat': lat, 'lng': lon})
 
 if __name__ == '__main__':
     print("\n🚀 Starting backend server...")

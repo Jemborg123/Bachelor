@@ -5,6 +5,7 @@ import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import Switch from "react-switch";
 import { useGeolocated } from "react-geolocated";
+import SearchField from './searchField';
 
 // Fix for Leaflet marker icons in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -218,7 +219,59 @@ function App() {
           handleLiveFeedbackDemo(map, e);
           return;
         }
+              if (endPoint && !startPoint) {
+        // Set start point
+        const marker = L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: 'custom-div-icon',
+            html: '<div style="background-color: green; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
+            iconSize: [16, 16]
+          })
+        }).addTo(map);
+        markersRef.current.start = marker;
 
+        setStartPoint([lat, lng]);
+        setStatus('Calculating path...');
+        setLoading(true);
+
+        try {
+          const response = await axios.post(`${API_URL}/path`, {
+            source: { lat, lng },
+            target: { lat: endPoint[0], lng: endPoint[1] }
+          });
+
+          const data = response.data;
+
+          if (data.path && data.path.length > 0) {
+            const pathLatLng = data.path.map(coord => [coord[0], coord[1]]);
+            pathCoordsRef.current = pathLatLng;
+            routeIdRef.current = data.route_id;
+
+            const remainingLine = L.polyline(pathLatLng, {
+              color: '#ff4444', weight: 5, opacity: 0.8
+            }).addTo(map);
+            const traveledLine = L.polyline([], {
+              color: '#ff4444', weight: 5, opacity: 0
+            }).addTo(map);
+
+            remainingLineRef.current = remainingLine;
+            traveledLineRef.current = traveledLine;
+
+            setPath(remainingLine);
+            setDistance(data.distance);
+            setStats(data);
+            setStatus(`✓ Distance: ${data.distance.toFixed(0)}m | Time: ${data.time_ms.toFixed(0)}ms | Nodes visited: ${data.nodes_visited}`);
+          } else {
+            setStatus('No path found! Try different points.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          setStatus('Error finding path. Make sure backend is running.');
+        } finally {
+          setLoading(false);
+        }
+        return;
+      }
         if (!startPoint) {
           const marker = L.marker([lat, lng], {
             icon: L.divIcon({
@@ -325,7 +378,26 @@ function App() {
     }
     updateProgress(ll);
   }
-
+  const searchProps = {
+  L,
+  mapRef,
+  startPoint,
+  endPoint,
+  setStartPoint,
+  setEndPoint,
+  setStatus,
+  setLoading,
+  setPath,
+  setDistance,
+  setStats,
+  pathCoordsRef,
+  routeIdRef,
+  remainingLineRef,
+  traveledLineRef,
+  markersRef,
+  placeholder: "Search building...",
+  style: { width: '200px' }
+  };
   return (
     <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
       <MapContainer
@@ -361,12 +433,11 @@ function App() {
         textAlign: 'center', transition: 'all 0.3s ease'
       }}>
         {!loading && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-            <span>search from</span>
-            <input name="fromInput" />
-            <span>to</span>
-            <input name="toInput" />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' , flexWrap: 'wrap'}}>
+            <span>search</span>
+              <SearchField {...searchProps} />
             <Switch onChange={liveFeedbackDemo} checked={demoSwitch} />
+            <span>location</span>
           </div>
         )}
       </div>
