@@ -93,6 +93,21 @@ def closest_node(point):
     heap = KDtree.KNN_KDtree(node_tree, point, 1)
     distance, coords = heap.extractMax()   # k=1 → the single nearest element
     return coords, distance
+
+def _graph_latlon_bounds():
+    """Lat/lon envelope of the graph — the area where routing is possible."""
+    xs = [p[0] for p in adj_list.keys()]
+    ys = [p[1] for p in adj_list.keys()]
+    corners = [(min(xs), min(ys)), (min(xs), max(ys)),
+               (max(xs), min(ys)), (max(xs), max(ys))]
+    lls = [grid_to_lat_lon(x, y) for (x, y) in corners]
+    lats = [lat for lat, lon in lls]
+    lons = [lon for lat, lon in lls]
+    return {'south': min(lats), 'west': min(lons),
+            'north': max(lats), 'east': max(lons)}
+
+_AREA_BOUNDS = _graph_latlon_bounds()   # computed once at startup
+
 # ========== LIVE TRACKING STATE ==========
 ROUTES = {}              # route_id -> route in grid coords, consumed by /progress
 _next_route_id = 0
@@ -237,6 +252,10 @@ def progress():
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'nodes': len(adj_list.keys())})
+
+@app.route('/bounds', methods=['GET'])
+def bounds():
+    return jsonify(_AREA_BOUNDS)
 
 if __name__ == '__main__':
     print("\n🚀 Starting backend server...")

@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { MapContainer, TileLayer, WMSTileLayer, Marker, Polyline, useMapEvents } from 'react-leaflet';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { MapContainer, TileLayer, WMSTileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import Switch from "react-switch";
+import { useGeolocated } from "react-geolocated";
 
 // Fix for Leaflet marker icons in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -16,6 +17,20 @@ L.Icon.Default.mergeOptions({
 // Your backend API URL (change to your computer's IP)
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+// Fallback area-of-interest (DTU Lyngby) used until /bounds is fetched.
+const AREA_BOUNDS = L.latLngBounds(
+  L.latLng(55.779, 12.508),   // south-west
+  L.latLng(55.793, 12.532)    // north-east
+);
+
+// Stashes the Leaflet map instance into a ref so logic outside click events
+// (the GPS handler) can reach it.
+function MapRefBinder({ mapRef }) {
+  const map = useMap();
+  useEffect(() => { mapRef.current = map; }, [map, mapRef]);
+  return null;
+}
+
 function App() {
   const [startPoint, setStartPoint] = useState(null);
   const [endPoint, setEndPoint] = useState(null);
@@ -26,15 +41,46 @@ function App() {
   const [loading, setLoading] = useState(false);
   const markersRef = useRef({ start: null, end: null });
 
-  // Route state. Geometry now lives on the backend; the client only draws.
+  
+  const [demoSwitch, setDemoSwitch] = useState(false);
+
+  // Route state. Geometry lives on the backend; the client only draws.
   const pathCoordsRef = useRef(null);     // full route [[lat, lng], ...] (for demo-off restore)
   const routeIdRef = useRef(null);        // id returned by /path, used by /progress
   const traveledLineRef = useRef(null);   // start -> pos marker (transparent)
   const remainingLineRef = useRef(null);  // pos marker -> end   (visible)
 
+  const mapRef = useRef(null);            // Leaflet map instance (via MapRefBinder)
+  const posMarkerRef = useRef(null);      // blue position marker (GPS or manual)
+  const areaBoundsRef = useRef(null);     // bounds fetched from /bounds (overrides default)
+
   // Throttle: only one /progress request in flight; coalesce drags (latest wins).
   const progressInFlight = useRef(false);
-  const progressPending = useRef(null);   // latest { latlng } waiting to be sent
+  const progressPending = useRef(null);
+
+  // Pull the real area-of-interest from the backend (falls back to AREA_BOUNDS).
+  useEffect(() => {
+    axios.get(`${API_URL}/bounds`)
+      .then(res => {
+        const b = res.data;
+        areaBoundsRef.current = L.latLngBounds(
+          L.latLng(b.south, b.west), L.latLng(b.north, b.east));
+      })
+      .catch(() => { /* keep the hardcoded fallback */ });
+  }, []);
+
+  // ----- Geolocation -----
+  const {
+    coords,
+    isGeolocationAvailable,
+    positionError,
+    getPosition,
+  } = useGeolocated({
+    positionOptions: { enableHighAccuracy: true },
+    watchPosition: true,
+    userDecisionTimeout: 8000,
+    suppressLocationOnMount: true,   // only ask when the user turns tracking on
+  });
 
   // Clear all markers and path
   const resetRoute = useCallback(() => {
@@ -49,7 +95,7 @@ function App() {
     progressInFlight.current = false;
     progressPending.current = null;
 
-    if (posMarker) { posMarker.remove(); setPosMarker(null); }
+    if (posMarkerRef.current) { posMarkerRef.current.remove(); posMarkerRef.current = null; }
 
     setStartPoint(null);
     setEndPoint(null);
@@ -60,7 +106,6 @@ function App() {
   }, []);
 
   // Ask the backend where we are along the route, then redraw the two lines.
-  // Reads refs + setStatus only, so it's safe from a captured drag handler.
   const sendProgress = useCallback(async (latlng) => {
     const routeId = routeIdRef.current;
     if (routeId == null) return;
@@ -76,8 +121,8 @@ function App() {
 
       if (d.rerouted) {
         // Strayed too far — backend rebuilt the route from the marker to the end.
-        routeIdRef.current = d.route_id;       // track the new route from now on
-        pathCoordsRef.current = d.path;        // so demo-off restores the new one
+        routeIdRef.current = d.route_id;
+        pathCoordsRef.current = d.path;
         traveledLineRef.current.setLatLngs([]);
         remainingLineRef.current.setLatLngs(d.remaining.map(c => L.latLng(c[0], c[1])));
         remainingLineRef.current.setStyle({ color: '#ff4444' });
@@ -113,6 +158,51 @@ function App() {
     sendProgress(latlng);
   }, [sendProgress]);
 
+  // One place that builds the blue marker + wires its drag handlers, shared by
+  // both the GPS tracker and manual click-to-place.
+  const makePosMarker = useCallback((map, ll) => {
+    const m = L.marker(ll, {
+      icon: L.divIcon({
+        className: 'custom-div-icon',
+        html: '<div style="background-color: blue; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
+        iconSize: [16, 16]
+      }),
+      draggable: true
+    }).addTo(map);
+    m.on('drag', (ev) => updateProgress(ev.latlng));
+    m.on('dragend', (ev) => updateProgress(ev.target.getLatLng()));
+    return m;
+  }, [updateProgress]);
+
+  // Drive the marker from GPS while tracking is on and the fix is in-bounds.
+  useEffect(() => {
+    if (!demoSwitch || !coords) return;
+    const map = mapRef.current;
+    if (!map) return;
+
+    const ll = L.latLng(coords.latitude, coords.longitude);
+    const area = areaBoundsRef.current || AREA_BOUNDS;
+    if (!area.contains(ll)) {
+      setStatus('📍 You appear to be outside the tracked area — GPS paused');
+      // return;
+    }
+
+    if (posMarkerRef.current) {
+      posMarkerRef.current.setLatLng(ll);
+    } else {
+      posMarkerRef.current = makePosMarker(map, ll);
+    }
+    updateProgress(ll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coords, demoSwitch, makePosMarker, updateProgress]);
+
+  // Surface geolocation failures while tracking is on.
+  useEffect(() => {
+    if (demoSwitch && positionError) {
+      setStatus('📍 Could not get GPS — tap the map to place the marker manually');
+    }
+  }, [demoSwitch, positionError]);
+
   // Map click handler component
   function MapClickHandler() {
     const map = useMapEvents({
@@ -130,7 +220,6 @@ function App() {
         }
 
         if (!startPoint) {
-          // Set start point
           const marker = L.marker([lat, lng], {
             icon: L.divIcon({
               className: 'custom-div-icon',
@@ -144,7 +233,6 @@ function App() {
           setStatus('Start point set. Tap to set end point...');
         }
         else if (!endPoint) {
-          // Set end point
           const marker = L.marker([lat, lng], {
             icon: L.divIcon({
               className: 'custom-div-icon',
@@ -159,7 +247,6 @@ function App() {
           setLoading(true);
 
           try {
-            // Call backend to get path
             const response = await axios.post(`${API_URL}/path`, {
               source: { lat: startPoint[0], lng: startPoint[1] },
               target: { lat, lng }
@@ -167,25 +254,16 @@ function App() {
 
             const data = response.data;
 
-            // Draw path
             if (data.path && data.path.length > 0) {
               const pathLatLng = data.path.map(coord => [coord[0], coord[1]]);
               pathCoordsRef.current = pathLatLng;
-              routeIdRef.current = data.route_id;   // used by /progress
+              routeIdRef.current = data.route_id;
 
-              // Visible "ahead of you" line (full route to begin with).
               const remainingLine = L.polyline(pathLatLng, {
-                color: '#ff4444',
-                weight: 5,
-                opacity: 0.8
+                color: '#ff4444', weight: 5, opacity: 0.8
               }).addTo(map);
-
-              // "Behind you" line, transparent so the consumed part disappears.
-              // Bump opacity (e.g. 0.25 + grey) for a faded trail instead.
               const traveledLine = L.polyline([], {
-                color: '#ff4444',
-                weight: 5,
-                opacity: 0
+                color: '#ff4444', weight: 5, opacity: 0
               }).addTo(map);
 
               remainingLineRef.current = remainingLine;
@@ -213,47 +291,39 @@ function App() {
     return null;
   }
 
-  const [demoSwitch, setDemoSwitch] = useState(false);
   function liveFeedbackDemo(){
-    const next = !demoSwitch;
-    setDemoSwitch(next);
+    const nextOn = !demoSwitch;
+    setDemoSwitch(nextOn);
 
-    // Turning the demo off: drop the position marker and restore the full route.
-    if (!next) {
-      if (posMarker) { posMarker.remove(); setPosMarker(null); }
-      progressPending.current = null;
-      if (remainingLineRef.current && pathCoordsRef.current) {
-        remainingLineRef.current.setLatLngs(pathCoordsRef.current.map(c => L.latLng(c[0], c[1])));
-        remainingLineRef.current.setStyle({ color: '#ff4444' });
+    if (nextOn) {
+      // Turning tracking on: ask for GPS now (prompt appears on user action).
+      if (isGeolocationAvailable) {
+        getPosition();
+      } else {
+        setStatus('Geolocation not supported — tap the map to place the marker');
       }
-      if (traveledLineRef.current) traveledLineRef.current.setLatLngs([]);
+      return;
     }
+
+    // Turning tracking off: drop the marker and restore the full route.
+    if (posMarkerRef.current) { posMarkerRef.current.remove(); posMarkerRef.current = null; }
+    progressPending.current = null;
+    if (remainingLineRef.current && pathCoordsRef.current) {
+      remainingLineRef.current.setLatLngs(pathCoordsRef.current.map(c => L.latLng(c[0], c[1])));
+      remainingLineRef.current.setStyle({ color: '#ff4444' });
+    }
+    if (traveledLineRef.current) traveledLineRef.current.setLatLngs([]);
   }
 
-  const [posMarker, setPosMarker] = useState(null);
+  // Manual click-to-place fallback (when GPS is unavailable or out of bounds).
   function handleLiveFeedbackDemo(map, click){
-    const { lat, lng } = click.latlng;
-    if (posMarker == null){
-      const marker = L.marker([lat, lng], {
-        icon: L.divIcon({
-          className: 'custom-div-icon',
-          html: '<div style="background-color: blue; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
-          iconSize: [16, 16]
-        }),
-        draggable: true
-      }).addTo(map);
-
-      // Live update while dragging; final precise update when the drag ends.
-      marker.on('drag', (ev) => updateProgress(ev.latlng));
-      marker.on('dragend', (ev) => updateProgress(ev.target.getLatLng()));
-
-      setPosMarker(marker);
+    const ll = click.latlng;
+    if (!posMarkerRef.current){
+      posMarkerRef.current = makePosMarker(map, ll);
+    } else {
+      posMarkerRef.current.setLatLng(ll);
     }
-    else{
-      posMarker.setLatLng([lat, lng]);
-    }
-    // Update immediately on click-to-place too.
-    updateProgress(click.latlng);
+    updateProgress(ll);
   }
 
   return (
@@ -265,13 +335,11 @@ function App() {
         zoomControl={true}
         attributionControl={true}
       >
-        {/* Base OpenStreetMap tiles */}
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {/* DTU Buildings overlay (WMS) */}
         <WMSTileLayer
           url="https://casgis.azurewebsites.net/geoserver/dtu/wms"
           layers="dtu:llyn_bygning_dtu"
@@ -281,21 +349,16 @@ function App() {
           attribution="DTU GeoServer"
         />
 
+        <MapRefBinder mapRef={mapRef} />
         <MapClickHandler />
       </MapContainer>
       <div style={{
-        position: 'absolute',
-        top: 20,
-        left: 20,
-        right: 20,
+        position: 'absolute', top: 20, left: 20, right: 20,
         background: loading ? 'rgba(255,255,255,0.9)' : 'white',
         padding: loading ? '8px 12px' : '12px',
-        borderRadius: 10,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-        zIndex: 1000,
-        fontSize: loading ? '12px' : '14px',
-        textAlign: 'center',
-        transition: 'all 0.3s ease'
+        borderRadius: 10, boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+        zIndex: 1000, fontSize: loading ? '12px' : '14px',
+        textAlign: 'center', transition: 'all 0.3s ease'
       }}>
         {!loading && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
@@ -306,31 +369,20 @@ function App() {
             <Switch onChange={liveFeedbackDemo} checked={demoSwitch} />
           </div>
         )}
-
       </div>
-      {/* Status panel */}
       <div style={{
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        right: 20,
+        position: 'absolute', bottom: 20, left: 20, right: 20,
         background: loading ? 'rgba(255,255,255,0.9)' : 'white',
         padding: loading ? '8px 12px' : '12px',
-        borderRadius: 10,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-        zIndex: 1000,
-        fontSize: loading ? '12px' : '14px',
-        textAlign: 'center',
-        transition: 'all 0.3s ease'
+        borderRadius: 10, boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+        zIndex: 1000, fontSize: loading ? '12px' : '14px',
+        textAlign: 'center', transition: 'all 0.3s ease'
       }}>
         {loading && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
             <div className="spinner" style={{
-              width: '16px',
-              height: '16px',
-              border: '2px solid #ccc',
-              borderTopColor: '#ff4444',
-              borderRadius: '50%',
+              width: '16px', height: '16px', border: '2px solid #ccc',
+              borderTopColor: '#ff4444', borderRadius: '50%',
               animation: 'spin 0.8s linear infinite'
             }} />
             <span>Finding best route...</span>
@@ -344,7 +396,6 @@ function App() {
         )}
       </div>
 
-      {/* Loading animation keyframes */}
       <style>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
