@@ -280,10 +280,14 @@ def search_suggestions():
             suggestions.append({'name': name, 'lat': None, 'lng': None})
     return jsonify({'suggestions': suggestions})
 
+# if __name__ == '__main__':
+#     print("\n🚀 Starting backend server...")
+#     print("📍 Backend running at: http://localhost:5000")
+#     print("💡 Make sure React is running on port 3000")
+#     print("\n📌 Test the API:")
+#     print("   curl http://localhost:5000/health")
+#     app.run(host='0.0.0.0', port=5000, debug=True)  # Use debug=True for now
+
 if __name__ == '__main__':
-    print("\n🚀 Starting backend server...")
-    print("📍 Backend running at: http://localhost:5000")
-    print("💡 Make sure React is running on port 3000")
-    print("\n📌 Test the API:")
-    print("   curl http://localhost:5000/health")
-    app.run(host='0.0.0.0', port=5000, debug=True)  # Use debug=True for now
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
