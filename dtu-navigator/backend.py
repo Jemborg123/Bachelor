@@ -22,7 +22,6 @@ ADJACENCY_PATH = "../Data/ObbyMap32_pruned.json"
 
 # Import your modules
 from Data.utils import load_adjacency_list
-from Algorithms.A_AStar import astar
 from Algorithms.ALT import *
 import Data.KDtree as KDtree
 from Data.routeToPath import build_continuous_path, project_point_onto_path

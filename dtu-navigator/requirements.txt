@@ -2,3 +2,7 @@ flask
 flask-cors
 gunicorn
 pyproj
+pickle
+matplotlib
+numpy
+geopandas
