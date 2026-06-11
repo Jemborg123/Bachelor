@@ -1,7 +1,7 @@
 // map.js - Core map functionality for DTU Navigator
 
 const API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000' 
+    ? 'https://bachelor-ntwt.onrender.com:5000' 
     : 'http://' + window.location.hostname + ':5000';
 
 let map;
