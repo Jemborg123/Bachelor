@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Your backend API URL (change to your computer's IP)
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'https://bachelor-ntwt.onrender.com/:5000';
 
 // Fallback area-of-interest (DTU Lyngby) used until /bounds is fetched.
 const AREA_BOUNDS = L.latLngBounds(
