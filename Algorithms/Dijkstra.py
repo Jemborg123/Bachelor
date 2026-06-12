@@ -137,84 +137,6 @@ def dijk_new(graph,source,cost_func,stopCondition=None):
     return distMap, prev, visited
 
 
-def dijkstra(graph, source, target, weight='weight'):
-    """
-    Custom implementation of Dijkstra's algorithm.
-    
-    Time Complexity: O((V + E) log V) with binary heap
-    Space Complexity: O(V)
-    
-    Args:
-        graph: NetworkX graph object
-        source: source node
-        target: target node
-        weight: edge attribute to use as weight
-    
-    Returns:
-        tuple: (path list, distance, stats dictionary)
-    """
-    stats = {
-        'nodes_visited': 0,
-        'edges_relaxed': 0,
-        'heap_operations': 0,
-        'algorithm': 'Dijkstra'
-    }
-    
-    # Initialize distances and predecessors
-    dist = {node: float('inf') for node in graph.nodes()}
-    prev = {node: None for node in graph.nodes()}
-    dist[source] = 0
-    
-    # Priority queue: (distance, node)
-    pq = [(0, source)]
-    stats['heap_operations'] += 1
-    
-    # Visited set
-    visited = set()
-    
-    while pq:
-        # Extract min
-        current_dist, current = heapq.heappop(pq)
-        stats['heap_operations'] += 1
-        
-        # Skip if we've already found a better path
-        if current_dist > dist[current]:
-            continue
-        
-        # Mark as visited
-        if current not in visited:
-            visited.add(current)
-            stats['nodes_visited'] += 1
-        
-        # Early termination if we reached target
-        if current == target:
-            break
-        
-        # Relax all neighbors
-        for neighbor in graph.neighbors(current):
-            edge_weight = graph[current][neighbor].get(weight, 1)
-            stats['edges_relaxed'] += 1
-            
-            new_dist = current_dist + edge_weight
-            
-            if new_dist < dist[neighbor]:
-                dist[neighbor] = new_dist
-                prev[neighbor] = current
-                heapq.heappush(pq, (new_dist, neighbor))
-                stats['heap_operations'] += 1
-    
-    # Reconstruct path
-    path = []
-    if dist[target] < float('inf'):
-        node = target
-        while node is not None:
-            path.append(node)
-            node = prev[node]
-        path.reverse()
-    
-    return path, dist[target], stats
-
-
 def analyze_complexity(V, E, stats, elapsed_time):
     """
     Analyze and print complexity information.
@@ -276,11 +198,9 @@ if __name__ == "__main__":
     nx_s,nx_t = select_random_nodes_nx(G)[0]
     nx_graph = nxGraph(G)
     newCost, newPath,visits = dijk_s_to_t(nx_graph,nx_s,nx_t)
-    oldPath, oldCost,_ = dijkstra(G,nx_s,nx_t)
 
-    print(f"new cost: {newCost}, old cost: {oldCost}")
+    print(f"new cost: {newCost}, new path: {newPath},\n nodes visited: {visits}")
     
-    print(f"new path: {newPath},\n old path: {oldPath}\n nodes visited: {visits}")
 
     ADJACENCY_PATH = "Data/ObbyMap32_pruned.json"
     adjacency_list, success = load_adjacency_list(ADJACENCY_PATH)

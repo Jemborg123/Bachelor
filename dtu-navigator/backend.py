@@ -289,4 +289,4 @@ def search_suggestions():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='bachelor-ntwt.onrender.com', port=port)
+    app.run(host='10.110.80.254', port=port)
