@@ -51,7 +51,6 @@ def merge_points_simpleDbscan(points: np.ndarray, eps: float = 0.5, min_samples:
     return np.array(merged)
 
 def simpleDBSCAN(dataset, Eps, minPts):
-    Eps = Eps**2
     n = len(dataset)
     neighbors = computeNeighbors(dataset, Eps)
 

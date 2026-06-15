@@ -244,7 +244,7 @@ def mergePoints(points,mergeType):
             squares = grid_merge.intoGrid(points, 10)
             return grid_merge.findCentroid(squares)
         case MergeType.DBSCANMERGE:
-            merged = dbscan_merge.merge_points_simpleDbscan(points, eps=3, min_samples=1)
+            merged = dbscan_merge.merge_points_simpleDbscan(points, eps=3.5, min_samples=1)
             return [tuple(p) for p in merged]
         case MergeType.NOMERGING:
             return [tuple(p) for p in points]
