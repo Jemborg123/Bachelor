@@ -76,7 +76,7 @@ DEFAULT_BUCKETS = [
     (1500, 2000, "1500--2000"),
     (2000, INF, "$>$2000"),
 ]
-LANDMARK_COUNTS = [1, 2, 4, 8, 16, 32]
+LANDMARK_COUNTS = [1,2,4,8,16,32,64,128]
 
 
 # =============================================================================
@@ -328,14 +328,19 @@ def latex_buckets(table, algo_order, buckets):
 def latex_landmark(rows, n_queries):
     lines = [
         r"\begin{table}[h]", r"\centering",
-        rf"\caption{{ALT performance as a function of landmark count. Values are means across {n_queries} queries.}}",
+        rf"\caption{{ALT performance as a function of landmark count. Query-time "
+        rf"values are means across {n_queries} queries; preprocessing time and "
+        rf"memory are the one-off cost of building the landmark distance tables.}}",
         r"\label{tab:landmark-sensitivity}",
-        r"\begin{tabular}{|r|r|r|r|r|}", r"\hline",
-        r"\textbf{Landmarks} & \textbf{Time (ms)} & \textbf{Nodes Visited} & "
+        r"\begin{tabular}{|r|r|r|r|r|r|r|}", r"\hline",
+        r"\textbf{Landmarks} & \textbf{Prep Time (s)} & \textbf{Prep Memory (KB)} & "
+        r"\textbf{Time (ms)} & \textbf{Nodes Visited} & "
         r"\textbf{Edges Relaxed} & \textbf{Memory (KB)} \\", r"\hline",
     ]
     for r in rows:
-        lines.append(f"{r['landmarks']} & {_f(r['time_ms'],3)} & {_f(r['vertices'],1)} & "
+        lines.append(f"{r['landmarks']} & {_f(r['prep_wall_s'],2)} & "
+                     f"{_f(r['prep_mem_kb'],1)} & {_f(r['time_ms'],3)} & "
+                     f"{_f(r['vertices'],1)} & "
                      f"{_f(r['edges_relaxed'],1)} & {_f(r['memory_kb'],1)} \\\\")
     lines += [r"\hline", r"\end{tabular}", r"\end{table}"]
     return "\n".join(lines)
@@ -686,7 +691,8 @@ def main():
     p.add_argument("--landmarks", type=int, default=16,
                    help="landmarks for the main ALT row")
     p.add_argument("--landmark-sweep", action="store_true",
-                   help="also run the {1,2,4,8,16,32}-landmark sensitivity table")
+                   help="run ONLY the landmark sensitivity sweep "
+                        "(skips the Dijkstra/A*/Bidirectional/ALT baseline benchmark)")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--outdir", default="Comparison_output")
     p.add_argument("--adjacency-path", default="Data/ObbyMap32_pruned.json")
@@ -705,57 +711,60 @@ def main():
     queries = queries_fn(args.queries)
     print(f"Selected {len(queries)} query pairs on the {args.graph} graph.")
 
-    h_euclid = euclid_h_factory()
-    print(f"ALT preprocessing ({args.landmarks} landmarks) ...")
-    (h_landmark, n_lm), prep = measure_block(
-        lambda: build_landmark_h(ALT, graph, args.landmarks))
-    print(f"  done in {prep['wall']:.2f}s, peak {prep['peak_bytes']/1024:.0f} KB")
-
-    algos = make_algos(mods, h_euclid, h_landmark)
-    algo_order = [a.name for a in algos]
-
-    print("\nRunning benchmark ...")
-    records, per_algo, qdist = run_benchmark(graph, algos, queries, args.repeats)
-    summary = summarize(records, per_algo, algo_order)
-    buckets = bucket_analysis(records, algo_order, DEFAULT_BUCKETS)
-
-    print_console_summary(summary, algo_order, args.queries)
-    write_raw_csv(records, os.path.join(args.outdir, f"{args.graph}_raw.csv"))
-    write_summary_csv(summary, algo_order,
-                      os.path.join(args.outdir, f"{args.graph}_summary.csv"))
-
-    tex = [latex_summary(summary, algo_order, args.queries), "",
-           latex_relative(summary, algo_order), "",
-           latex_buckets(buckets, algo_order, DEFAULT_BUCKETS)]
-
-    # Write the three main tables FIRST, so a problem in the optional sweep can
-    # never cost you the rest of the results.
     tex_path = os.path.join(args.outdir, f"{args.graph}_tables.tex")
-    with open(tex_path, "w") as f:
-        f.write("\n".join(tex) + "\n")
-    print("\nLaTeX tables written to:", tex_path)
-    print("\n" + "\n\n".join(tex))
 
     if args.landmark_sweep:
+        # Sweep-only mode: skip the four-algorithm baseline benchmark
+        # (Dijkstra / A* / Bidirectional A* / ALT) and its CSVs/summary tables;
+        # produce only the landmark sensitivity table.
         rows = run_landmark_sweep(mods, graph, queries, LANDMARK_COUNTS, args.repeats)
         if rows:
             lm_tex = latex_landmark(rows, args.queries)
-            # standalone file + appended to the combined file
+            # standalone file + the combined tables file (only the sweep table)
             with open(os.path.join(args.outdir, f"{args.graph}_landmark_table.tex"),
                       "w") as f:
                 f.write(lm_tex + "\n")
-            with open(tex_path, "a") as f:
-                f.write("\n" + lm_tex + "\n")
+            with open(tex_path, "w") as f:
+                f.write(lm_tex + "\n")
+            print("\nLaTeX table written to:", tex_path)
             print("\n" + lm_tex)
         else:
             print("\n[sweep] produced no rows -- landmark table skipped.")
+    else:
+        h_euclid = euclid_h_factory()
+        print(f"ALT preprocessing ({args.landmarks} landmarks) ...")
+        (h_landmark, n_lm), prep = measure_block(
+            lambda: build_landmark_h(ALT, graph, args.landmarks))
+        print(f"  done in {prep['wall']:.2f}s, peak {prep['peak_bytes']/1024:.0f} KB")
 
-    if args.viz_query is not None and args.viz_query >= 0 and len(queries):
-        qi = min(args.viz_query, len(queries) - 1)
-        s, t = queries[qi]
-        print(f"\nVisualising query {qi}: s={s} t={t}")
-        visualize_query(graph, algos, s, t, args.outdir, args.graph,
-                        equal_aspect=not args.no_equal_aspect)
+        algos = make_algos(mods, h_euclid, h_landmark)
+        algo_order = [a.name for a in algos]
+
+        print("\nRunning benchmark ...")
+        records, per_algo, qdist = run_benchmark(graph, algos, queries, args.repeats)
+        summary = summarize(records, per_algo, algo_order)
+        buckets = bucket_analysis(records, algo_order, DEFAULT_BUCKETS)
+
+        print_console_summary(summary, algo_order, args.queries)
+        write_raw_csv(records, os.path.join(args.outdir, f"{args.graph}_raw.csv"))
+        write_summary_csv(summary, algo_order,
+                          os.path.join(args.outdir, f"{args.graph}_summary.csv"))
+
+        tex = [latex_summary(summary, algo_order, args.queries), "",
+               latex_relative(summary, algo_order), "",
+               latex_buckets(buckets, algo_order, DEFAULT_BUCKETS)]
+
+        with open(tex_path, "w") as f:
+            f.write("\n".join(tex) + "\n")
+        print("\nLaTeX tables written to:", tex_path)
+        print("\n" + "\n\n".join(tex))
+
+        if args.viz_query is not None and args.viz_query >= 0 and len(queries):
+            qi = min(args.viz_query, len(queries) - 1)
+            s, t = queries[qi]
+            print(f"\nVisualising query {qi}: s={s} t={t}")
+            visualize_query(graph, algos, s, t, args.outdir, args.graph,
+                            equal_aspect=not args.no_equal_aspect)
 
     print("\nNote: 'CPU cycles' has no portable counter in Python. The CSV's")
     print("prim_calls (cProfile primitive calls) and cpu_ms columns are the")
